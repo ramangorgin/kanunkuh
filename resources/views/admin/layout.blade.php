@@ -29,6 +29,13 @@
     {{-- DataTables --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
+    {{-- Select2 --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+    {{-- Leaflet --}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     {{-- FilePond --}}
     <link href="https://unpkg.com/filepond@^4/dist/filepond.min.css" rel="stylesheet" />
 
@@ -226,6 +233,22 @@
                 <i class="bi bi-hourglass-split me-2"></i> بررسی عضویت‌ها
             </a>
 
+            <div class="menu-header">برنامه‌ها</div>
+            <a href="{{ route('admin.programs.index') }}" class="{{ request()->routeIs('admin.programs.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar-event me-2"></i> لیست برنامه‌ها
+            </a>
+            <a href="{{ route('admin.programs.create') }}" class="{{ request()->routeIs('admin.programs.create') ? 'active' : '' }}">
+                <i class="bi bi-plus-circle me-2"></i> ایجاد برنامه جدید
+            </a>
+
+            <div class="menu-header">گزارش‌های برنامه</div>
+            <a href="{{ route('admin.program_reports.index') }}" class="{{ request()->routeIs('admin.program_reports.index') ? 'active' : '' }}">
+                <i class="bi bi-file-text me-2"></i> لیست گزارش‌ها
+            </a>
+            <a href="{{ route('admin.program_reports.create') }}" class="{{ request()->routeIs('admin.program_reports.create') ? 'active' : '' }}">
+                <i class="bi bi-plus-circle me-2"></i> ایجاد گزارش جدید
+            </a>
+
             <div class="menu-header">امور مالی</div>
             <a href="{{ route('admin.payments.index') }}" class="{{ request()->routeIs('admin.payments.index') ? 'active' : '' }}">
                 <i class="bi bi-credit-card me-2"></i> پرداخت‌ها
@@ -285,6 +308,12 @@
     {{-- Jalali Datepicker --}}
     <script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
     
+    {{-- Select2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    {{-- Leaflet --}}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     {{-- FilePond --}}
     <script src="https://unpkg.com/filepond@^4/dist/filepond.min.js"></script>
 
@@ -307,7 +336,10 @@
         });
 
         // Initialize Jalali Datepicker
-        jalaliDatepicker.startWatch({ persianDigits: true });
+        jalaliDatepicker.startWatch({ 
+            persianDigits: true,
+            zIndex: 3000
+        });
 
         // Toastr Options
         toastr.options = {

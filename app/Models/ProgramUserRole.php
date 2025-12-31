@@ -12,9 +12,8 @@ class ProgramUserRole extends Model
     protected $fillable = [
         'program_id',
         'user_id',
-        'name',
+        'user_name',
         'role_title',
-        'phone',
     ];
 
 

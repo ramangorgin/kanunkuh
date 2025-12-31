@@ -20,6 +20,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPaymentController;
+use App\Http\Controllers\ProgramReportController;
 
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\UserController;
@@ -130,6 +131,24 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/payments/{id}', [AdminPaymentController::class, 'show'])->name('admin.payments.show');
     Route::post('/payments/{id}/approve', [AdminPaymentController::class, 'approve'])->name('admin.payments.approve');
     Route::post('/payments/{id}/reject', [AdminPaymentController::class, 'reject'])->name('admin.payments.reject');
+
+    // Programs
+    Route::get('/programs', [ProgramController::class, 'index'])->name('admin.programs.index');
+    Route::get('/programs/create', [ProgramController::class, 'create'])->name('admin.programs.create');
+    Route::post('/programs', [ProgramController::class, 'store'])->name('admin.programs.store');
+    Route::get('/programs/{program}', [ProgramController::class, 'show'])->name('admin.programs.show');
+    Route::get('/programs/{program}/edit', [ProgramController::class, 'edit'])->name('admin.programs.edit');
+    Route::put('/programs/{program}', [ProgramController::class, 'update'])->name('admin.programs.update');
+    Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('admin.programs.destroy');
+
+    // Program Reports
+    Route::get('/program-reports', [ProgramReportController::class, 'index'])->name('admin.program_reports.index');
+    Route::get('/program-reports/create', [ProgramReportController::class, 'create'])->name('admin.program_reports.create');
+    Route::post('/program-reports', [ProgramReportController::class, 'store'])->name('admin.program_reports.store');
+    Route::get('/program-reports/{programReport}', [ProgramReportController::class, 'show'])->name('admin.program_reports.show');
+    Route::get('/program-reports/{programReport}/edit', [ProgramReportController::class, 'edit'])->name('admin.program_reports.edit');
+    Route::put('/program-reports/{programReport}', [ProgramReportController::class, 'update'])->name('admin.program_reports.update');
+    Route::delete('/program-reports/{programReport}', [ProgramReportController::class, 'destroy'])->name('admin.program_reports.destroy');
 });
 
 // (Removed duplicate route blocks at file end)

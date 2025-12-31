@@ -10,48 +10,31 @@ class Program extends Model
     use HasFactory;
 
     protected $fillable = [
-        'type',
-        'title',
-        'description',
-        'poster_path',
-        'base_height',
+        'name',
         'peak_height',
-        'area',
-        'peak_lat',
-        'peak_lon',
-        'start_date',
-        'end_date',
-        'registration_deadline',
-        'is_registration_open',
-        'has_transport',
-        'departure_dateTime_tehran',
-        'departure_place_tehran',
-        'departure_lat_tehran',
-        'departure_lon_tehran',
-        'departure_dateTime_karaj',
-        'departure_place_karaj',
-        'departure_lat_karaj',
-        'departure_lon_karaj',
-        'required_equipment',
-        'required_meals',
-        'is_free',
-        'member_cost',
-        'guest_cost',
-        'card_number',
-        'sheba_number',
-        'card_holder',
-        'bank_name',
-        'difficulty',
+        'program_type',
+        'region_name',
+        'execution_date',
+        'move_from_karaj',
+        'move_from_tehran',
+        'cost_member',
+        'cost_guest',
+        'payment_info',
+        'equipments',
+        'meals',
+        'conditions',
+        'register_deadline',
+        'rules',
         'status',
     ];
 
     protected $casts = [
-        'is_registration_open' => 'boolean',
-        'has_transport' => 'boolean',
-        'is_free' => 'boolean',
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'registration_deadline' => 'datetime',
+        'execution_date' => 'datetime',
+        'register_deadline' => 'datetime',
+        'payment_info' => 'array',
+        'equipments' => 'array',
+        'meals' => 'array',
+        'conditions' => 'array',
     ];
 
     public function registrations()
@@ -69,9 +52,9 @@ class Program extends Model
         return $this->hasMany(ProgramUserRole::class);
     }
 
-    public function details()
+    public function report()
     {
-        return $this->hasOne(ProgramDetail::class);
+        return $this->hasOne(ProgramReport::class);
     }
 
     public function payments()

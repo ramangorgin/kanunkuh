@@ -1,320 +1,206 @@
-@extends('admin.layout')
-
-@section('breadcrumb')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.programs.index') }}">برنامه‌ها</a></li>
-            <li class="breadcrumb-item active" aria-current="page">نمایش برنامه</li>
-        </ol>
-    </nav>
-@endsection
+@extends('layout')
 
 @section('content')
+<div class="container my-5">
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-    <div id="first-section" class="container mt-3">
-        <div class="row">
-            <div class="col-md-6 col-sm-12">
-              {{-- اسلایدشو عکس‌ها --}}
-                @if($program->photos && count($program->photos) > 0)
-                    <div id="programCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            @foreach($program->photos as $index => $photo)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <img src="{{ asset('storage/' . $photo) }}" class="d-block w-100" alt="program photo">
-                                </div>
-                            @endforeach
+
+    <div class="card shadow-lg mb-4">
+        <div class="card-body p-4">
+            <h2 class="mb-4">{{ $program->name }}</h2>
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-tag-fill text-primary fs-4 me-3"></i>
+                        <div>
+                            <strong>نوع برنامه:</strong>
+                            <span class="badge bg-info ms-2">{{ $program->program_type }}</span>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#programCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#programCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
                     </div>
-                @endif
-            </div>
-            <div class="col-md-6 col-sm-12">
-                <h3 class="mb-4">{{ $program->title }}</h3>
-                {{-- توضیحات --}}
-                @if($program->description)
-                    <div>
-                        <h5>توضیحات برنامه</h5>
-                        <p class="text-justify">{!! $program->description !!}</p>
+                    
+                    @if($program->peak_height)
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-mountain text-success fs-4 me-3"></i>
+                        <div>
+                            <strong>ارتفاع قله:</strong>
+                            <span class="ms-2">{{ number_format($program->peak_height) }} متر</span>
+                        </div>
                     </div>
-                @endif
-                <div class="row mt-4">
-                    <!-- تاریخ شروع -->
-                    <div class="col-md-6 mb-3">
-                        <div class="d-flex align-items-center bg-light border rounded p-3 shadow-sm">
-                            <i class="bi bi-calendar-event-fill text-primary fs-4 me-3"></i>
-                            <div>
-                                <div class="fw-bold">تاریخ شروع برنامه</div>
-                                <div class="text-muted">
-                                    {{ \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::createFromTimestampMs($program->start_date))->format('Y/m/d H:i') }}
-                                </div>
+                    @endif
+
+                    @if($program->region_name)
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-geo-alt-fill text-danger fs-4 me-3"></i>
+                        <div>
+                            <strong>منطقه:</strong>
+                            <span class="ms-2">{{ $program->region_name }}</span>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-calendar-event-fill text-primary fs-4 me-3"></i>
+                        <div>
+                            <strong>تاریخ اجرا:</strong>
+                            <div class="text-muted">
+                                @if($program->execution_date)
+                                    {{ \Morilog\Jalali\Jalalian::fromCarbon($program->execution_date)->format('Y/m/d H:i') }}
+                                @else
+                                    —
+                                @endif
                             </div>
                         </div>
                     </div>
 
-                    <!-- تاریخ پایان -->
-                    <div class="col-md-6 mb-3">
-                        <div class="d-flex align-items-center bg-light border rounded p-3 shadow-sm">
-                            <i class="bi bi-calendar-check-fill text-success fs-4 me-3"></i>
-                            <div>
-                                <div class="fw-bold">تاریخ پایان برنامه</div>
-                                <div class="text-muted">
-                                    {{ \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::createFromTimestampMs($program->end_date))->format('Y/m/d H:i') }}
-                                </div>
+                    @if($program->register_deadline)
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-clock-history text-warning fs-4 me-3"></i>
+                        <div>
+                            <strong>مهلت ثبت‌نام:</strong>
+                            <div class="text-muted">
+                                {{ \Morilog\Jalali\Jalalian::fromCarbon($program->register_deadline)->format('Y/m/d H:i') }}
                             </div>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
-        </div>        
-    </div>
 
+            @if($program->rules)
+            <hr>
+            <h5 class="mb-3">قوانین و شرایط</h5>
+            <div class="bg-light p-4 rounded">
+                {!! $program->rules !!}
+            </div>
+            @endif
 
-     {{-- اطلاعات مسئولین برنامه --}}
-    @if($program->roles->count())
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 my-4">
+            @if($program->equipments && count($program->equipments) > 0)
+            <hr>
+            <h5 class="mb-3">تجهیزات مورد نیاز</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($program->equipments as $equipment)
+                    <span class="badge bg-secondary fs-6">{{ $equipment }}</span>
+                @endforeach
+            </div>
+            @endif
 
-            @foreach($program->roles as $role)
-                @php
-                    $user = $role->user;
-                    $profile = $user?->profile;
-                    $fullName = $user && $profile
-                        ? $profile->first_name . ' ' . $profile->last_name
-                        : $role->user_name;
-                    $photo = $profile && $profile->photo
-                        ? asset('storage/' . $profile->photo)
-                        : 'https://ui-avatars.com/api/?name=' . urlencode($fullName) . '&background=0D8ABC&color=fff';
-                @endphp
+            @if($program->meals && count($program->meals) > 0)
+            <hr>
+            <h5 class="mb-3">وعده‌های مورد نیاز</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($program->meals as $meal)
+                    <span class="badge bg-info text-dark fs-6">{{ $meal }}</span>
+                @endforeach
+            </div>
+            @endif
 
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body text-center">
-                            <img src="{{ $photo }}" alt="Profile" class="rounded-circle mb-3" width="80" height="80">
-                            <h6 class="mb-1">{{ $fullName }}</h6>
-                            <small class="text-muted">{{ $role->role_title }}</small>
+            @if($program->cost_member || $program->cost_guest)
+            <hr>
+            <h5 class="mb-3">هزینه‌ها</h5>
+            <div class="row">
+                @if($program->cost_member)
+                <div class="col-md-6 mb-2">
+                    <strong>هزینه عضو:</strong> {{ number_format($program->cost_member) }} ریال
+                </div>
+                @endif
+                @if($program->cost_guest)
+                <div class="col-md-6 mb-2">
+                    <strong>هزینه مهمان:</strong> {{ number_format($program->cost_guest) }} ریال
+                </div>
+                @endif
+            </div>
+            @endif
+
+            @if($program->move_from_tehran || $program->move_from_karaj)
+            <hr>
+            <h5 class="mb-3">اطلاعات حرکت</h5>
+            @if($program->move_from_tehran)
+            <div class="mb-2">
+                <strong>حرکت از تهران:</strong> {{ $program->move_from_tehran }}
+            </div>
+            @endif
+            @if($program->move_from_karaj)
+            <div class="mb-2">
+                <strong>حرکت از کرج:</strong> {{ $program->move_from_karaj }}
+            </div>
+            @endif
+            @endif
+
+            @if($program->userRoles->count() > 0)
+            <hr>
+            <h5 class="mb-3">مسئولین برنامه</h5>
+            <div class="row g-3">
+                @foreach($program->userRoles as $role)
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card border">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">{{ $role->role_title }}</h6>
+                                <p class="card-text mb-0">
+                                    @if($role->user)
+                                        {{ $role->user->phone }}
+                                    @elseif($role->user_name)
+                                        {{ $role->user_name }}
+                                    @else
+                                        —
+                                    @endif
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-
-        </div>
-    @else
-        <p class="text-muted">هیچ مسئولی برای این برنامه ثبت نشده است.</p>
-    @endif
-
-    {{-- حمل و نقل --}}
-    @if($program->has_transport)
-    <div class="container my-4">
-        <div class="row g-4">
-
-            {{-- ستون حرکت از تهران --}}
-            <div class="col-md-6 col-12">
-                <div class="card h-100">
-                    <div class="card-header bg-primary text-white">
-                        <i class="bi bi-geo-alt-fill me-1"></i> حرکت از تهران
-                    </div>
-                    <div class="card-body">
-                        <p><i class="bi bi-calendar-event-fill text-secondary"></i> تاریخ و ساعت حرکت:
-                            <strong id="departure_dateTime_tehran" data-ts="{{ $program->departure_dateTime_tehran }}"></strong></p>
-                        <p><i class="bi bi-geo-fill text-secondary"></i> محل حرکت:
-                            <strong>{{ $program->departure_place_tehran ?? '—' }}</strong></p>
-                        @if($program->departure_lat_tehran && $program->departure_lon_tehran)
-                            <div id="map_tehran" style="height: 300px;" class="rounded shadow-sm"></div>
-                        @else
-                            <p class="text-muted">موقعیت جغرافیایی مشخص نشده است.</p>
-                        @endif
-                    </div>
-                </div>
+                @endforeach
             </div>
-
-            {{-- ستون حرکت از کرج --}}
-            <div class="col-md-6 col-12">
-                <div class="card h-100">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-geo-alt-fill me-1"></i> حرکت از کرج
-                    </div>
-                    <div class="card-body">
-                        <p><i class="bi bi-calendar-event-fill text-secondary"></i> تاریخ و ساعت حرکت:
-                            <strong id="departure_dateTime_karaj" data-ts="{{ $program->departure_dateTime_karaj }}"></strong></p>
-                        <p><i class="bi bi-geo-fill text-secondary"></i> محل حرکت:
-                            <strong>{{ $program->departure_place_karaj ?? '—' }}</strong></p>
-                        @if($program->departure_lat_karaj && $program->departure_lon_karaj)
-                            <div id="map_karaj" style="height: 300px;" class="rounded shadow-sm"></div>
-                        @else
-                            <p class="text-muted">موقعیت جغرافیایی مشخص نشده است.</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    @else
-        <div class="alert alert-info">برنامه با حمل‌ونقل شخصی برگزار می‌شود.</div>
-    @endif
-
-   
-
-   {{-- وعده‌ها و تجهیزات --}}
-<div class="container my-4">
-    <div class="row g-4">
-
-        {{-- تجهیزات --}}
-        <div class="col-md-6 col-sm-12">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-light">
-                    <i class="bi bi-tools me-1 text-primary"></i> تجهیزات مورد نیاز
-                </div>
-                <div class="card-body">
-                    @php
-                        $equipments = is_array($program->required_equipment) ? $program->required_equipment : json_decode($program->required_equipment ?? '[]', true);
-                    @endphp
-                    @if(!empty($equipments))
-                        @foreach($equipments as $item)
-                            <span class="badge bg-secondary me-1 mb-1">{{ $item }}</span>
-                        @endforeach
-                    @else
-                        <p class="text-muted mb-0">تجهیزاتی ثبت نشده است.</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        {{-- وعده‌های غذایی --}}
-        <div class="col-md-6 col-sm-12">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-light">
-                    <i class="bi bi-egg-fried me-1 text-success"></i> وعده‌های غذایی
-                </div>
-                <div class="card-body">
-                    @php
-                        $meals = is_array($program->required_meals) ? $program->required_meals : json_decode($program->required_meals ?? '[]', true);
-                    @endphp
-                    @if(!empty($meals))
-                        @foreach($meals as $item)
-                            <span class="badge bg-info text-dark me-1 mb-1">{{ $item }}</span>
-                        @endforeach
-                    @else
-                        <p class="text-muted mb-0">وعده‌ای ثبت نشده است.</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-{{-- هزینه‌ها --}}
-<div class="container my-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-light">
-            <i class="bi bi-cash-coin me-1 text-warning"></i> هزینه‌ها و اطلاعات پرداخت
-        </div>
-        <div class="card-body">
-            @if($program->is_free)
-                <span class="badge bg-success">این برنامه رایگان است</span>
-            @else
-                <div class="row mb-3">
-                    <div class="col-md-6 col-sm-12">
-                        <p><strong><i class="bi bi-person-check-fill text-primary"></i> هزینه عضو:</strong> <span class="text-danger">{{ number_format($program->member_cost) }} ریال</span></p>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <p><strong><i class="bi bi-person-fill text-warning"></i> هزینه مهمان:</strong> <span class="text-danger">{{ number_format($program->guest_cost) }} ریال</span></p>
-                    </div>
-                </div>
-                <div class="row text-muted small">
-                    <div class="col-md-6 col-sm-12">
-                        <p><i class="bi bi-credit-card-2-front"></i> شماره کارت: {{ $program->card_number }}</p>
-                        <p><i class="bi bi-bank2"></i> نام بانک: {{ $program->bank_name }}</p>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <p><i class="bi bi-hash"></i> شماره شبا: {{ $program->sheba_number }}</p>
-                        <p><i class="bi bi-person"></i> نام دارنده کارت: {{ $program->card_holder }}</p>
-                    </div>
-                </div>
             @endif
         </div>
     </div>
-</div>
 
-{{-- وضعیت ثبت‌نام --}}
-<div class="container my-4">
-    @if($program->is_registration_open)
-        <div class="alert alert-success d-flex align-items-center" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <div>
-                ثبت‌نام باز است تا تاریخ:
-                <strong>{{ $program->registration_deadline }}</strong>
+    {{-- منطق ویژه برای نمایش دکمه‌ها --}}
+    @php
+        $now = now();
+        $registerDeadlinePassed = $program->register_deadline && $now->gt($program->register_deadline);
+        $executionDatePassed = $program->execution_date && $now->gt($program->execution_date);
+        $hasReport = $program->report !== null;
+    @endphp
+
+    <div class="text-center my-5">
+        @if($program->register_deadline && !$registerDeadlinePassed)
+            <div class="alert alert-success mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <strong>ثبت‌نام باز است</strong>
+                <p class="mb-0 mt-2">مهلت ثبت‌نام تا {{ \Morilog\Jalali\Jalalian::fromCarbon($program->register_deadline)->format('Y/m/d H:i') }} می‌باشد.</p>
             </div>
-        </div>
-    @else
-        <div class="alert alert-warning d-flex align-items-center" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <div>ثبت‌نام برای این برنامه بسته شده است.</div>
-        </div>
-    @endif
-</div>
-
-<div class="mt-5 text-center">
-    <a href="{{ route('registrations.program.create', $program->id) }}" class="btn btn-primary btn-lg">
-        <i class="bi bi-pencil-square me-2"></i> ثبت‌نام در برنامه
-    </a>
-</div>
-
-
-@auth
-    @if($userHasParticipated && !$userHasSubmittedSurvey)
-        <div class="mt-4">
-            <a href="{{ route('surveys.program.form', ['program' => $program->id]) }}" class="btn btn-primary">
-                تکمیل فرم نظرسنجی برنامه
+            <a href="#" class="btn btn-primary btn-lg">
+                <i class="bi bi-pencil-square me-2"></i> ثبت‌نام در برنامه
             </a>
-        </div>
-    @elseif($userHasSubmittedSurvey)
-        <p class="text-success mt-4">شما قبلاً در این نظرسنجی شرکت کرده‌اید. با تشکر!</p>
-    @endif
-@endauth
-
-
-@push('scripts')
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    const ts = document.getElementById("departure_dateTime_tehran").dataset.ts;
-
-    const dateStr = new persianDate(parseInt(ts)).format('YYYY/MM/DD HH:mm');
-    document.getElementById("departure_dateTime_tehran").innerText = dateStr;
-</script>
-<script>
-    const ts = document.getElementById("departure_dateTime_karaj").dataset.ts;
-
-    const dateStr = new persianDate(parseInt(ts)).format('YYYY/MM/DD HH:mm');
-    document.getElementById("departure_dateTime_karaj").innerText = dateStr;
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        @if($program->departure_lat_tehran && $program->departure_lon_tehran)
-            var mapTehran = L.map('map_tehran').setView([{{ $program->departure_lat_tehran }}, {{ $program->departure_lon_tehran }}], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-            }).addTo(mapTehran);
-            L.marker([{{ $program->departure_lat_tehran }}, {{ $program->departure_lon_tehran }}]).addTo(mapTehran);
+        @elseif($registerDeadlinePassed)
+            <div class="alert alert-warning mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>مهلت ثبت‌نام به پایان رسیده است</strong>
+            </div>
         @endif
 
-        @if($program->departure_lat_karaj && $program->departure_lon_karaj)
-            var mapKaraj = L.map('map_karaj').setView([{{ $program->departure_lat_karaj }}, {{ $program->departure_lon_karaj }}], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-            }).addTo(mapKaraj);
-            L.marker([{{ $program->departure_lat_karaj }}, {{ $program->departure_lon_karaj }}]).addTo(mapKaraj);
+        @if($executionDatePassed && $hasReport)
+            <a href="{{ route('admin.program_reports.show', $program->report->id) }}" class="btn btn-success btn-lg">
+                <i class="bi bi-file-text me-2"></i> مشاهده گزارش برنامه
+            </a>
         @endif
-    });
-</script>
-@endpush
+    </div>
+
+    @auth
+        @if($userHasParticipated && !$userHasSubmittedSurvey)
+            <div class="text-center mt-4">
+                <a href="{{ route('surveys.program.form', ['program' => $program->id]) }}" class="btn btn-primary">
+                    تکمیل فرم نظرسنجی برنامه
+                </a>
+            </div>
+        @elseif($userHasSubmittedSurvey)
+            <div class="alert alert-success text-center mt-4">
+                شما قبلاً در این نظرسنجی شرکت کرده‌اید. با تشکر!
+            </div>
+        @endif
+    @endauth
+</div>
 @endsection

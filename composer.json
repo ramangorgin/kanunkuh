@@ -13,6 +13,7 @@
         "barryvdh/laravel-dompdf": "^2.2",
         "doctrine/dbal": "^3.9",
         "guzzlehttp/guzzle": "^7.2",
+        "hekmatinasser/verta": "^8.4",
         "ipe/smsir-php": "^1.0",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
