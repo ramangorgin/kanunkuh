@@ -20,7 +20,8 @@ class Payment extends Model
         'related_id', 
         'status',
         'membership_code', 
-        'transaction_code'  
+        'transaction_code',
+        'metadata',
     ];
 
 

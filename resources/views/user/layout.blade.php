@@ -379,10 +379,14 @@
             <i class="bi bi-credit-card-2-front-fill me-2"></i> پرداخت‌ها
         </a>
 
+        <a href="{{ route('dashboard.programs.index') }}" class="{{ request()->routeIs('dashboard.programs.*') ? 'active-link' : '' }}">
+            <i class="bi bi-calendar-event-fill me-2"></i> برنامه‌های من
         </a>
-        <a href="{{ route('dashboard.settings') }}" class="{{ request()->routeIs('dashboard.settings') ? 'active-link' : '' }}">
-            <i class="bi bi-gear-fill me-2"></i> تنظیمات
+
+        <a href="{{ route('dashboard.courses.index') }}" class="{{ request()->routeIs('dashboard.courses.*') ? 'active-link' : '' }}">
+            <i class="bi bi-book-fill me-2"></i> دوره‌های من
         </a>
+
         @auth
             <form method="POST" action="{{ route('logout') }}" style="margin:0;">
                 @csrf

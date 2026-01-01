@@ -157,20 +157,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
-        {{-- تنظیمات --}}
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">تنظیمات حساب</div>
-                <div class="card-body">
-                    <a href="{{ route('dashboard.settings') }}" class="btn btn-sm btn-outline-secondary">تغییر رمز عبور</a>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 @endsection

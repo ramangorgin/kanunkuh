@@ -55,7 +55,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">یادداشت‌های مهم</label>
-                    <textarea name="important_notes" class="form-control" rows="5">{{ old('important_notes', $programReport->important_notes) }}</textarea>
+                    <textarea name="important_notes" id="important_notes" class="form-control" rows="5">{{ old('important_notes', $programReport->important_notes) }}</textarea>
                 </div>
 
                 <hr>
@@ -199,6 +199,41 @@
                     </div>
                 </div>
 
+                <hr>
+
+                {{-- تصاویر گزارش --}}
+                <h5 class="mb-3 text-primary"><i class="bi bi-images me-2"></i> تصاویر گزارش</h5>
+                <div class="mb-4">
+                    {{-- نمایش تصاویر موجود --}}
+                    @if($programReport->program && $programReport->program->files->count() > 0)
+                        <div class="mb-3">
+                            <label class="form-label">تصاویر موجود:</label>
+                            <div class="row g-3" id="existing-images">
+                                @foreach($programReport->program->files->where('file_type', 'image') as $file)
+                                    <div class="col-md-3 col-sm-6 image-preview-item" data-file-id="{{ $file->id }}">
+                                        <img src="{{ Storage::url($file->file_path) }}" alt="Existing image">
+                                        <button type="button" class="btn btn-danger btn-sm remove-btn remove-existing-image" data-file-id="{{ $file->id }}">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                    
+                    {{-- آپلود تصاویر جدید --}}
+                    <div class="image-upload-container">
+                        <div class="upload-area border rounded p-4 text-center mb-3" id="upload-area" style="cursor: pointer; background: #f8f9fa; transition: all 0.3s;">
+                            <i class="bi bi-cloud-upload fs-1 text-primary d-block mb-2"></i>
+                            <p class="mb-1 fw-bold">برای آپلود تصویر جدید کلیک کنید</p>
+                            <p class="text-muted small mb-0">فرمت‌های مجاز: JPG, PNG, GIF | حداکثر اندازه: 2 مگابایت | حداکثر تعداد: 20 تصویر</p>
+                        </div>
+                        <input type="file" name="report_images[]" id="image-input" class="d-none" multiple accept="image/jpeg,image/png,image/gif">
+                        <div id="image-preview" class="row g-3"></div>
+                        <input type="hidden" name="deleted_files" id="deleted-files" value="">
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-end gap-2">
                     <a href="{{ route('admin.program_reports.index') }}" class="btn btn-secondary">انصراف</a>
                     <button type="submit" class="btn btn-success">
@@ -210,16 +245,147 @@
     </div>
 @endsection
 
+@push('styles')
+<style>
+    .image-upload-container {
+        margin-bottom: 20px;
+    }
+    
+    .upload-area:hover {
+        background: #e9ecef !important;
+        border-color: #667eea !important;
+    }
+    
+    .image-preview-item {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    
+    .image-preview-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+    }
+    
+    .image-preview-item .remove-btn {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .image-preview-item img {
+            height: 150px;
+        }
+    }
+</style>
+@endpush
+
 @push('scripts')
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
     <script>
-        ClassicEditor
-            .create(document.querySelector('#report_description'), {
-                language: 'fa'
-            })
-            .catch(error => {
-                console.error(error);
+        $(document).ready(function() {
+            // Initialize CKEditor for report_description
+            ClassicEditor
+                .create(document.querySelector('#report_description'), {
+                    language: 'fa'
+                })
+                .catch(error => {
+                    console.error('CKEditor error:', error);
+                });
+            
+            // Initialize CKEditor for important_notes
+            ClassicEditor
+                .create(document.querySelector('#important_notes'), {
+                    language: 'fa'
+                })
+                .catch(error => {
+                    console.error('CKEditor error:', error);
+                });
+
+            // Image upload handling
+            const uploadArea = document.getElementById('upload-area');
+            const imageInput = document.getElementById('image-input');
+            const imagePreview = document.getElementById('image-preview');
+            let imageFiles = [];
+            let deletedFileIds = [];
+
+            uploadArea.addEventListener('click', () => {
+                imageInput.click();
             });
+
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                
+                // Check total count (existing + new)
+                const existingCount = $('#existing-images .image-preview-item').length;
+                if (existingCount - deletedFileIds.length + imageFiles.length + files.length > 20) {
+                    toastr.error('حداکثر 20 تصویر مجاز است');
+                    e.target.value = '';
+                    return;
+                }
+
+                files.forEach(file => {
+                    // Check file size (2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        toastr.error(`فایل ${file.name} بزرگتر از 2 مگابایت است`);
+                        return;
+                    }
+
+                    // Check file type
+                    if (!file.type.match('image.*')) {
+                        toastr.error(`فایل ${file.name} یک تصویر معتبر نیست`);
+                        return;
+                    }
+
+                    imageFiles.push(file);
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'col-md-3 col-sm-6 image-preview-item';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-image" data-index="${imageFiles.length - 1}">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        `;
+                        imagePreview.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                e.target.value = '';
+            });
+
+            // Remove new image
+            $(document).on('click', '.remove-image', function() {
+                const index = $(this).data('index');
+                imageFiles.splice(index, 1);
+                $(this).closest('.image-preview-item').remove();
+                
+                // Update indices
+                $('.remove-image').each(function(i) {
+                    $(this).attr('data-index', i);
+                });
+            });
+
+            // Remove existing image
+            $(document).on('click', '.remove-existing-image', function() {
+                const fileId = $(this).data('file-id');
+                deletedFileIds.push(fileId);
+                $(this).closest('.image-preview-item').remove();
+                $('#deleted-files').val(deletedFileIds.join(','));
+            });
+        });
     </script>
 @endpush
 

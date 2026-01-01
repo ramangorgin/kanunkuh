@@ -18,8 +18,9 @@
                 <i class="bi bi-plus-circle me-1"></i> گزارش جدید
             </a>
         </div>
-        <div class="card-body">
-            <table id="reports-table" class="table table-bordered table-hover nowrap">
+        <div class="card-body" style="padding-left: 20px;">
+            <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <table id="reports-table" class="table table-bordered table-hover" style="min-width: 600px;">
                 <thead class="table-light">
                     <tr>
                         <th>برنامه</th>
@@ -40,7 +41,7 @@
                                 {{ $report->participants_count ?? 0 }} نفر
                             </td>
                             <td>
-                                {{ \Morilog\Jalali\Jalalian::fromCarbon($report->created_at)->format('Y/m/d') }}
+                                {{ verta($report->created_at)->format('Y/m/d H:i') }}
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
@@ -50,11 +51,10 @@
                                     <a href="{{ route('admin.program_reports.edit', $report->id) }}" class="btn btn-primary" title="ویرایش">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('admin.program_reports.destroy', $report->id) }}" method="POST" class="d-inline"
-                                          onsubmit="return confirm('آیا از حذف این گزارش مطمئن هستید؟');">
+                                    <form action="{{ route('admin.program_reports.destroy', $report->id) }}" method="POST" class="d-inline delete-report-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" title="حذف">
+                                        <button type="button" class="btn btn-danger delete-report-btn" title="حذف" data-report-id="{{ $report->id }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -64,6 +64,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 @endsection
@@ -77,15 +78,40 @@
                     "search": "جستجو:",
                     "lengthMenu": "نمایش _MENU_ مورد",
                     "info": "نمایش _START_ تا _END_ از _TOTAL_ مورد",
+                    "infoEmpty": "نمایش 0 تا 0 از 0 مورد",
+                    "infoFiltered": "(فیلتر شده از _MAX_ مورد)",
                     "paginate": {
                         "first": "اول",
                         "last": "آخر",
                         "next": "بعدی",
                         "previous": "قبلی"
                     },
-                    "zeroRecords": "موردی پیدا نشد"
+                    "zeroRecords": "موردی پیدا نشد",
+                    "emptyTable": "داده‌ای در جدول وجود ندارد"
                 },
                 order: [[2, 'desc']]
+            });
+
+            // Delete confirmation with SweetAlert2
+            $('.delete-report-btn').on('click', function() {
+                const reportId = $(this).data('report-id');
+                const form = $(this).closest('form');
+                
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    text: 'آیا از حذف این گزارش اطمینان دارید؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-trash me-1"></i> بله، حذف شود',
+                    cancelButtonText: '<i class="bi bi-x-circle me-1"></i> انصراف',
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

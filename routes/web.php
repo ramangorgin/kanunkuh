@@ -59,10 +59,18 @@ Route::post('/auth/register/verify', [AuthController::class, 'registerVerifyOtp'
 Route::get('/programs', [ProgramController::class, 'archive'])->name('programs.archive');
 Route::get('/programs/{program}', [ProgramController::class, 'show'])->name('programs.show');
 
+// Program Registration
+Route::get('/programs/{program}/register', [App\Http\Controllers\ProgramRegistrationController::class, 'create'])->name('programs.register.create');
+Route::post('/programs/{program}/register', [App\Http\Controllers\ProgramRegistrationController::class, 'store'])->name('programs.register.store');
+
 
 //general Courses
 Route::get('/courses', [CourseController::class, 'archive'])->name('courses.archive');
 Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+
+// Course Registration
+Route::get('/courses/{course}/register', [App\Http\Controllers\CourseRegistrationController::class, 'create'])->name('courses.register.create');
+Route::post('/courses/{course}/register', [App\Http\Controllers\CourseRegistrationController::class, 'store'])->name('courses.register.store');
 
 
 
@@ -88,6 +96,20 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     // Payments & Settings
     Route::get('/my-payments', [PaymentController::class, 'UserIndex'])->name('payments.index');
     Route::post('/my-payments', [PaymentController::class, 'store'])->name('payments.store');
+    
+    // Programs
+    Route::get('/my-programs', [UserDashboardController::class, 'programs'])->name('programs.index');
+    
+    // Courses
+    Route::get('/my-courses', [UserDashboardController::class, 'courses'])->name('courses.index');
+    Route::get('/courses/{registration}/download-certificate', [App\Http\Controllers\UserCourseController::class, 'downloadCertificate'])->name('courses.downloadCertificate');
+    
+    // Program Reports (User)
+    Route::get('/program-reports/create/{program}', [App\Http\Controllers\UserProgramReportController::class, 'create'])->name('program_reports.create');
+    Route::post('/program-reports/{program}', [App\Http\Controllers\UserProgramReportController::class, 'store'])->name('program_reports.store');
+    Route::get('/program-reports/{programReport}', [ProgramReportController::class, 'show'])->name('program_reports.show');
+    Route::get('/program-reports/{programReport}/pdf', [ProgramReportController::class, 'downloadPdf'])->name('program_reports.downloadPdf');
+    
     Route::get('/settings', [UserDashboardController::class, 'settings'])->name('settings');
     Route::post('/settings', [SettingsController::class, 'updatePassword'])->name('settings.updatePassword');
 });
@@ -149,6 +171,28 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/program-reports/{programReport}/edit', [ProgramReportController::class, 'edit'])->name('admin.program_reports.edit');
     Route::put('/program-reports/{programReport}', [ProgramReportController::class, 'update'])->name('admin.program_reports.update');
     Route::delete('/program-reports/{programReport}', [ProgramReportController::class, 'destroy'])->name('admin.program_reports.destroy');
+    Route::get('/program-reports/{programReport}/pdf', [ProgramReportController::class, 'downloadPdf'])->name('admin.program_reports.downloadPdf');
+
+    // Program Registrations
+    Route::get('/programs/{program}/registrations', [App\Http\Controllers\AdminProgramRegistrationController::class, 'index'])->name('admin.programs.registrations.index');
+    Route::post('/programs/{program}/registrations/{registrationId}/approve', [App\Http\Controllers\AdminProgramRegistrationController::class, 'approve'])->name('admin.programs.registrations.approve');
+    Route::post('/programs/{program}/registrations/{registrationId}/reject', [App\Http\Controllers\AdminProgramRegistrationController::class, 'reject'])->name('admin.programs.registrations.reject');
+    Route::post('/programs/{program}/registrations/{registrationId}/cancel', [App\Http\Controllers\AdminProgramRegistrationController::class, 'cancel'])->name('admin.programs.registrations.cancel');
+
+    // Courses
+    Route::get('/courses', [CourseController::class, 'index'])->name('admin.courses.index');
+    Route::get('/courses/create', [CourseController::class, 'create'])->name('admin.courses.create');
+    Route::post('/courses', [CourseController::class, 'store'])->name('admin.courses.store');
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('admin.courses.edit');
+    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
+    Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
+
+    // Course Registrations
+    Route::get('/courses/{course}/registrations', [App\Http\Controllers\AdminCourseRegistrationController::class, 'index'])->name('admin.courses.registrations.index');
+    Route::post('/courses/{course}/registrations/{registrationId}/approve', [App\Http\Controllers\AdminCourseRegistrationController::class, 'approve'])->name('admin.courses.registrations.approve');
+    Route::post('/courses/{course}/registrations/{registrationId}/reject', [App\Http\Controllers\AdminCourseRegistrationController::class, 'reject'])->name('admin.courses.registrations.reject');
+    Route::post('/courses/{course}/registrations/{registrationId}/cancel', [App\Http\Controllers\AdminCourseRegistrationController::class, 'cancel'])->name('admin.courses.registrations.cancel');
+    Route::post('/courses/{course}/registrations/{registrationId}/upload-certificate', [App\Http\Controllers\AdminCourseRegistrationController::class, 'uploadCertificate'])->name('admin.courses.registrations.uploadCertificate');
 });
 
 // (Removed duplicate route blocks at file end)

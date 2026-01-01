@@ -1,19 +1,19 @@
 @extends('admin.layout')
 
-@section('title', 'لیست برنامه‌ها')
+@section('title', 'لیست دوره‌ها')
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.programs.index') }}">برنامه‌ها</a></li>
-            <li class="breadcrumb-item active" aria-current="page">لیست برنامه‌ها</li>
+            <li class="breadcrumb-item"><a href="{{ route('admin.courses.index') }}">دوره‌ها</a></li>
+            <li class="breadcrumb-item active" aria-current="page">لیست دوره‌ها</li>
         </ol>
     </nav>
 @endsection
 
 @push('styles')
 <style>
-    .programs-table-wrapper {
+    .courses-table-wrapper {
         background: #fff;
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -35,13 +35,13 @@
         font-weight: 600;
     }
     
-    #programs-table {
+    #courses-table {
         font-size: 0.875rem;
         margin: 0;
-        min-width: 700px; /* حداقل عرض برای حفظ ساختار */
+        min-width: 700px;
     }
     
-    #programs-table thead th {
+    #courses-table thead th {
         background-color: #f8f9fa;
         color: #495057;
         font-weight: 600;
@@ -53,14 +53,13 @@
         white-space: nowrap;
     }
     
-    #programs-table tbody td {
+    #courses-table tbody td {
         padding: 12px 15px;
         vertical-align: middle;
         border-bottom: 1px solid #f0f0f0;
         white-space: nowrap;
     }
     
-    /* Responsive styles for mobile */
     @media (max-width: 768px) {
         .table-responsive {
             display: block;
@@ -69,12 +68,12 @@
             -webkit-overflow-scrolling: touch;
         }
         
-        #programs-table {
+        #courses-table {
             font-size: 0.75rem;
         }
         
-        #programs-table thead th,
-        #programs-table tbody td {
+        #courses-table thead th,
+        #courses-table tbody td {
             padding: 8px 10px;
         }
         
@@ -90,12 +89,12 @@
         }
     }
     
-    #programs-table tbody tr:hover {
+    #courses-table tbody tr:hover {
         background-color: #f8f9fa;
         transition: background-color 0.2s;
     }
     
-    .program-name-link {
+    .course-name-link {
         color: #495057;
         font-weight: 600;
         text-decoration: none;
@@ -103,7 +102,7 @@
         font-size: 0.9rem;
     }
     
-    .program-name-link:hover {
+    .course-name-link:hover {
         color: #667eea;
     }
     
@@ -207,85 +206,97 @@
 @endpush
 
 @section('content')
-    <div class="programs-table-wrapper">
+    <div class="courses-table-wrapper">
         <div class="table-header-section">
-            <h5><i class="bi bi-list-ul me-2"></i> لیست برنامه‌ها</h5>
-            <a href="{{ route('admin.programs.create') }}" class="btn btn-light btn-sm" style="font-size: 0.875rem;">
-                <i class="bi bi-plus-circle me-1"></i> برنامه جدید
+            <h5><i class="bi bi-list-ul me-2"></i> لیست دوره‌ها</h5>
+            <a href="{{ route('admin.courses.create') }}" class="btn btn-light btn-sm" style="font-size: 0.875rem;">
+                <i class="bi bi-plus-circle me-1"></i> دوره جدید
             </a>
         </div>
         <div class="dataTables_wrapper">
             <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                <table id="programs-table" class="table table-hover">
+                <table id="courses-table" class="table table-hover">
                 <thead>
                     <tr>
-                        <th>نام برنامه</th>
-                        <th>نوع برنامه</th>
-                        <th>تاریخ اجرا</th>
+                        <th>عنوان دوره</th>
+                        <th>مدرس</th>
+                        <th>تاریخ شروع</th>
                         <th>وضعیت</th>
+                        <th>ثبت‌نام</th>
                         <th>هزینه عضو</th>
-                        <th style="text-align: center; width: 120px;">عملیات</th>
+                        <th style="text-align: center; width: 140px;">عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($programs as $program)
+                    @foreach($courses as $course)
                         <tr>
                             <td>
-                                <a href="{{ route('admin.programs.show', $program->id) }}" class="program-name-link">
-                                    {{ $program->name }}
+                                <a href="{{ route('courses.show', $course->id) }}" class="course-name-link">
+                                    {{ $course->title }}
                                 </a>
                             </td>
                             <td>
-                                <span class="badge bg-info status-badge">{{ $program->program_type }}</span>
+                                @if($course->teacher)
+                                    {{ $course->teacher->first_name }} {{ $course->teacher->last_name }}
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
                             </td>
                             <td class="date-cell">
-                                @if($program->execution_date)
+                                @if($course->start_date)
                                     <i class="bi bi-calendar-event"></i>
-                                    {{ verta($program->execution_date)->format('Y/m/d H:i') }}
+                                    {{ verta($course->start_date)->format('Y/m/d') }}
                                 @else
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
                             <td>
-                                @if($program->status == 'draft')
+                                @if($course->status == 'draft')
                                     <span class="badge bg-secondary status-badge">پیش‌نویس</span>
-                                @elseif($program->status == 'open')
+                                @elseif($course->status == 'published')
+                                    <span class="badge bg-success status-badge">منتشر شده</span>
+                                @elseif($course->status == 'completed')
+                                    <span class="badge bg-primary status-badge">تکمیل شده</span>
+                                @elseif($course->status == 'canceled')
+                                    <span class="badge bg-danger status-badge">لغو شده</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($course->is_registration_open)
                                     <span class="badge bg-success status-badge">باز</span>
-                                @elseif($program->status == 'closed')
-                                    <span class="badge bg-warning status-badge">بسته</span>
-                                @elseif($program->status == 'done')
-                                    <span class="badge bg-primary status-badge">انجام شده</span>
+                                @else
+                                    <span class="badge bg-danger status-badge">بسته</span>
                                 @endif
                             </td>
                             <td class="cost-cell">
-                                @if($program->cost_member)
-                                    <span class="text-success">{{ number_format($program->cost_member) }} ریال</span>
+                                @if($course->member_cost)
+                                    <span class="text-success">{{ number_format($course->member_cost) }} ریال</span>
                                 @else
                                     <span class="text-muted">رایگان</span>
                                 @endif
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{ route('admin.programs.show', $program->id) }}" 
+                                    <a href="{{ route('courses.show', $course->id) }}" 
                                        class="btn action-btn btn-view" 
                                        title="مشاهده">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('admin.programs.registrations.index', $program->id) }}" 
+                                    <a href="{{ route('admin.courses.registrations.index', $course->id) }}" 
                                        class="btn action-btn" 
                                        style="background: #ffc107; color: white;"
                                        title="ثبت‌نام‌ها">
                                         <i class="bi bi-people"></i>
                                     </a>
-                                    <a href="{{ route('admin.programs.edit', $program->id) }}" 
+                                    <a href="{{ route('admin.courses.edit', $course->id) }}" 
                                        class="btn action-btn btn-edit" 
                                        title="ویرایش">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('admin.programs.destroy', $program->id) }}" 
+                                    <form action="{{ route('admin.courses.destroy', $course->id) }}" 
                                           method="POST" 
                                           class="d-inline delete-form"
-                                          data-program-name="{{ $program->name }}">
+                                          data-course-name="{{ $course->title }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" 
@@ -308,8 +319,7 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            // Initialize DataTable
-            $('#programs-table').DataTable({
+            $('#courses-table').DataTable({
                 responsive: true,
                 language: {
                     "search": "جستجو:",
@@ -331,21 +341,19 @@
                 lengthMenu: [[10, 15, 25, 50, -1], [10, 15, 25, 50, "همه"]],
                 dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
                 drawCallback: function() {
-                    // Re-initialize delete buttons after DataTable redraw
                     initDeleteButtons();
                 }
             });
 
-            // Initialize delete buttons
             function initDeleteButtons() {
                 $('.delete-btn').off('click').on('click', function(e) {
                     e.preventDefault();
                     const form = $(this).closest('form');
-                    const programName = form.data('program-name');
+                    const courseName = form.data('course-name');
                     
                     Swal.fire({
                         title: 'آیا مطمئن هستید؟',
-                        html: `<p style="font-size: 0.95rem; margin-bottom: 10px;">آیا از حذف برنامه <strong>"${programName}"</strong> اطمینان دارید؟</p><p style="font-size: 0.85rem; color: #dc3545;">این عمل غیرقابل بازگشت است!</p>`,
+                        html: `<p style="font-size: 0.95rem; margin-bottom: 10px;">آیا از حذف دوره <strong>"${courseName}"</strong> اطمینان دارید؟</p><p style="font-size: 0.85rem; color: #dc3545;">این عمل غیرقابل بازگشت است!</p>`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: '<i class="bi bi-check-circle me-1"></i> بله، حذف شود',
@@ -361,7 +369,6 @@
                         buttonsStyling: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Show loading
                             Swal.fire({
                                 title: 'در حال حذف...',
                                 text: 'لطفاً صبر کنید',
@@ -370,21 +377,17 @@
                                     Swal.showLoading();
                                 }
                             });
-
-                            // Submit form
                             form.submit();
                         }
                     });
                 });
             }
 
-            // Initialize on page load
             initDeleteButtons();
         });
     </script>
     
     <style>
-        /* SweetAlert2 RTL Support */
         .swal2-popup {
             direction: rtl;
             text-align: right;
@@ -413,3 +416,4 @@
         }
     </style>
 @endpush
+

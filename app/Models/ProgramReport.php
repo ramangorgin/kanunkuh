@@ -11,6 +11,18 @@ class ProgramReport extends Model
 
     protected $fillable = [
         'program_id',
+        'report_date',
+        'reporter_id',
+        'reporter_name',
+        'leader_id',
+        'leader_name',
+        'report_program_type',
+        'report_program_name',
+        'report_region_route',
+        'report_start_date',
+        'report_end_date',
+        'report_duration',
+        'technical_feature',
         'report_description',
         'important_notes',
         'map_author',
@@ -34,6 +46,9 @@ class ProgramReport extends Model
         'start_altitude',
         'target_altitude',
         'start_location_name',
+        'local_village_name',
+        'local_guide_info',
+        'shelters_info',
         'distance_from_tehran',
         'road_type',
         'transport_types',
@@ -45,6 +60,9 @@ class ProgramReport extends Model
     ];
 
     protected $casts = [
+        'report_date' => 'datetime',
+        'report_start_date' => 'date',
+        'report_end_date' => 'date',
         'technical_equipments' => 'array',
         'transport_types' => 'array',
         'facilities' => 'array',
@@ -63,6 +81,16 @@ class ProgramReport extends Model
     public function program()
     {
         return $this->belongsTo(Program::class);
+    }
+    
+    public function reporter()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'reporter_id');
+    }
+    
+    public function leader()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'leader_id');
     }
 }
 

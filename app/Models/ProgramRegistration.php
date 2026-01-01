@@ -20,7 +20,8 @@ class ProgramRegistration extends Model
         'guest_phone',
         'guest_national_id',
         'pickup_location',
-        'approved',
+        'needs_transport',
+        'status',
     ];
 
     protected $casts = [

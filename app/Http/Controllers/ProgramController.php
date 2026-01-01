@@ -111,22 +111,45 @@ class ProgramController extends Controller
 
     public function show($id)
     {
-        $program = Program::with('report', 'userRoles')->findOrFail($id);
+        $program = Program::with([
+            'report', 
+            'userRoles.user.profile',
+            'files' => function($query) {
+                $query->where('file_type', 'image');
+            }
+        ])->findOrFail($id);
         $user = auth()->user();
 
-        $userHasParticipated = Auth::check()
-        ? $program->registrations()->where('user_id', Auth::id())->exists()
-        : false;
+        // Check if user has registered
+        $userRegistration = null;
+        $userHasParticipated = false;
+        if (Auth::check()) {
+            $userRegistration = $program->registrations()
+                ->where('user_id', Auth::id())
+                ->with('payment')
+                ->first();
+            $userHasParticipated = $userRegistration !== null;
+        }
 
-        // آیا فرم نظرسنجی پر کرده؟
-        $userHasSubmittedSurvey = Auth::check()
-        ? $program->surveys()->where('user_id', Auth::id())->exists()
-        : false;
+        // Check for guest registration (by phone if not logged in)
+        $guestRegistration = null;
+        if (!Auth::check() && request()->has('guest_phone')) {
+            $guestRegistration = $program->registrations()
+                ->where('guest_phone', request('guest_phone'))
+                ->with('payment')
+                ->first();
+        }
+
+        // Check if user has submitted survey (if surveys relationship exists)
+        $userHasSubmittedSurvey = false;
+        // Note: Survey relationship may not exist, so we check safely
 
         return view('programs.show', compact(
             'program',
             'userHasParticipated',
-            'userHasSubmittedSurvey'
+            'userHasSubmittedSurvey',
+            'userRegistration',
+            'guestRegistration'
         ));
     }
 

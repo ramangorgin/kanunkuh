@@ -10,6 +10,7 @@ class Course extends Model
     use HasFactory;
 
     protected $fillable = [
+        'federation_course_id',
         'title',
         'description',
         'teacher_id',
@@ -19,6 +20,7 @@ class Course extends Model
         'start_time',
         'end_time',
         'place',
+        'place_address',
         'place_lat',
         'place_lon',
         'capacity',
@@ -31,14 +33,28 @@ class Course extends Model
         'bank_name',
         'is_registration_open',
         'registration_deadline',
+        'report',
+        'status',
         'is_special',
     ];
 
-    protected $dates = ['start_date', 'end_date'];
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'registration_deadline' => 'datetime',
+        'is_free' => 'boolean',
+        'is_registration_open' => 'boolean',
+        'is_special' => 'boolean',
+    ];
 
     public function teacher()
     {
         return $this->belongsTo(Teacher::class);
+    }
+
+    public function federationCourse()
+    {
+        return $this->belongsTo(FederationCourse::class, 'federation_course_id');
     }
 
     public function registrations()
@@ -51,9 +67,43 @@ class Course extends Model
         return $this->hasMany(CourseFile::class);
     }
 
+    /**
+     * Get prerequisites for this course (via federation course)
+     */
     public function prerequisites()
     {
-        return $this->hasMany(CoursePrerequisite::class);
+        if (!$this->federation_course_id) {
+            return collect();
+        }
+        
+        return CoursePrerequisite::where('course_id', $this->federation_course_id)
+            ->with('prerequisite')
+            ->get()
+            ->pluck('prerequisite');
+    }
+
+    /**
+     * Check if user has completed all prerequisites
+     */
+    public function userHasCompletedPrerequisites($userId)
+    {
+        if (!$this->federation_course_id) {
+            return true; // No prerequisites for non-federation courses
+        }
+
+        $prerequisites = CoursePrerequisite::where('course_id', $this->federation_course_id)
+            ->pluck('prerequisite_id');
+
+        if ($prerequisites->isEmpty()) {
+            return true;
+        }
+
+        // Check if user has completed all prerequisites in educational_histories
+        $completedCourses = \App\Models\EducationalHistory::where('user_id', $userId)
+            ->whereIn('federation_course_id', $prerequisites)
+            ->pluck('federation_course_id');
+
+        return $prerequisites->diff($completedCourses)->isEmpty();
     }
 
 }

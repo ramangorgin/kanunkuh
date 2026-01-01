@@ -53,11 +53,12 @@
             width: 260px;
             background: #fff;
             color: #333;
-            min-height: 100vh;
+            height: 100vh;
             position: fixed;
             top: 0;
             right: 0;
             overflow-y: auto;
+            overflow-x: hidden;
             transition: all 0.3s;
             border-left: 1px solid #e0e0e0;
             z-index: 1040;
@@ -72,6 +73,25 @@
 
         .sidebar .menu {
             padding: 15px;
+            padding-bottom: 30px; /* اضافه کردن padding پایین برای اسکرول بهتر */
+        }
+        
+        /* بهبود اسکرول سایدبار */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         .sidebar a {
@@ -200,6 +220,45 @@
 
         /* Jalali Datepicker Z-Index Fix */
         .jalali-datepicker { z-index: 10000 !important; }
+        
+        /* Responsive Tables for Admin Panel */
+        @media (max-width: 768px) {
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                position: relative;
+            }
+            
+            .table-responsive table {
+                min-width: 600px;
+                font-size: 0.8rem;
+            }
+            
+            .table-responsive th,
+            .table-responsive td {
+                padding: 8px 10px !important;
+                white-space: nowrap;
+            }
+            
+            .dataTables_wrapper .table-responsive {
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .table-responsive table {
+                min-width: 500px;
+                font-size: 0.75rem;
+            }
+            
+            .table-responsive th,
+            .table-responsive td {
+                padding: 6px 8px !important;
+            }
+        }
     </style>
 
     @stack('styles')
@@ -249,9 +308,17 @@
                 <i class="bi bi-plus-circle me-2"></i> ایجاد گزارش جدید
             </a>
 
+            <div class="menu-header">دوره‌ها</div>
+            <a href="{{ route('admin.courses.index') }}" class="{{ request()->routeIs('admin.courses.index') ? 'active' : '' }}">
+                <i class="bi bi-book me-2"></i> لیست دوره‌ها
+            </a>
+            <a href="{{ route('admin.courses.create') }}" class="{{ request()->routeIs('admin.courses.create') ? 'active' : '' }}">
+                <i class="bi bi-plus-circle me-2"></i> ایجاد دوره جدید
+            </a>
+
             <div class="menu-header">امور مالی</div>
             <a href="{{ route('admin.payments.index') }}" class="{{ request()->routeIs('admin.payments.index') ? 'active' : '' }}">
-                <i class="bi bi-credit-card me-2"></i> پرداخت‌ها
+                <i class="bi bi-credit-card me-2"></i> مدیریت پرداخت‌ها
             </a>
 
             <div class="menu-header">تنظیمات</div>

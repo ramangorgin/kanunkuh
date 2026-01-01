@@ -16,13 +16,16 @@ class CourseRegistration extends Model
         'guest_name',
         'guest_phone',
         'guest_national_id',
-        'approved',
+        'status',
+        'approved', // For backward compatibility
+        'certificate_file',
     ];
 
     protected $casts = [
         'approved' => 'boolean',
     ];
-
+    
+    // For backward compatibility, keep approved field but also use status
 
     public function course()
     {
