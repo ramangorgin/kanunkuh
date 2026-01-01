@@ -67,7 +67,7 @@
         @else
             {{-- All steps complete: show registration approval state --}}
             @if($registrationStatus === 'approved')
-                <div class="alert alert-success">
+                <div id="registration-success-alert" class="alert alert-success d-none">
                     <strong>ثبت‌نام شما تایید شده است.</strong>
                     <div class="small">خوش آمدید! اکنون می‌توانید از تمامی امکانات حساب کاربری استفاده کنید.</div>
                 </div>
@@ -135,8 +135,8 @@
     <div class="row g-4">
 
         {{-- مشخصات کاربری --}}
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100">
                 <div class="card-header">مشخصات کاربری</div>
                 <div class="card-body">
                     <p><strong>نام:</strong> {{ optional($user->profile)->first_name ?? '' }} {{ optional($user->profile)->last_name ?? '' }}</p>
@@ -148,8 +148,8 @@
 
 
         {{-- پرداخت‌ها --}}
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100">
                 <div class="card-header">پرداخت‌ها</div>
                 <div class="card-body">
                     <p>لیست تراکنش‌های اخیر شما در این بخش نمایش داده خواهد شد.</p>
@@ -157,6 +157,60 @@
                 </div>
             </div>
         </div>
+
+        {{-- دوره‌ها --}}
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">دوره‌ها</div>
+                <div class="card-body">
+                    <p>به لیست دوره‌های ثبت‌نام‌شده و گواهی‌های خود دسترسی سریع داشته باشید.</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ route('dashboard.courses.index') }}" class="btn btn-sm btn-outline-primary">دوره‌های من</a>
+                        <a href="{{ route('dashboard.courses.index') }}#available" class="btn btn-sm btn-light">مشاهده دوره‌ها</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- برنامه‌ها --}}
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">برنامه‌ها</div>
+                <div class="card-body">
+                    <p>برنامه‌های ثبت‌شده یا در دسترس را مرور و وضعیت خود را مدیریت کنید.</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ route('dashboard.programs.index') }}" class="btn btn-sm btn-outline-primary">برنامه‌های من</a>
+                        <a href="{{ route('dashboard.programs.index') }}#available" class="btn btn-sm btn-light">برنامه‌های فعال</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var alertEl = document.getElementById('registration-success-alert');
+    if (!alertEl) return;
+
+    var STORAGE_KEY = 'dashboard_approval_shown_at';
+    var FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+    var now = Date.now();
+    var firstSeen = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+
+    if (Number.isNaN(firstSeen)) {
+        localStorage.setItem(STORAGE_KEY, now.toString());
+        alertEl.classList.remove('d-none');
+        return;
+    }
+
+    if (now - firstSeen <= FIVE_DAYS_MS) {
+        alertEl.classList.remove('d-none');
+    } else {
+        alertEl.remove();
+    }
+});
+</script>
+@endpush

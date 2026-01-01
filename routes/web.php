@@ -24,6 +24,8 @@ use App\Http\Controllers\ProgramReportController;
 
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\Admin\PostController;
 
 
 use App\Http\Controllers\AuthController;
@@ -194,6 +196,17 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/courses/{course}/registrations/{registrationId}/cancel', [App\Http\Controllers\AdminCourseRegistrationController::class, 'cancel'])->name('admin.courses.registrations.cancel');
     Route::post('/courses/{course}/registrations/{registrationId}/upload-certificate', [App\Http\Controllers\AdminCourseRegistrationController::class, 'uploadCertificate'])->name('admin.courses.registrations.uploadCertificate');
 });
+
+// Admin Blog Posts
+Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
+    Route::resource('posts', PostController::class)->except(['show']);
+    Route::post('posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
+    Route::post('posts/upload-image', [PostController::class, 'uploadImage'])->name('posts.uploadImage');
+});
+
+// Public blog
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // (Removed duplicate route blocks at file end)
 

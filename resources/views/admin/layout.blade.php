@@ -316,6 +316,14 @@
                 <i class="bi bi-plus-circle me-2"></i> ایجاد دوره جدید
             </a>
 
+            <div class="menu-header">وبلاگ</div>
+            <a href="{{ route('admin.posts.index') }}" class="{{ request()->routeIs('admin.posts.*') ? 'active' : '' }}">
+                <i class="bi bi-journal-text me-2"></i> مدیریت پست‌ها
+            </a>
+            <a href="{{ route('admin.posts.create') }}" class="{{ request()->routeIs('admin.posts.create') ? 'active' : '' }}">
+                <i class="bi bi-plus-circle me-2"></i> پست جدید
+            </a>
+
             <div class="menu-header">امور مالی</div>
             <a href="{{ route('admin.payments.index') }}" class="{{ request()->routeIs('admin.payments.index') ? 'active' : '' }}">
                 <i class="bi bi-credit-card me-2"></i> مدیریت پرداخت‌ها

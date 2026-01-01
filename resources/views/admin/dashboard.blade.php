@@ -14,61 +14,136 @@
 
     {{-- کارت‌های آماری بالا --}}
     <div class="row g-4 mb-4">
-        {{-- کاربران --}}
-        <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 animate__animated animate__fadeInUp" style="border-top:4px solid #0d6efd;">
-                <div class="card-body d-flex align-items-center">
-                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3">
-                        <i class="bi bi-people-fill fs-3"></i>
-                    </div>
+        {{-- کاربران کل --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #0d6efd, #3f8bff);">
+                <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="mb-0">تعداد کاربران</h6>
-                        <h4 class="fw-bold mt-1">{{ toPersianNumber($stats['users'] ?? 0) }}</h4>
+                        <small class="text-white-50">کاربران کل</small>
+                        <h3 class="fw-bold mb-0">{{ toPersianNumber($stats['users'] ?? 0) }}</h3>
                     </div>
+                    <i class="bi bi-people-fill fs-1 text-white-50"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- اعضای تایید شده --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #28a745, #58d68d);">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-white-50">اعضای تایید شده</small>
+                        <h3 class="fw-bold mb-0">{{ toPersianNumber($stats['approved_memberships'] ?? 0) }}</h3>
+                    </div>
+                    <i class="bi bi-shield-check fs-1 text-white-50"></i>
                 </div>
             </div>
         </div>
 
         {{-- عضویت‌های در انتظار --}}
-        <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 animate__animated animate__fadeInUp" style="border-top:4px solid #ffc107;">
-                <div class="card-body d-flex align-items-center">
-                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3">
-                        <i class="bi bi-person-check-fill fs-3"></i>
-                    </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #f39c12, #f5b041);">
+                <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="mb-0">عضویت‌های در انتظار</h6>
-                        <h4 class="fw-bold mt-1">{{ toPersianNumber($stats['pending_memberships'] ?? 0) }}</h4>
+                        <small class="text-white-50">در انتظار بررسی</small>
+                        <h3 class="fw-bold mb-0">{{ toPersianNumber($stats['pending_memberships'] ?? 0) }}</h3>
                     </div>
+                    <i class="bi bi-hourglass-split fs-1 text-white-50"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- عضویت‌های رد شده --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #dc3545, #e35d6a);">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-white-50">رد شده</small>
+                        <h3 class="fw-bold mb-0">{{ toPersianNumber($stats['rejected_memberships'] ?? 0) }}</h3>
+                    </div>
+                    <i class="bi bi-x-octagon fs-1 text-white-50"></i>
                 </div>
             </div>
         </div>
 
         {{-- پرداخت‌های تایید شده --}}
-        <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 animate__animated animate__fadeInUp" style="border-top:4px solid #198754;">
-                <div class="card-body d-flex align-items-center">
-                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 me-3">
-                        <i class="bi bi-credit-card-fill fs-3"></i>
-                    </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #17a2b8, #3bc8e7);">
+                <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="mb-0">پرداخت‌های تایید شده</h6>
-                        <h4 class="fw-bold mt-1">{{ toPersianNumber($stats['approved_payments'] ?? 0) }}</h4>
+                        <small class="text-white-50">تعداد پرداخت‌های تایید شده</small>
+                        <h3 class="fw-bold mb-0">{{ toPersianNumber($stats['approved_payments'] ?? 0) }}</h3>
                     </div>
+                    <i class="bi bi-credit-card fs-1 text-white-50"></i>
                 </div>
             </div>
         </div>
 
         {{-- کل پرداخت‌ها --}}
-        <div class="col-md-3 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 animate__animated animate__fadeInUp" style="border-top:4px solid #0dcaf0;">
-                <div class="card-body d-flex align-items-center">
-                    <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 me-3">
-                        <i class="bi bi-cash-stack fs-3"></i>
-                    </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #6610f2, #8e44ad);">
+                <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 class="mb-0">کل پرداخت‌ها (تومان)</h6>
-                        <h5 class="fw-bold mt-1">{{ toPersianNumber(number_format($stats['total_amount'] ?? 0)) }}</h5>
+                        <small class="text-white-50">کل پرداخت‌ها (تومان)</small>
+                        <h4 class="fw-bold mb-0">{{ toPersianNumber(number_format($stats['total_amount'] ?? 0)) }}</h4>
+                    </div>
+                    <i class="bi bi-cash-stack fs-1 text-white-50"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- پرداخت‌های ماه جاری --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #0dcaf0, #20c997);">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <small class="text-white-50">پرداخت‌های این ماه</small>
+                        <h4 class="fw-bold mb-0">{{ toPersianNumber(number_format($stats['monthly_amount'] ?? 0)) }}</h4>
+                    </div>
+                    <i class="bi bi-calendar2-week fs-1 text-white-50"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- دوره‌ها و برنامه‌ها --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #1abc9c, #16a085);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-white-50">محتوا</small>
+                        <i class="bi bi-journal-code fs-5 text-white-50"></i>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="small text-white-50">دوره‌ها</div>
+                            <h5 class="fw-bold mb-0">{{ toPersianNumber($stats['courses'] ?? 0) }}</h5>
+                        </div>
+                        <div class="text-end">
+                            <div class="small text-white-50">برنامه‌ها</div>
+                            <h5 class="fw-bold mb-0">{{ toPersianNumber($stats['programs'] ?? 0) }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ثبت‌نام‌ها --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm text-white animate__animated animate__fadeInUp" style="background: linear-gradient(135deg, #ff6f61, #ff9a8b);">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-white-50">ثبت‌نام‌ها</small>
+                        <i class="bi bi-check2-square fs-5 text-white-50"></i>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="small text-white-50">دوره</div>
+                            <h5 class="fw-bold mb-0">{{ toPersianNumber($stats['course_registrations'] ?? 0) }}</h5>
+                        </div>
+                        <div class="text-end">
+                            <div class="small text-white-50">برنامه</div>
+                            <h5 class="fw-bold mb-0">{{ toPersianNumber($stats['program_registrations'] ?? 0) }}</h5>
+                        </div>
                     </div>
                 </div>
             </div>

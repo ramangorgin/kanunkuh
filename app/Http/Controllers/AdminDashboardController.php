@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Payment;
+use App\Models\Program;
+use App\Models\Course;
+use App\Models\ProgramRegistration;
+use App\Models\CourseRegistration;
 use Carbon\Carbon;
 use Morilog\Jalali\Jalalian;
 
@@ -19,14 +23,33 @@ class AdminDashboardController extends Controller
         // === آمار کلی ===
         $totalUsers = User::count();
         $pendingMemberships = Profile::where('membership_status', 'pending')->count();
+        $approvedMembers = Profile::where('membership_status', 'approved')->count();
+        $rejectedMembers = Profile::where('membership_status', 'rejected')->count();
         $approvedPayments = Payment::where('status', 'approved')->count();
         $totalAmount = Payment::where('status', 'approved')->sum('amount');
+
+        $monthlyAmount = Payment::where('status', 'approved')
+            ->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->sum('amount');
+
+        $programCount = Program::count();
+        $courseCount = Course::count();
+        $programRegistrations = ProgramRegistration::count();
+        $courseRegistrations = CourseRegistration::count();
 
         $stats = [
             'users' => $totalUsers,
             'pending_memberships' => $pendingMemberships,
+            'approved_memberships' => $approvedMembers,
+            'rejected_memberships' => $rejectedMembers,
             'approved_payments' => $approvedPayments,
             'total_amount' => $totalAmount,
+            'monthly_amount' => $monthlyAmount,
+            'programs' => $programCount,
+            'courses' => $courseCount,
+            'program_registrations' => $programRegistrations,
+            'course_registrations' => $courseRegistrations,
         ];
 
         // === پرداخت‌های اخیر ===
