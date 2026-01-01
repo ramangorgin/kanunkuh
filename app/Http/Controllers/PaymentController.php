@@ -11,9 +11,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Morilog\Jalali\Jalalian;
 use Illuminate\Support\Facades\Session;
+use App\Services\NotificationService;
 
 class PaymentController extends Controller
 {
+    protected NotificationService $notifications;
+
+    public function __construct(NotificationService $notifications)
+    {
+        $this->notifications = $notifications;
+    }
     
     /**
      * نمایش فرم پرداخت و سوابق کاربر
@@ -68,6 +75,19 @@ class PaymentController extends Controller
 
         $payment->save();
 
+        // Notify all admins about the new payment (site only)
+        $context = $this->buildContext($payment);
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $this->notifications->notify('payment_created', $admin, [
+                'user' => trim(($user->profile->first_name ?? '') . ' ' . ($user->profile->last_name ?? '')) ?: ($user->phone ?? 'کاربر'),
+                'amount' => number_format($payment->amount) . ' تومان',
+                'context' => $context,
+                // Link admins to the payments list (show route returns JSON)
+                'url' => route('admin.payments.index'),
+            ]);
+        }
+
         // ارسال شناسه‌ها به Blade از طریق Session
         Session::flash('payment_success', [
             'membership_code' => $membershipCode ?? 'نامشخص',
@@ -76,6 +96,17 @@ class PaymentController extends Controller
 
         return redirect()->route('dashboard.payments.index')
             ->with('status', 'پرداخت با موفقیت ثبت شد.');
+    }
+
+    private function buildContext(Payment $payment): string
+    {
+        if ($payment->type === 'program') {
+            return optional(Program::find($payment->related_id))->name ?? 'برنامه';
+        }
+        if ($payment->type === 'course') {
+            return optional(Course::find($payment->related_id))->name ?? 'دوره';
+        }
+        return 'حق عضویت' . ($payment->year ? ' ' . $payment->year : '');
     }
 
     /**

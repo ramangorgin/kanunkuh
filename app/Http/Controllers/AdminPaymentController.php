@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PaymentsExport;
+use App\Services\NotificationService;
+use App\Models\Program;
+use App\Models\Course;
 
 class AdminPaymentController extends Controller
 {
+    protected NotificationService $notifications;
+
+    public function __construct(NotificationService $notifications)
+    {
+        $this->notifications = $notifications;
+    }
+
     public function index()
     {
         $payments = Payment::with('user.profile')->latest()->get();
@@ -68,6 +78,13 @@ class AdminPaymentController extends Controller
                 }
             }
         });
+
+        // Notify user about approval (site only)
+        $this->notifications->notify('payment_approved', $payment->user, [
+            'amount' => number_format($payment->amount) . ' تومان',
+            'context' => $this->buildContext($payment),
+            'url' => route('dashboard.payments.index'),
+        ]);
         
         return response()->json(['success' => true]);
     }
@@ -94,8 +111,26 @@ class AdminPaymentController extends Controller
                 $registration->delete();
             }
         }
+
+        // Notify user about rejection (site only)
+        $this->notifications->notify('payment_rejected', $payment->user, [
+            'amount' => number_format($payment->amount) . ' تومان',
+            'context' => $this->buildContext($payment),
+            'url' => route('dashboard.payments.index'),
+        ]);
         
         return response()->json(['success' => true]);
+    }
+
+    private function buildContext(Payment $payment): string
+    {
+        if ($payment->type === 'program') {
+            return optional(Program::find($payment->related_id))->name ?? 'برنامه';
+        }
+        if ($payment->type === 'course') {
+            return optional(Course::find($payment->related_id))->name ?? 'دوره';
+        }
+        return 'حق عضویت' . ($payment->year ? ' ' . $payment->year : '');
     }
 
 

@@ -26,6 +26,8 @@ use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\User\UserNotificationController;
 
 
 use App\Http\Controllers\AuthController;
@@ -79,6 +81,13 @@ Route::post('/courses/{course}/register', [App\Http\Controllers\CourseRegistrati
 // User Dashboard routes (single canonical set)
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [UserDashboardController::class, 'index'])->name('index');
+
+    // Notifications - User
+    Route::get('/notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/panel', [UserNotificationController::class, 'panel'])->name('notifications.panel');
+    Route::post('/notifications/{notification}/read', [UserNotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [UserNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::delete('/notifications/{notification}', [UserNotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // Profile
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
@@ -136,6 +145,15 @@ Route::post('/registrations/course/{course}', [RegistrationController::class, 'C
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Notifications - Admin
+    Route::middleware('admin')->group(function () {
+        Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
+        Route::get('/notifications/panel', [AdminNotificationController::class, 'panel'])->name('admin.notifications.panel');
+        Route::post('/notifications/{notification}/read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+        Route::post('/notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.readAll');
+        Route::delete('/notifications/{notification}', [AdminNotificationController::class, 'destroy'])->name('admin.notifications.destroy');
+    });
+
     Route::get('/users/export', [AdminUserController::class, 'export'])->name('admin.users.export');
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
@@ -185,6 +203,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/courses', [CourseController::class, 'index'])->name('admin.courses.index');
     Route::get('/courses/create', [CourseController::class, 'create'])->name('admin.courses.create');
     Route::post('/courses', [CourseController::class, 'store'])->name('admin.courses.store');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('admin.courses.show');
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('admin.courses.edit');
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');

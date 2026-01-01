@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'پنل مدیریت')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -354,10 +355,7 @@
 
         <div class="d-flex align-items-center gap-2">
             <!-- Notification -->
-            <a href="#" class="header-icon-btn position-relative" title="اعلانات">
-                <i class="bi bi-bell"></i>
-                <span class="notification-dot"></span>
-            </a>
+            @include('partials.notification_dropdown', ['panel' => 'admin'])
 
             <!-- Profile Link (Admin) -->
             <a href="#" class="header-icon-btn" title="پروفایل مدیر">

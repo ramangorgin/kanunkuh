@@ -61,11 +61,11 @@ class AuthController extends Controller
         $user->otp_expires_at = now()->addMinutes(5);
         $user->save();
 
-            if (config('app.env') === 'local') {
-                $templateId = 123456; 
-            } else {
-                $templateId = 218734;
-            }
+        if (config('app.env') === 'local') {
+            $templateId = 123456; 
+        } else {
+            $templateId = 218734;
+        }
         $parameters = [
             [
                 "name" => "CODE",

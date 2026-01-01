@@ -5,6 +5,7 @@
     <title>@yield('title', 'داشبورد')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Faveico meta tags -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -336,10 +337,7 @@
             <div class="d-flex align-items-center gap-2 gap-md-3">
                 
                 <!-- Notification Icon -->
-                <a href="#" class="header-icon-btn position-relative" title="اعلانات">
-                    <i class="bi bi-bell"></i>
-                    <span class="notification-dot"></span>
-                </a>
+                @include('partials.notification_dropdown', ['panel' => 'user'])
 
                 <!-- Profile Icon -->
                 <a href="{{ route('dashboard.profile.edit') }}" class="header-icon-btn" title="پروفایل">
