@@ -17,19 +17,26 @@
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
 
     <!-- JalaliDatePicker - Load before Bootstrap to ensure proper styling -->
-    <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.css') }}'">
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap/5.3.2/css/bootstrap.rtl.min.css') }}'">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap-icons/1.10.5/font/bootstrap-icons.css') }}'">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap-select/1.14.0-beta3/bootstrap-select.min.css') }}'">
 
 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.css') }}'" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}'" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/animate.css/4.1.1/animate.min.css') }}'"/>
+        <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/aos/2.3.4/aos.css') }}'">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('styles')
     <style>
@@ -419,15 +426,22 @@
 
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/jquery/3.6.0/jquery.min.js') }}';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/bootstrap/5.3.0/js/bootstrap.bundle.min.js') }}';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/bootstrap-select/1.14.0-beta3/bootstrap-select.min.js') }}';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}';document.head.appendChild(s);"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}';document.head.appendChild(s);"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}';document.head.appendChild(s);"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/aos/2.3.4/aos.js') }}';document.head.appendChild(s);"></script>
+<script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"
+    onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}';document.head.appendChild(s);"></script>
 
 @stack('modals')
 

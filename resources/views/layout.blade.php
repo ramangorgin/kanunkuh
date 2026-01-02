@@ -8,11 +8,15 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"
+              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap/5.3.2/css/bootstrap.rtl.min.css') }}'">
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"
+              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap-icons/1.10.5/font/bootstrap-icons.css') }}'">
+          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}'" />
         <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+          <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"
+              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.css') }}'" />
         <link rel="stylesheet" href="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         @arcaptchaScript
@@ -172,12 +176,16 @@
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/jquery/3.6.0/jquery.min.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/bootstrap/5.3.0/js/bootstrap.bundle.min.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}';document.head.appendChild(s);"></script>
         {{-- نقشه و تاریخ --}}
         <script>
             // سال شمسی به فارسی

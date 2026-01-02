@@ -13,35 +13,46 @@
     <link rel="manifest" href="/site.webmanifest">
 
     {{-- Jalali Datepicker --}}
-    <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.css') }}'">
     
-    {{-- App CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
+        {{-- App CSS --}}
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
 
-    {{-- Bootstrap & Icons --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        {{-- Bootstrap & Icons --}}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap/5.3.2/css/bootstrap.rtl.min.css') }}'">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap-icons/1.10.5/font/bootstrap-icons.css') }}'">
 
-    {{-- SweetAlert & Animate --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+        {{-- SweetAlert & Animate --}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.css') }}'">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/animate.css/4.1.1/animate.min.css') }}'"/>
 
-    {{-- DataTables --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+        {{-- DataTables --}}
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/datatables/1.13.6/dataTables.bootstrap5.min.css') }}'">
 
-    {{-- Select2 --}}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+        {{-- Select2 --}}
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.css') }}'" />
+        <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css') }}'" />
 
-    {{-- Leaflet --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        {{-- Leaflet --}}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}'" />
 
-    {{-- FilePond --}}
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.min.css" rel="stylesheet" />
+        {{-- FilePond --}}
+        <link href="https://unpkg.com/filepond@^4/dist/filepond.min.css" rel="stylesheet"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/filepond/4/filepond.min.css') }}'" />
 
-    {{-- Toastr --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        {{-- Toastr --}}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+            onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/toastr/latest/toastr.min.css') }}'">
 
     <style>
         body {
@@ -370,28 +381,38 @@
     </main>
 
     {{-- JS --}}
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/jquery/3.7.0/jquery.min.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/bootstrap/5.3.2/js/bootstrap.bundle.min.js') }}';document.head.appendChild(s);"></script>
     
-    {{-- Plugins --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+        {{-- Plugins --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/datatables/1.13.6/jquery.dataTables.min.js') }}';document.head.appendChild(s);"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/datatables/1.13.6/dataTables.bootstrap5.min.js') }}';document.head.appendChild(s);"></script>
     
-    {{-- Jalali Datepicker --}}
-    <script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+        {{-- Jalali Datepicker --}}
+        <script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}';document.head.appendChild(s);"></script>
     
-    {{-- Select2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        {{-- Select2 --}}
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}';document.head.appendChild(s);"></script>
     
-    {{-- Leaflet --}}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        {{-- Leaflet --}}
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}';document.head.appendChild(s);"></script>
     
-    {{-- FilePond --}}
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.min.js"></script>
+        {{-- FilePond --}}
+        <script src="https://unpkg.com/filepond@^4/dist/filepond.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/filepond/4/filepond.min.js') }}';document.head.appendChild(s);"></script>
 
-    {{-- Toastr --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        {{-- Toastr --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/toastr/latest/toastr.min.js') }}';document.head.appendChild(s);"></script>
 
     @stack('modals')
 
