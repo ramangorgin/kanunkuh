@@ -20,7 +20,8 @@
         @php
             $isAdmin = auth()->check() && auth()->user()->role === 'admin';
             $reportImages = $programReport->program && $programReport->program->files ? $programReport->program->files->where('file_type', 'image') : collect();
-            $mapFiles = $programReport->program && $programReport->program->files ? $programReport->program->files->whereIn('file_type', ['other', 'pdf', 'gps']) : collect();
+            $mapFiles = $programReport->program && $programReport->program->files ? $programReport->program->files->whereIn('file_type', ['map', 'other', 'pdf', 'gps']) : collect();
+            $formatNumber = fn($value) => $value !== null ? fa_digits(number_format($value)) : '—';
         @endphp
 
         {{-- Image Slideshow --}}
@@ -69,8 +70,8 @@
                         </h2>
                         <p class="mb-0 opacity-75">
                             <i class="bi bi-calendar3 me-2"></i>
-                            تاریخ گزارش: {{ $programReport->report_date ? verta($programReport->report_date)->format('Y/m/d H:i') : '—' }} | 
-                            تاریخ ایجاد: {{ verta($programReport->created_at)->format('Y/m/d H:i') }}
+                            تاریخ گزارش: {{ $programReport->report_date ? fa_digits(verta($programReport->report_date)->format('Y/m/d H:i')) : '—' }} |
+                            تاریخ ایجاد: {{ fa_digits(verta($programReport->created_at)->format('Y/m/d H:i')) }}
                         </p>
                     </div>
                     <div class="btn-group flex-wrap">
@@ -111,7 +112,7 @@
                             <i class="bi bi-calendar-check text-primary fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">تاریخ گزارش</strong>
-                                <span class="text-dark">{{ verta($programReport->report_date)->format('Y/m/d H:i') }}</span>
+                                <span class="text-dark">{{ fa_digits(verta($programReport->report_date)->format('Y/m/d H:i')) }}</span>
                             </div>
                         </div>
                     </div>
@@ -155,7 +156,7 @@
                             <i class="bi bi-calendar-event text-danger fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">از تاریخ</strong>
-                                <span class="text-dark">{{ verta($programReport->report_start_date)->format('Y/m/d') }}</span>
+                                <span class="text-dark">{{ fa_digits(verta($programReport->report_start_date)->format('Y/m/d')) }}</span>
                             </div>
                         </div>
                     </div>
@@ -166,7 +167,7 @@
                             <i class="bi bi-calendar-x text-secondary fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">تا تاریخ</strong>
-                                <span class="text-dark">{{ verta($programReport->report_end_date)->format('Y/m/d') }}</span>
+                                <span class="text-dark">{{ fa_digits(verta($programReport->report_end_date)->format('Y/m/d')) }}</span>
                             </div>
                         </div>
                     </div>
@@ -177,7 +178,7 @@
                             <i class="bi bi-clock-history text-primary fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">مدت</strong>
-                                <span class="text-dark">{{ $programReport->report_duration }}</span>
+                                <span class="text-dark">{{ fa_digits($programReport->report_duration) }}</span>
                             </div>
                         </div>
                     </div>
@@ -255,7 +256,7 @@
                 @if($programReport->participants_count)
                 <div class="mb-3">
                     <strong><i class="bi bi-123 text-warning me-2"></i> تعداد کل:</strong>
-                    <span class="badge bg-warning text-dark fs-6">{{ $programReport->participants_count }} نفر</span>
+                    <span class="badge bg-warning text-dark fs-6">{{ fa_digits($programReport->participants_count) }} نفر</span>
                 </div>
                 @endif
                 @if($programReport->participants && is_array($programReport->participants) && count($programReport->participants) > 0)
@@ -293,7 +294,7 @@
                             <i class="bi bi-arrow-down-circle text-info fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">ارتفاع شروع</strong>
-                                <span class="text-dark">{{ number_format($programReport->start_altitude) }} متر</span>
+                                <span class="text-dark">{{ $formatNumber($programReport->start_altitude) }} متر</span>
                             </div>
                         </div>
                     </div>
@@ -304,7 +305,7 @@
                             <i class="bi bi-arrow-up-circle text-success fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">ارتفاع هدف</strong>
-                                <span class="text-dark">{{ number_format($programReport->target_altitude) }} متر</span>
+                                <span class="text-dark">{{ $formatNumber($programReport->target_altitude) }} متر</span>
                             </div>
                         </div>
                     </div>
@@ -326,7 +327,7 @@
                             <i class="bi bi-signpost-split text-warning fs-4 me-3"></i>
                             <div>
                                 <strong class="d-block text-muted small">فاصله از تهران</strong>
-                                <span class="text-dark">{{ number_format($programReport->distance_from_tehran) }} کیلومتر</span>
+                                <span class="text-dark">{{ $formatNumber($programReport->distance_from_tehran) }} کیلومتر</span>
                             </div>
                         </div>
                     </div>
@@ -367,8 +368,8 @@
                             @foreach($programReport->geo_points as $point)
                             <tr>
                                 <td><i class="bi bi-geo-alt text-primary me-2"></i>{{ $point['name'] ?? '—' }}</td>
-                                <td>{{ $point['lat'] ?? '—' }}</td>
-                                <td>{{ $point['lon'] ?? '—' }}</td>
+                                <td>{{ isset($point['lat']) ? fa_digits($point['lat']) : '—' }}</td>
+                                <td>{{ isset($point['lon']) ? fa_digits($point['lon']) : '—' }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -545,7 +546,7 @@
                                 <div class="bg-light p-3 rounded text-center">
                                     <i class="bi bi-wind text-primary fs-4 mb-2 d-block"></i>
                                     <strong class="d-block text-muted small">سرعت باد</strong>
-                                    <span class="text-dark">{{ $programReport->wind_speed }} km/h</span>
+                                    <span class="text-dark">{{ fa_digits($programReport->wind_speed) }} km/h</span>
                                 </div>
                             </div>
                             @endif
@@ -554,7 +555,7 @@
                                 <div class="bg-light p-3 rounded text-center">
                                     <i class="bi bi-thermometer-half text-danger fs-4 mb-2 d-block"></i>
                                     <strong class="d-block text-muted small">دما</strong>
-                                    <span class="text-dark">{{ $programReport->temperature }} °C</span>
+                                    <span class="text-dark">{{ fa_digits($programReport->temperature) }} °C</span>
                                 </div>
                             </div>
                             @endif
@@ -597,6 +598,35 @@
                         <p class="mb-0 mt-2">{{ $programReport->shelters_info }}</p>
                     </div>
                     @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- پناهگاه‌ها و محل‌های اطراق --}}
+        @if($programReport->shelters && is_array($programReport->shelters) && count($programReport->shelters) > 0)
+        <div class="card shadow-sm mb-4 border-start border-4 border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-house-heart me-2"></i> پناهگاه‌ها / محل‌های اطراق</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>نام</th>
+                                <th>ارتفاع (متر)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($programReport->shelters as $shelter)
+                            <tr>
+                                <td><i class="bi bi-buildings text-warning me-2"></i>{{ $shelter['name'] ?? '—' }}</td>
+                                <td>{{ isset($shelter['height']) ? fa_digits($shelter['height']) : '—' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -661,9 +691,9 @@
                                         @php
                                             try {
                                                 $date = \Carbon\Carbon::parse($event['datetime']);
-                                                echo verta($date)->format('Y/m/d H:i');
+                                                echo fa_digits(verta($date)->format('Y/m/d H:i'));
                                             } catch (\Exception $e) {
-                                                echo $event['datetime'];
+                                                echo fa_digits($event['datetime']);
                                             }
                                         @endphp
                                     @else

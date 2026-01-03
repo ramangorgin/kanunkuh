@@ -76,7 +76,7 @@
                     <div class="col-md-6">
                         <label class="form-label">تاریخ گزارش <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input type="text" name="report_date" id="report_date" class="form-control" data-jdp data-jdp-time="true" value="{{ old('report_date', now()->format('Y-m-d H:i')) }}" required autocomplete="off">
+                            <input type="text" name="report_date" id="report_date" class="form-control" data-jdp value="{{ old('report_date', verta()->format('Y/m/d')) }}" required autocomplete="off">
                             <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">مدت</label>
-                        <input type="text" name="report_duration" class="form-control" value="{{ old('report_duration') }}" placeholder="مثلاً: 3 روز">
+                        <input type="text" name="report_duration" id="report_duration" class="form-control" value="{{ old('report_duration') }}" placeholder="مثلاً: 3 روز" readonly>
                     </div>
                 </div>
 
@@ -196,14 +196,7 @@
                             <div class="row g-2 align-items-end">
                                 <div class="col-md-4">
                                     <label class="form-label">سمت</label>
-                                    <select name="executive_roles[{{ $index }}][role_title]" class="form-select">
-                                        <option value="">انتخاب کنید</option>
-                                        <option value="سرپرست" {{ ($role['role_title'] ?? '') == 'سرپرست' ? 'selected' : '' }}>سرپرست</option>
-                                        <option value="کمک‌سرپرست" {{ ($role['role_title'] ?? '') == 'کمک‌سرپرست' ? 'selected' : '' }}>کمک‌سرپرست</option>
-                                        <option value="مربی" {{ ($role['role_title'] ?? '') == 'مربی' ? 'selected' : '' }}>مربی</option>
-                                        <option value="مسئول فنی" {{ ($role['role_title'] ?? '') == 'مسئول فنی' ? 'selected' : '' }}>مسئول فنی</option>
-                                        <option value="پشتیبان برنامه" {{ ($role['role_title'] ?? '') == 'پشتیبان برنامه' ? 'selected' : '' }}>پشتیبان برنامه</option>
-                                    </select>
+                                    <input type="text" name="executive_roles[{{ $index }}][role_title]" class="form-control" value="{{ $role['role_title'] ?? '' }}" placeholder="مثلاً: سرپرست یا پزشک تیم">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">نام و نام خانوادگی</label>
@@ -390,13 +383,27 @@
                             if (empty($initialTechnicalEquipments) && isset($program) && $program->equipments) {
                                 $initialTechnicalEquipments = $program->equipments;
                             }
+                        $defaultTechnicalEquipments = [
+                            'کرامپون',
+                            'تبر یخ',
+                            'هارنس',
+                            'کلاه ایمنی',
+                            'ریسمان',
+                            'کارابین',
+                            'طناب کمکی',
+                            'کلنگ کوهستان',
+                        ];
+                        $technicalEquipmentOptions = collect($defaultTechnicalEquipments)
+                            ->merge($initialTechnicalEquipments)
+                            ->unique()
+                            ->values();
                         @endphp
                         <select name="technical_equipments[]" id="technical-equipments" class="form-select select2-tags" multiple>
-                            @foreach($initialTechnicalEquipments as $eq)
-                                <option value="{{ $eq }}" selected>{{ $eq }}</option>
+                            @foreach($technicalEquipmentOptions as $eq)
+                                <option value="{{ $eq }}" {{ in_array($eq, $initialTechnicalEquipments) ? 'selected' : '' }}>{{ $eq }}</option>
                             @endforeach
                         </select>
-                        <small class="text-muted">می‌توانید چند مورد را انتخاب کنید یا مورد جدید اضافه کنید</small>
+                        <small class="text-muted">چند مورد پرکاربرد اضافه شد؛ می‌توانید موارد جدید بنویسید</small>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">سختی مسیر</label>
@@ -513,9 +520,36 @@
                         <label class="form-label">نام راهنمای منطقه، آدرس و تلفن</label>
                         <textarea name="local_guide_info" class="form-control" rows="3">{{ old('local_guide_info') }}</textarea>
                     </div>
+                    @php
+                        $initialShelters = old('shelters', []);
+                        if (empty($initialShelters)) {
+                            $initialShelters = [['name' => '', 'height' => '']];
+                        }
+                    @endphp
                     <div class="col-md-12">
-                        <label class="form-label">اسامی پناهگاه‌ها / محل‌های اطراق + ارتفاع</label>
-                        <textarea name="shelters_info" class="form-control" rows="3" placeholder="مثلاً: پناهگاه بارگاه سوم - ارتفاع 4150 متر">{{ old('shelters_info') }}</textarea>
+                        <label class="form-label d-flex justify-content-between align-items-center">
+                            <span>اسامی پناهگاه‌ها / محل‌های اطراق + ارتفاع</span>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-shelter">افزودن محل</button>
+                        </label>
+                        <div id="shelters-wrapper">
+                            @foreach($initialShelters as $index => $shelter)
+                                <div class="shelter-row mb-3 border p-3 rounded">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-6">
+                                            <label class="form-label">نام پناهگاه / محل</label>
+                                            <input type="text" name="shelters[{{ $index }}][name]" class="form-control" value="{{ $shelter['name'] ?? '' }}" placeholder="مثلاً: پناهگاه بارگاه سوم">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">ارتفاع (متر)</label>
+                                            <input type="number" name="shelters[{{ $index }}][height]" class="form-control" value="{{ $shelter['height'] ?? '' }}" min="0" placeholder="مثلاً: 4150">
+                                        </div>
+                                        <div class="col-md-2 text-end">
+                                            <button type="button" class="btn btn-danger btn-sm remove-shelter">حذف</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
@@ -804,14 +838,7 @@
                         <div class="row g-2 align-items-end">
                             <div class="col-md-4">
                                 <label class="form-label">سمت</label>
-                                <select name="executive_roles[${executiveRoleIndex}][role_title]" class="form-select">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="سرپرست">سرپرست</option>
-                                    <option value="کمک‌سرپرست">کمک‌سرپرست</option>
-                                    <option value="مربی">مربی</option>
-                                    <option value="مسئول فنی">مسئول فنی</option>
-                                    <option value="پشتیبان برنامه">پشتیبان برنامه</option>
-                                </select>
+                                <input type="text" name="executive_roles[${executiveRoleIndex}][role_title]" class="form-control" placeholder="مثلاً: سرپرست یا پزشک تیم">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">نام و نام خانوادگی</label>
@@ -918,6 +945,88 @@
                 $(this).closest('.timeline-row').remove();
             });
 
+            // Add shelter row
+            let shelterIndex = $('#shelters-wrapper .shelter-row').length;
+            $('#add-shelter').on('click', function() {
+                const newRow = $(`
+                    <div class="shelter-row mb-3 border p-3 rounded">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label">نام پناهگاه / محل</label>
+                                <input type="text" name="shelters[${shelterIndex}][name]" class="form-control" placeholder="مثلاً: پناهگاه بارگاه سوم">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ارتفاع (متر)</label>
+                                <input type="number" name="shelters[${shelterIndex}][height]" class="form-control" min="0" placeholder="مثلاً: 4150">
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button type="button" class="btn btn-danger btn-sm remove-shelter">حذف</button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                $('#shelters-wrapper').append(newRow);
+                shelterIndex++;
+            });
+
+            // Remove shelter row
+            $(document).on('click', '.remove-shelter', function() {
+                $(this).closest('.shelter-row').remove();
+            });
+
+            // Auto-calc duration based on start/end dates
+            function toEnglishDigits(str) {
+                return str
+                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+            }
+
+            function jalaliToGregorian(jy, jm, jd) {
+                const gy = jy + 621;
+                const days = [0,31,59,90,120,151,181,212,243,273,304,334];
+                const gy2 = gy + 1;
+                let doyJ = (jm <= 6) ? ((jm - 1) * 31 + jd) : (days[jm - 1] + jd + (jm - 7) * 30);
+                const leapJ = (jy % 33 === 1 || jy % 33 === 5 || jy % 33 === 9 || jy % 33 === 13 || jy % 33 === 17 || jy % 33 === 22 || jy % 33 === 26 || jy % 33 === 30);
+                const march = leapJ ? 20 : 21;
+                let dG = doyJ + march - 1;
+                const leapG = (gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0);
+                const leapG2 = (gy2 % 4 === 0 && gy2 % 100 !== 0) || (gy2 % 400 === 0);
+                const monthsG = [31, leapG ? 29 : 28,31,30,31,30,31,31,30,31,30,31];
+                let gm = 0;
+                while (gm < 12 && dG >= monthsG[gm]) {
+                    dG -= monthsG[gm];
+                    gm++;
+                }
+                const gd = dG + 1;
+                return new Date(gy, gm, gd);
+            }
+
+            function jalaliStringToDate(value) {
+                if (!value) return null;
+                const clean = toEnglishDigits(value.trim());
+                const parts = clean.split('/');
+                if (parts.length !== 3) return null;
+                const [jy, jm, jd] = parts.map(Number);
+                if (isNaN(jy) || isNaN(jm) || isNaN(jd)) return null;
+                return jalaliToGregorian(jy, jm, jd);
+            }
+
+            function updateDuration() {
+                const startVal = $('#report_start_date').val();
+                const endVal = $('#report_end_date').val();
+                const startDate = jalaliStringToDate(startVal);
+                const endDate = jalaliStringToDate(endVal);
+                if (!startDate || !endDate || endDate < startDate) {
+                    $('#report_duration').val('');
+                    return;
+                }
+                const diffDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                $('#report_duration').val(diffDays + ' روز');
+            }
+
+            $('#report_start_date, #report_end_date').on('change blur', updateDuration);
+            updateDuration();
+
             // Add guest
             @php
                 $initialGuestsCount = isset($initialGuests) ? count($initialGuests) : 0;
@@ -988,15 +1097,17 @@
                     </div>
                 `;
                 mapFilePreview.appendChild(div);
-                
-                e.target.value = '';
+
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                mapFileInput.files = dt.files;
             });
 
             // Remove map file
             $(document).on('click', '.remove-map-file', function() {
                 mapFile = null;
                 mapFileInput.value = '';
-                $(this).closest('.map-preview-item').remove();
+                mapFilePreview.innerHTML = '';
             });
 
             // Helper function to get file icon based on extension
@@ -1043,7 +1154,6 @@
                 // Check total count
                 if (imageFiles.length + files.length > 20) {
                     toastr.error('حداکثر 20 تصویر مجاز است');
-                    e.target.value = '';
                     return;
                 }
 
@@ -1061,13 +1171,28 @@
                     }
 
                     imageFiles.push(file);
+                });
+
+                rebuildImagePreview();
+            });
+
+            // Remove image
+            $(document).on('click', '.remove-image', function() {
+                const index = $(this).data('index');
+                imageFiles.splice(index, 1);
+                rebuildImagePreview();
+            });
+
+            function rebuildImagePreview() {
+                imagePreview.innerHTML = '';
+                imageFiles.forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const div = document.createElement('div');
                         div.className = 'col-md-3 col-sm-6 image-preview-item';
                         div.innerHTML = `
                             <img src="${e.target.result}" alt="Preview">
-                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-image" data-index="${imageFiles.length - 1}">
+                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-image" data-index="${index}">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         `;
@@ -1076,29 +1201,18 @@
                     reader.readAsDataURL(file);
                 });
 
-                e.target.value = '';
-            });
+                const dt = new DataTransfer();
+                imageFiles.forEach(file => dt.items.add(file));
+                imageInput.files = dt.files;
+            }
 
-            // Remove image
-            $(document).on('click', '.remove-image', function() {
-                const index = $(this).data('index');
-                imageFiles.splice(index, 1);
-                $(this).closest('.image-preview-item').remove();
-                
-                // Update indices
-                $('.remove-image').each(function(i) {
-                    $(this).attr('data-index', i);
-                });
-            });
-
-            // Jalali datepicker time toggle for report_date
-            $('#report_date').on('focus', function() {
-                jalaliDatepicker.updateOptions({ time: true, zIndex: 3000 });
-            });
-
-            // Jalali datepicker for date-only fields
-            $('#report_start_date, #report_end_date').on('focus', function() {
+            // Jalali datepicker options: only timeline uses time picker
+            $('#report_date, #report_start_date, #report_end_date').on('focus', function() {
                 jalaliDatepicker.updateOptions({ time: false, zIndex: 3000 });
+            });
+
+            $(document).on('focus', '.timeline-datetime', function() {
+                jalaliDatepicker.updateOptions({ time: true, zIndex: 3000 });
             });
         });
     </script>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProgramReport;
 use App\Models\Program;
 use Illuminate\Support\Facades\DB;
+use Morilog\Jalali\Jalalian;
 
 class ProgramReportController extends Controller
 {
@@ -57,11 +58,21 @@ class ProgramReportController extends Controller
     {
         $validated = $request->validate([
             'program_id' => 'required|exists:programs,id',
+            'report_date' => 'nullable|string|max:50',
+            'report_program_type' => 'nullable|string|max:255',
+            'report_program_name' => 'nullable|string|max:255',
+            'report_region_route' => 'nullable|string|max:255',
+            'report_start_date' => 'nullable|string|max:50',
+            'report_end_date' => 'nullable|string|max:50',
+            'report_duration' => 'nullable|string|max:50',
+            'reporter_id' => 'nullable|exists:users,id',
+            'reporter_name' => 'nullable|string|max:255',
             'report_description' => 'nullable|string',
             'important_notes' => 'nullable|string',
             'map_author' => 'nullable|string|max:255',
             'map_scale' => 'nullable|string|max:255',
             'map_source' => 'nullable|string|max:255',
+            'technical_feature' => 'nullable|string|max:255',
             'technical_equipments' => 'nullable|array',
             'route_difficulty' => 'nullable|in:آسان,متوسط,سخت,بسیار سخت',
             'slope' => 'nullable|string|max:255',
@@ -81,6 +92,9 @@ class ProgramReportController extends Controller
             'target_altitude' => 'nullable|integer|min:0',
             'start_location_name' => 'nullable|string|max:255',
             'distance_from_tehran' => 'nullable|integer|min:0',
+            'local_village_name' => 'nullable|string|max:255',
+            'local_guide_info' => 'nullable|string',
+            'shelters_info' => 'nullable|string',
             'road_type' => 'nullable|in:آسفالت,خاکی,ترکیبی',
             'transport_types' => 'nullable|array',
             'facilities' => 'nullable|array',
@@ -88,6 +102,10 @@ class ProgramReportController extends Controller
             'timeline' => 'nullable|array',
             'participants' => 'nullable|array',
             'participants_count' => 'nullable|integer|min:0',
+            'shelters' => 'nullable|array',
+            'shelters.*.name' => 'nullable|string|max:255',
+            'shelters.*.height' => 'nullable|integer|min:0',
+            'map_file' => 'nullable|file|max:5120',
             'report_images' => 'nullable|array|max:20',
             'report_images.*' => 'image|mimes:jpeg,png,gif|max:2048',
             'deleted_files' => 'nullable|array',
@@ -107,7 +125,8 @@ class ProgramReportController extends Controller
                 throw new \Exception('گزارش این برنامه قبلاً ثبت شده است.');
             }
             
-            $report = ProgramReport::create($validated);
+            $payload = $this->applySanitizers($validated, $request);
+            $report = ProgramReport::create($payload);
             
             // Handle file uploads
             if ($request->hasFile('report_images')) {
@@ -122,6 +141,16 @@ class ProgramReportController extends Controller
                         ]);
                     }
                 }
+            }
+
+            if ($request->hasFile('map_file') && $request->file('map_file')->isValid()) {
+                $mapPath = $request->file('map_file')->store('program_reports/maps', 'public');
+                \App\Models\ProgramFile::create([
+                    'program_id' => $program->id,
+                    'file_type' => 'map',
+                    'file_path' => $mapPath,
+                    'caption' => null,
+                ]);
             }
         });
 
@@ -203,11 +232,21 @@ class ProgramReportController extends Controller
     {
         $validated = $request->validate([
             'program_id' => 'required|exists:programs,id',
+            'report_date' => 'nullable|string|max:50',
+            'report_program_type' => 'nullable|string|max:255',
+            'report_program_name' => 'nullable|string|max:255',
+            'report_region_route' => 'nullable|string|max:255',
+            'report_start_date' => 'nullable|string|max:50',
+            'report_end_date' => 'nullable|string|max:50',
+            'report_duration' => 'nullable|string|max:50',
+            'reporter_id' => 'nullable|exists:users,id',
+            'reporter_name' => 'nullable|string|max:255',
             'report_description' => 'nullable|string',
             'important_notes' => 'nullable|string',
             'map_author' => 'nullable|string|max:255',
             'map_scale' => 'nullable|string|max:255',
             'map_source' => 'nullable|string|max:255',
+            'technical_feature' => 'nullable|string|max:255',
             'technical_equipments' => 'nullable|array',
             'route_difficulty' => 'nullable|in:آسان,متوسط,سخت,بسیار سخت',
             'slope' => 'nullable|string|max:255',
@@ -227,6 +266,9 @@ class ProgramReportController extends Controller
             'target_altitude' => 'nullable|integer|min:0',
             'start_location_name' => 'nullable|string|max:255',
             'distance_from_tehran' => 'nullable|integer|min:0',
+            'local_village_name' => 'nullable|string|max:255',
+            'local_guide_info' => 'nullable|string',
+            'shelters_info' => 'nullable|string',
             'road_type' => 'nullable|in:آسفالت,خاکی,ترکیبی',
             'transport_types' => 'nullable|array',
             'facilities' => 'nullable|array',
@@ -234,6 +276,10 @@ class ProgramReportController extends Controller
             'timeline' => 'nullable|array',
             'participants' => 'nullable|array',
             'participants_count' => 'nullable|integer|min:0',
+            'shelters' => 'nullable|array',
+            'shelters.*.name' => 'nullable|string|max:255',
+            'shelters.*.height' => 'nullable|integer|min:0',
+            'map_file' => 'nullable|file|max:5120',
             'report_images' => 'nullable|array|max:20',
             'report_images.*' => 'image|mimes:jpeg,png,gif|max:2048',
             'deleted_files' => 'nullable|array',
@@ -246,7 +292,8 @@ class ProgramReportController extends Controller
         ]);
 
         DB::transaction(function () use ($programReport, $validated, $request) {
-            $programReport->update($validated);
+            $payload = $this->applySanitizers($validated, $request);
+            $programReport->update($payload);
             
             $program = $programReport->program;
             
@@ -263,6 +310,16 @@ class ProgramReportController extends Controller
                         ]);
                     }
                 }
+            }
+
+            if ($request->hasFile('map_file') && $request->file('map_file')->isValid()) {
+                $mapPath = $request->file('map_file')->store('program_reports/maps', 'public');
+                \App\Models\ProgramFile::create([
+                    'program_id' => $program->id,
+                    'file_type' => 'map',
+                    'file_path' => $mapPath,
+                    'caption' => null,
+                ]);
             }
             
             // Handle file deletions
@@ -290,6 +347,120 @@ class ProgramReportController extends Controller
     {
         $programReport->delete();
         return redirect()->route('admin.program_reports.index')->with('success', 'گزارش برنامه با موفقیت حذف شد.');
+    }
+
+    private function applySanitizers(array $validated, Request $request): array
+    {
+        $validated['report_date'] = $this->convertJalaliDate($request->input('report_date'));
+        $validated['report_start_date'] = $this->convertJalaliDate($request->input('report_start_date'));
+        $validated['report_end_date'] = $this->convertJalaliDate($request->input('report_end_date'));
+        $validated['geo_points'] = $this->sanitizeGeoPoints($request);
+        $validated['timeline'] = $this->sanitizeTimeline($request);
+        $validated['shelters'] = $this->sanitizeShelters($request);
+        $validated['report_duration'] = $validated['report_duration'] ?? $this->computeDuration($request);
+
+        return $validated;
+    }
+
+    private function sanitizeGeoPoints(Request $request): ?array
+    {
+        $points = collect($request->input('geo_points', []))
+            ->map(function ($point) {
+                return [
+                    'name' => $point['name'] ?? null,
+                    'lat' => $point['lat'] ?? null,
+                    'lon' => $point['lon'] ?? null,
+                ];
+            })
+            ->filter(function ($point) {
+                return !empty($point['name']) || !empty($point['lat']) || !empty($point['lon']);
+            })
+            ->values()
+            ->toArray();
+
+        return empty($points) ? null : $points;
+    }
+
+    private function sanitizeTimeline(Request $request): ?array
+    {
+        $timeline = collect($request->input('timeline', []))
+            ->map(function ($row) {
+                return [
+                    'title' => $row['title'] ?? null,
+                    'datetime' => $row['datetime'] ?? null,
+                ];
+            })
+            ->filter(function ($row) {
+                return !empty($row['title']) || !empty($row['datetime']);
+            })
+            ->values()
+            ->toArray();
+
+        return empty($timeline) ? null : $timeline;
+    }
+
+    private function sanitizeShelters(Request $request): ?array
+    {
+        $shelters = collect($request->input('shelters', []))
+            ->map(function ($row) {
+                return [
+                    'name' => $row['name'] ?? null,
+                    'height' => $row['height'] ?? null,
+                ];
+            })
+            ->filter(function ($row) {
+                return !empty($row['name']) || !empty($row['height']);
+            })
+            ->values()
+            ->toArray();
+
+        return empty($shelters) ? null : $shelters;
+    }
+
+    private function computeDuration(Request $request): ?string
+    {
+        $start = $request->input('report_start_date');
+        $end = $request->input('report_end_date');
+        if (!$start || !$end) {
+            return null;
+        }
+
+        try {
+            $startDate = Jalalian::fromFormat('Y/m/d', $this->toEnglishDigits($start))->toCarbon();
+            $endDate = Jalalian::fromFormat('Y/m/d', $this->toEnglishDigits($end))->toCarbon();
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        if ($endDate->lt($startDate)) {
+            return null;
+        }
+
+        $days = $startDate->diffInDays($endDate) + 1;
+        return $days . ' روز';
+    }
+
+    private function toEnglishDigits(string $value): string
+    {
+        return strtr($value, ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9','٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9']);
+    }
+
+    private function convertJalaliDate(?string $value, bool $withTime = false)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        try {
+            $format = $withTime ? 'Y/m/d H:i' : 'Y/m/d';
+            $clean = $this->toEnglishDigits($value);
+            $jalali = Jalalian::fromFormat($format, $clean);
+            return $withTime
+                ? $jalali->toCarbon()->setTime($jalali->getHour(), $jalali->getMinute())
+                : $jalali->toCarbon()->startOfDay();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
 

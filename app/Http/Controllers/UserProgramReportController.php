@@ -90,6 +90,7 @@ class UserProgramReportController extends Controller
         DB::transaction(function () use ($validated, $program, $request) {
             // Convert dates
             $validated = $this->convertDates($validated);
+            $validated = $this->applySanitizers($validated, $request);
             
             // Create report
             $report = ProgramReport::create($validated);
@@ -107,6 +108,16 @@ class UserProgramReportController extends Controller
                         ]);
                     }
                 }
+            }
+
+            if ($request->hasFile('map_file') && $request->file('map_file')->isValid()) {
+                $mapPath = $request->file('map_file')->store('program_reports/maps', 'public');
+                ProgramFile::create([
+                    'program_id' => $program->id,
+                    'file_type' => 'map',
+                    'file_path' => $mapPath,
+                    'caption' => null,
+                ]);
             }
         });
         
@@ -152,6 +163,10 @@ class UserProgramReportController extends Controller
             'timeline' => 'nullable|array',
             'participants' => 'nullable|array',
             'participants_count' => 'nullable|integer|min:0',
+            'shelters' => 'nullable|array',
+            'shelters.*.name' => 'nullable|string|max:255',
+            'shelters.*.height' => 'nullable|integer|min:0',
+            'map_file' => 'nullable|file|max:5120',
             'report_images' => 'nullable|array|max:20',
             'report_images.*' => 'image|mimes:jpeg,png,gif|max:2048',
         ], [
@@ -185,6 +200,95 @@ class UserProgramReportController extends Controller
         $str = str_replace($arabic, $english, $str);
         
         return $str;
+    }
+
+    private function applySanitizers(array $validated, Request $request): array
+    {
+        $validated['geo_points'] = $this->sanitizeGeoPoints($request);
+        $validated['timeline'] = $this->sanitizeTimeline($request);
+        $validated['shelters'] = $this->sanitizeShelters($request);
+        $validated['program_id'] = $request->route('program')->id;
+        $validated['report_duration'] = $validated['report_duration'] ?? $this->computeDuration($request);
+
+        return $validated;
+    }
+
+    private function sanitizeGeoPoints(Request $request): ?array
+    {
+        $points = collect($request->input('geo_points', []))
+            ->map(function ($point) {
+                return [
+                    'name' => $point['name'] ?? null,
+                    'lat' => $point['lat'] ?? null,
+                    'lon' => $point['lon'] ?? null,
+                ];
+            })
+            ->filter(function ($point) {
+                return !empty($point['name']) || !empty($point['lat']) || !empty($point['lon']);
+            })
+            ->values()
+            ->toArray();
+
+        return empty($points) ? null : $points;
+    }
+
+    private function sanitizeTimeline(Request $request): ?array
+    {
+        $timeline = collect($request->input('timeline', []))
+            ->map(function ($row) {
+                return [
+                    'title' => $row['title'] ?? null,
+                    'datetime' => $row['datetime'] ?? null,
+                ];
+            })
+            ->filter(function ($row) {
+                return !empty($row['title']) || !empty($row['datetime']);
+            })
+            ->values()
+            ->toArray();
+
+        return empty($timeline) ? null : $timeline;
+    }
+
+    private function sanitizeShelters(Request $request): ?array
+    {
+        $shelters = collect($request->input('shelters', []))
+            ->map(function ($row) {
+                return [
+                    'name' => $row['name'] ?? null,
+                    'height' => $row['height'] ?? null,
+                ];
+            })
+            ->filter(function ($row) {
+                return !empty($row['name']) || !empty($row['height']);
+            })
+            ->values()
+            ->toArray();
+
+        return empty($shelters) ? null : $shelters;
+    }
+
+    private function computeDuration(Request $request): ?string
+    {
+        $start = $request->input('report_start_date');
+        $end = $request->input('report_end_date');
+        if (!$start || !$end) {
+            return null;
+        }
+
+        try {
+            $startDate = Jalalian::fromFormat('Y/m/d', $this->toEnglishDigits($start))->toCarbon();
+            $endDate = Jalalian::fromFormat('Y/m/d', $this->toEnglishDigits($end))->toCarbon();
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        if ($endDate->lt($startDate)) {
+            return null;
+        }
+
+        $days = $startDate->diffInDays($endDate) + 1;
+        return $days . ' روز';
     }
 }
 
