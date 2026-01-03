@@ -49,6 +49,7 @@ return new class extends Migration
 
             // توضیحات اختیاری (در صورت نیاز در آینده)
             $table->text('description')->nullable();
+            
 
             $table->timestamps();
         });

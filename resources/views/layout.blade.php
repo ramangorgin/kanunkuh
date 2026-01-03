@@ -47,7 +47,9 @@
                             <li class="nav-item"><a class="nav-link" href="{{ route('home') }}" style="font-size: 15pt;">خانه</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('programs.archive') }}" style="font-size: 15pt;">برنامه‌ها</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('courses.archive') }}" style="font-size: 15pt;">دوره‌ها</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}" style="font-size: 15pt;">بلاگ</a></li>
+                            @if(Route::has('blog.index'))
+                                <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}" style="font-size: 15pt;">بلاگ</a></li>
+                            @endif
                         </ul>
                     </div>
 
@@ -81,7 +83,9 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">خانه</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('programs.archive') }}">برنامه‌ها</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('courses.archive') }}">دوره‌ها</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">بلاگ</a></li>
+                        @if(Route::has('blog.index'))
+                            <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">بلاگ</a></li>
+                        @endif
                     </ul>
 
                     <hr>
