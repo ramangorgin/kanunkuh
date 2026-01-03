@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedInteger('federation_course_id');
+            $table->unsignedInteger('federation_course_id')->nullable();
             $table->foreign('federation_course_id')
                 ->references('id')->on('federation_courses')
                 ->onDelete('cascade');
@@ -27,6 +27,8 @@ return new class extends Migration
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
             $table->integer('duration')->nullable();
+
+            $table->longText('description')->nullable();
 
             $table->string('place')->nullable();
             $table->string('place_address')->nullable();

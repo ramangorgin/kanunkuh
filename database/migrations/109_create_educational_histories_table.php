@@ -12,9 +12,10 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('user_id');
-            $table->unsignedInteger('federation_course_id');
-            $table->string('custom_course_title')->nullable();
+            $table->unsignedInteger('federation_course_id')->nullable();
 
+            $table->string('custom_course_title')->nullable();
+            
             $table->date('issue_date')->nullable();
 
             $table->string('certificate_file')->nullable();

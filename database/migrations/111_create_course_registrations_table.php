@@ -19,6 +19,17 @@ return new class extends Migration
             $table->string('guest_phone')->nullable();
             $table->string('guest_national_id')->nullable();
 
+            $table->enum('status', [
+                'pending',     // ثبت اولیه
+                'paid',        // پرداخت شده
+                'approved',    // تایید شده
+                'rejected',    // رد شده
+                'cancelled'    // لغو شده
+            ])->default('pending');
+
+            $table->string('certificate_file')->nullable();
+
+
             $table->boolean('approved')->default(false);
 
             $table->timestamps();
