@@ -392,6 +392,10 @@
             <i class="bi bi-book-fill me-2"></i> دوره‌های من
         </a>
 
+        <a href="{{ route('dashboard.tickets.index') }}" class="{{ request()->routeIs('dashboard.tickets.*') ? 'active-link' : '' }}">
+            <i class="bi bi-life-preserver me-2"></i> تیکت‌ها
+        </a>
+
         @auth
             <form method="POST" action="{{ route('logout') }}" style="margin:0;">
                 @csrf

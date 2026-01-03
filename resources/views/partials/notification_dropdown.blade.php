@@ -35,12 +35,13 @@
     border: 0 !important;
 }
 .notif-badge {
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
     border-radius: 999px;
-    background: #dc3545;
-    color: #fff;
+    background: #dc3545 !important;
+    color: #fff !important;
+    font-weight: 700;
     font-size: 11px;
     display: inline-flex;
     align-items: center;
@@ -62,6 +63,8 @@
     const prefix = @json($prefix);
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+    const toPersianDigits = (val) => String(val ?? '').replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
     function buildUrl(template, id){
         return template.replace(/0(?!.*0)/, id);
     }
@@ -79,8 +82,9 @@
     function renderList(data){
         const listEl = document.getElementById(`${prefix}-notif-list`);
         const countEl = document.getElementById(`${prefix}-notif-count`);
-        countEl.textContent = data.unread_count;
-        countEl.style.display = data.unread_count > 0 ? 'inline-flex' : 'none';
+        const unread = Number(data.unread_count || 0);
+        countEl.textContent = toPersianDigits(unread);
+        countEl.style.display = unread > 0 ? 'inline-flex' : 'none';
 
         if(!data.items || data.items.length === 0){
             listEl.innerHTML = '<div class="text-center text-muted py-3">اعلانی وجود ندارد.</div>';
@@ -94,7 +98,7 @@
                     <div class="flex-grow-1">
                         <div class="fw-bold mb-1">${item.title ?? ''}</div>
                         <div class="text-muted small mb-1">${item.message ?? ''}</div>
-                        <div class="text-secondary small">${item.created_at ?? ''}</div>
+                        <div class="text-secondary small">${toPersianDigits(item.created_at ?? '')}</div>
                     </div>
                 </div>
             `;

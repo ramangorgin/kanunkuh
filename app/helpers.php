@@ -37,3 +37,25 @@ if (! function_exists('fa_digits')) {
 if (! function_exists('toPersianNumber')) {
     function toPersianNumber($string) { return fa_digits($string); }
 }
+
+if (! function_exists('ticket_status_badge')) {
+    function ticket_status_badge(string $status, ?string $lastReplyBy = null): string
+    {
+        $map = [
+            'open' => ['text' => 'باز', 'class' => 'bg-success'],
+            'waiting_admin' => ['text' => 'در انتظار ادمین', 'class' => 'bg-warning text-dark'],
+            'waiting_user' => ['text' => 'در انتظار شما', 'class' => 'bg-info text-dark'],
+            'closed' => ['text' => 'بسته', 'class' => 'bg-secondary'],
+        ];
+
+        $item = $map[$status] ?? $map['open'];
+        $suffix = '';
+        if ($lastReplyBy === 'admin') {
+            $suffix = ' (آخرین پاسخ: ادمین)';
+        } elseif ($lastReplyBy === 'user') {
+            $suffix = ' (آخرین پاسخ: کاربر)';
+        }
+
+        return '<span class="badge '.$item['class'].'">'.$item['text'].$suffix.'</span>';
+    }
+}

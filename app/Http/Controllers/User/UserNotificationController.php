@@ -17,8 +17,7 @@ class UserNotificationController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $notifications = Notification::where('notifiable_id', $user->id)
-            ->where('notifiable_type', User::class)
+        $notifications = $this->baseQuery($user)
             ->latest()
             ->paginate(20);
 
@@ -28,17 +27,14 @@ class UserNotificationController extends Controller
     public function panel(Request $request)
     {
         $user = auth()->user();
-        $query = Notification::where('notifiable_id', $user->id)
-            ->where('notifiable_type', User::class)
-            ->latest();
+        $query = $this->baseQuery($user)->latest();
 
         $notifications = $query->take(10)->get();
         $unreadCount = (clone $query)->where('is_read', false)->count();
 
         // Auto mark as read if requested (when dropdown opened)
         if ($request->boolean('mark')) {
-            Notification::where('notifiable_id', $user->id)
-                ->where('notifiable_type', User::class)
+            $this->baseQuery($user)
                 ->where('is_read', false)
                 ->update(['is_read' => true, 'read_at' => now()]);
         }
@@ -68,8 +64,7 @@ class UserNotificationController extends Controller
     public function markAllAsRead()
     {
         $user = auth()->user();
-        Notification::where('notifiable_id', $user->id)
-            ->where('notifiable_type', User::class)
+        $this->baseQuery($user)
             ->where('is_read', false)
             ->update(['is_read' => true, 'read_at' => now()]);
 
@@ -90,5 +85,15 @@ class UserNotificationController extends Controller
         if ($notification->notifiable_id !== $user->id || $notification->notifiable_type !== User::class) {
             abort(403);
         }
+    }
+
+    protected function baseQuery(User $user)
+    {
+        return Notification::where('notifiable_id', $user->id)
+            ->where('notifiable_type', User::class)
+            ->where(function ($q) {
+                $q->whereNull('data->audience')
+                  ->orWhere('data->audience', 'user');
+            });
     }
 }

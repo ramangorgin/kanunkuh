@@ -28,6 +28,8 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\User\UserNotificationController;
+use App\Http\Controllers\User\TicketController as UserTicketController;
+use App\Http\Controllers\Admin\TicketController as AdminTicketController;
 
 
 use App\Http\Controllers\AuthController;
@@ -114,6 +116,16 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     // Courses
     Route::get('/my-courses', [UserDashboardController::class, 'courses'])->name('courses.index');
     Route::get('/courses/{registration}/download-certificate', [App\Http\Controllers\UserCourseController::class, 'downloadCertificate'])->name('courses.downloadCertificate');
+
+    // Tickets
+    Route::get('/tickets/attachments/{attachment}', [UserTicketController::class, 'downloadAttachment'])->name('tickets.attachments.download');
+    Route::get('/tickets', [UserTicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/create', [UserTicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets', [UserTicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/{ticket}', [UserTicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/{ticket}/reply', [UserTicketController::class, 'reply'])->name('tickets.reply');
+    Route::post('/tickets/{ticket}/close', [UserTicketController::class, 'close'])->name('tickets.close');
+    Route::post('/tickets/{ticket}/reopen', [UserTicketController::class, 'reopen'])->name('tickets.reopen');
     
     // Program Reports (User)
     Route::get('/program-reports/create/{program}', [App\Http\Controllers\UserProgramReportController::class, 'create'])->name('program_reports.create');
@@ -214,6 +226,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/courses/{course}/registrations/{registrationId}/reject', [App\Http\Controllers\AdminCourseRegistrationController::class, 'reject'])->name('admin.courses.registrations.reject');
     Route::post('/courses/{course}/registrations/{registrationId}/cancel', [App\Http\Controllers\AdminCourseRegistrationController::class, 'cancel'])->name('admin.courses.registrations.cancel');
     Route::post('/courses/{course}/registrations/{registrationId}/upload-certificate', [App\Http\Controllers\AdminCourseRegistrationController::class, 'uploadCertificate'])->name('admin.courses.registrations.uploadCertificate');
+
+    // Tickets (Admin)
+    Route::get('/tickets/attachments/{attachment}', [AdminTicketController::class, 'downloadAttachment'])->name('admin.tickets.attachments.download');
+    Route::get('/tickets', [AdminTicketController::class, 'index'])->name('admin.tickets.index');
+    Route::get('/tickets/{ticket}', [AdminTicketController::class, 'show'])->name('admin.tickets.show');
+    Route::post('/tickets/{ticket}/reply', [AdminTicketController::class, 'reply'])->name('admin.tickets.reply');
+    Route::post('/tickets/{ticket}/close', [AdminTicketController::class, 'close'])->name('admin.tickets.close');
+    Route::post('/tickets/{ticket}/reopen', [AdminTicketController::class, 'reopen'])->name('admin.tickets.reopen');
 });
 
 // Admin Blog Posts

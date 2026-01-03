@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Profile;
 use App\Models\EducationalHistory;
 use App\Models\MedicalRecord;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
@@ -359,7 +360,13 @@ class AdminUserController extends Controller
             'payments', // چون در show.blade.php استفاده شده
         ])->findOrFail($id);
 
-        return view('admin.users.show', compact('user'));
+        $recentTickets = Ticket::where('user_id', $user->id)
+            ->latest()
+            ->with('latestMessage')
+            ->take(5)
+            ->get();
+
+        return view('admin.users.show', compact('user', 'recentTickets'));
     }
 
     /** عضویت‌های در انتظار (اختیاری اگر لازم دارید) **/

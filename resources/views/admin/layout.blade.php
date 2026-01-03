@@ -341,6 +341,11 @@
                 <i class="bi bi-credit-card me-2"></i> مدیریت پرداخت‌ها
             </a>
 
+            <div class="menu-header">پشتیبانی</div>
+            <a href="{{ route('admin.tickets.index') }}" class="{{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
+                <i class="bi bi-life-preserver me-2"></i> تیکت‌ها
+            </a>
+
             <div class="menu-header">تنظیمات</div>
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
                 @csrf

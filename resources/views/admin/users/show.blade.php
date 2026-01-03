@@ -224,6 +224,31 @@
                 </div>
             </div>
 
+            {{-- Tickets --}}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3 text-primary border-bottom pb-2">
+                        <i class="bi bi-life-preserver"></i> آخرین تیکت‌ها
+                    </h5>
+                    @php($ticketsList = $recentTickets ?? collect())
+                    @if($ticketsList->count())
+                        <ul class="list-group list-group-flush small">
+                            @foreach($ticketsList as $t)
+                                <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                                    <div class="me-2">
+                                        <div class="fw-semibold">{{ $t->subject }}</div>
+                                        <div class="text-muted">{{ $t->updated_at ? toPersianNumber(jdate($t->updated_at)->format('Y/m/d H:i')) : '' }}</div>
+                                    </div>
+                                    <div>{!! ticket_status_badge($t->status, $t->last_reply_by) !!}</div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-muted mb-0">تیکتی ثبت نشده است.</p>
+                    @endif
+                </div>
+            </div>
+
         </div>
     </div>
 
