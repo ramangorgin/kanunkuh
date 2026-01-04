@@ -34,38 +34,38 @@
                     <div class="row g-3">
                         {{-- Avatar --}}
                         <div class="col-md-12 text-center mb-3">
-                            @if($user->profile->photo)
-                                <img src="{{ asset('storage/'.$user->profile->photo) }}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover;">
+                            @if(optional($user->profile)->photo)
+                                <img src="{{ asset('storage/'.optional($user->profile)->photo) }}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover;">
                             @else
                                 <img src="{{ asset('images/default-avatar.png') }}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover;">
                             @endif
                         </div>
 
-                        <div class="col-md-4"><strong>نام:</strong> {{ $user->profile->first_name ?? '-' }}</div>
-                        <div class="col-md-4"><strong>نام خانوادگی:</strong> {{ $user->profile->last_name ?? '-' }}</div>
-                        <div class="col-md-4"><strong>نام پدر:</strong> {{ $user->profile->father_name ?? '-' }}</div>
+                        <div class="col-md-4"><strong>نام:</strong> {{ optional($user->profile)->first_name ?? '-' }}</div>
+                        <div class="col-md-4"><strong>نام خانوادگی:</strong> {{ optional($user->profile)->last_name ?? '-' }}</div>
+                        <div class="col-md-4"><strong>نام پدر:</strong> {{ optional($user->profile)->father_name ?? '-' }}</div>
                         
-                        <div class="col-md-4"><strong>کد ملی:</strong> {{ toPersianNumber($user->profile->national_id ?? '-') }}</div>
-                        <div class="col-md-4"><strong>شماره شناسنامه:</strong> {{ toPersianNumber($user->profile->id_number ?? '-') }}</div>
-                        <div class="col-md-4"><strong>محل صدور:</strong> {{ $user->profile->id_place ?? '-' }}</div>
+                        <div class="col-md-4"><strong>کد ملی:</strong> {{ toPersianNumber(optional($user->profile)->national_id ?? '-') }}</div>
+                        <div class="col-md-4"><strong>شماره شناسنامه:</strong> {{ toPersianNumber(optional($user->profile)->id_number ?? '-') }}</div>
+                        <div class="col-md-4"><strong>محل صدور:</strong> {{ optional($user->profile)->id_place ?? '-' }}</div>
 
-                        <div class="col-md-4"><strong>تاریخ تولد:</strong> {{ isset($user->profile->birth_date) ? toPersianNumber(jdate($user->profile->birth_date)->format('Y/m/d')) : '-' }}</div>
-                        <div class="col-md-4"><strong>وضعیت تأهل:</strong> {{ $user->profile->marital_status ?? '-' }}</div>
-                        <div class="col-md-4"><strong>شغل:</strong> {{ $user->profile->job ?? '-' }}</div>
+                        <div class="col-md-4"><strong>تاریخ تولد:</strong> {{ optional($user->profile)->birth_date ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($user->profile->birth_date)->format('Y/m/d')) : '-' }}</div>
+                        <div class="col-md-4"><strong>وضعیت تأهل:</strong> {{ optional($user->profile)->marital_status ?? '-' }}</div>
+                        <div class="col-md-4"><strong>شغل:</strong> {{ optional($user->profile)->job ?? '-' }}</div>
 
-                        <div class="col-md-4"><strong>تحصیلات:</strong> {{ $user->profile->education ?? '-' }}</div>
+                        <div class="col-md-4"><strong>تحصیلات:</strong> {{ optional($user->profile)->education ?? '-' }}</div>
                         <div class="col-md-4"><strong>شماره تماس:</strong> {{ toPersianNumber($user->phone) }}</div>
-                        <div class="col-md-4"><strong>شماره اضطراری:</strong> {{ toPersianNumber($user->profile->emergency_phone ?? '-') }}</div>
+                        <div class="col-md-4"><strong>شماره اضطراری:</strong> {{ toPersianNumber(optional($user->profile)->emergency_phone ?? '-') }}</div>
 
-                        <div class="col-md-4"><strong>معرف:</strong> {{ $user->profile->referrer ?? '-' }}</div>
+                        <div class="col-md-4"><strong>معرف:</strong> {{ optional($user->profile)->referrer ?? '-' }}</div>
                         
-                        <div class="col-12"><strong>آدرس منزل:</strong> {{ $user->profile->home_address ?? '-' }}</div>
-                        <div class="col-12"><strong>آدرس محل کار:</strong> {{ $user->profile->work_address ?? '-' }}</div>
+                        <div class="col-12"><strong>آدرس منزل:</strong> {{ optional($user->profile)->home_address ?? '-' }}</div>
+                        <div class="col-12"><strong>آدرس محل کار:</strong> {{ optional($user->profile)->work_address ?? '-' }}</div>
 
                         <div class="col-12 mt-3">
                             <strong>تصویر کارت ملی:</strong>
-                            @if($user->profile->national_card)
-                                <a href="{{ asset('storage/'.$user->profile->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">مشاهده فایل</a>
+                            @if(optional($user->profile)->national_card)
+                                <a href="{{ asset('storage/'.optional($user->profile)->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">مشاهده فایل</a>
                             @else
                                 <span class="text-muted">ندارد</span>
                             @endif
@@ -83,29 +83,29 @@
 
                     @if($user->profile)
                         <div class="row g-3">
-                            <div class="col-md-3"><strong>شناسه عضویت:</strong> {{ toPersianNumber($user->profile->membership_id ?? '-') }}</div>
+                            <div class="col-md-3"><strong>شناسه عضویت:</strong> {{ toPersianNumber(optional($user->profile)->membership_id ?? '-') }}</div>
                             <div class="col-md-3"><strong>نوع عضویت:</strong> 
-                                @if($user->profile->membership_type == 'official') رسمی @else آزمایشی @endif
+                                @if(optional($user->profile)->membership_type == 'official') رسمی @else آزمایشی @endif
                             </div>
-                            <div class="col-md-3"><strong>تاریخ شروع:</strong> {{ isset($user->profile->membership_start) ? toPersianNumber(jdate($user->profile->membership_start)->format('Y/m/d')) : '-' }}</div>
-                            <div class="col-md-3"><strong>تاریخ پایان:</strong> {{ isset($user->profile->membership_expiry) ? toPersianNumber(jdate($user->profile->membership_expiry)->format('Y/m/d')) : '-' }}</div>
+                            <div class="col-md-3"><strong>تاریخ شروع:</strong> {{ optional($user->profile)->membership_start ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($user->profile->membership_start)->format('Y/m/d')) : '-' }}</div>
+                            <div class="col-md-3"><strong>تاریخ پایان:</strong> {{ optional($user->profile)->membership_expiry ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($user->profile->membership_expiry)->format('Y/m/d')) : '-' }}</div>
                         </div>
 
                         <div class="mt-3 d-flex align-items-center gap-3">
                             <strong>وضعیت فعلی:</strong>
-                            @if($user->profile->membership_status === 'approved')
+                            @if(optional($user->profile)->membership_status === 'approved')
                                 <span class="badge bg-success">تایید شده</span>
-                            @elseif($user->profile->membership_status === 'pending')
+                            @elseif(optional($user->profile)->membership_status === 'pending')
                                 <span class="badge bg-warning text-dark">در انتظار</span>
-                            @elseif($user->profile->membership_status === 'rejected')
+                            @elseif(optional($user->profile)->membership_status === 'rejected')
                                 <span class="badge bg-danger">رد شده</span>
                             @endif
 
-                            @if($user->profile->membership_status === 'pending')
-                                <button class="btn btn-success btn-sm approve-user" data-id="{{ $user->profile->id }}">
+                            @if(optional($user->profile)->membership_status === 'pending')
+                                <button class="btn btn-success btn-sm approve-user" data-id="{{ optional($user->profile)->id }}">
                                     <i class="bi bi-check-circle"></i> تایید عضویت
                                 </button>
-                                <button class="btn btn-danger btn-sm reject-user" data-id="{{ $user->profile->id }}">
+                                <button class="btn btn-danger btn-sm reject-user" data-id="{{ optional($user->profile)->id }}">
                                     <i class="bi bi-x-circle"></i> رد عضویت
                                 </button>
                             @endif
@@ -127,20 +127,20 @@
                     </h5>
                     @if($user->medicalRecord)
                         <div class="row g-2 mb-3">
-                            <div class="col-4"><strong>گروه خونی:</strong> {{ $user->medicalRecord->blood_type ?? '-' }}</div>
-                            <div class="col-4"><strong>قد:</strong> {{ toPersianNumber($user->medicalRecord->height ?? '-') }}</div>
-                            <div class="col-4"><strong>وزن:</strong> {{ toPersianNumber($user->medicalRecord->weight ?? '-') }}</div>
+                            <div class="col-4"><strong>گروه خونی:</strong> {{ optional($user->medicalRecord)->blood_type ?? '-' }}</div>
+                            <div class="col-4"><strong>قد:</strong> {{ toPersianNumber(optional($user->medicalRecord)->height ?? '-') }}</div>
+                            <div class="col-4"><strong>وزن:</strong> {{ toPersianNumber(optional($user->medicalRecord)->weight ?? '-') }}</div>
                         </div>
                         <div class="mb-2">
                             <strong>بیمه ورزشی:</strong>
-                            @if($user->medicalRecord->insurance_file)
-                                <a href="{{ asset('storage/'.$user->medicalRecord->insurance_file) }}" target="_blank" class="badge bg-primary text-decoration-none">دانلود فایل</a>
+                            @if(optional($user->medicalRecord)->insurance_file)
+                                <a href="{{ asset('storage/'.optional($user->medicalRecord)->insurance_file) }}" target="_blank" class="badge bg-primary text-decoration-none">دانلود فایل</a>
                             @else
                                 <span class="badge bg-secondary">ندارد</span>
                             @endif
                         </div>
                         <div class="text-muted small">
-                            تاریخ اعتبار: {{ isset($user->medicalRecord->insurance_expiry_date) ? toPersianNumber(jdate($user->medicalRecord->insurance_expiry_date)->format('Y/m/d')) : '-' }}
+                            تاریخ اعتبار: {{ optional($user->medicalRecord)->insurance_expiry_date ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($user->medicalRecord->insurance_expiry_date)->format('Y/m/d')) : '-' }}
                         </div>
                         
                         <hr>
@@ -191,7 +191,7 @@
                                             <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="text-primary"><i class="bi bi-download"></i></a>
                                         @endif
                                     </div>
-                                    <small class="text-muted">تاریخ صدور: {{ isset($edu->issue_date) ? toPersianNumber(jdate($edu->issue_date)->format('Y/m/d')) : '-' }}</small>
+                                        <small class="text-muted">تاریخ صدور: {{ isset($edu->issue_date) ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($edu->issue_date)->format('Y/m/d')) : '-' }}</small>
                                 </div>
                             @endforeach
                         </div>
@@ -237,7 +237,7 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-start px-0">
                                     <div class="me-2">
                                         <div class="fw-semibold">{{ $t->subject }}</div>
-                                        <div class="text-muted">{{ $t->updated_at ? toPersianNumber(jdate($t->updated_at)->format('Y/m/d H:i')) : '' }}</div>
+                                        <div class="text-muted">{{ $t->updated_at ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($t->updated_at)->format('Y/m/d H:i')) : '' }}</div>
                                     </div>
                                     <div>{!! ticket_status_badge($t->status, $t->last_reply_by) !!}</div>
                                 </li>
@@ -290,7 +290,7 @@ $(function() {
 
     // Approve
     $('.approve-user').click(function() {
-        const id = $(this).data('id'); // profile id
+        const profileId = $(this).data('id'); // profile id
         Swal.fire({
             title: 'تایید عضویت؟',
             text: 'آیا از تایید این کاربر مطمئن هستید؟',
@@ -301,20 +301,11 @@ $(function() {
             confirmButtonColor: '#198754'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Assuming route exists: POST /admin/users/{id}/approve where id is USER id or PROFILE id?
-                // The route typically uses User ID. Let's check previous context or assume Profile ID logic.
-                // Best to use User ID if the controller method finds user.
-                // In show.blade.php, data-id is user->profile->id.
-                // Let's assume the backend route handles profile ID or user ID correctly.
-                // Standard Laravel resource controller usually uses User ID.
-                // I will use User ID to be safe if I can, but here I only have profile->id in the loop variable context?
-                // No, I have $user->id available globally in show blade.
-                // Let's use $user->id for safety.
-                
-                const userId = {{ $user->id }};
-                $.post(`/admin/users/${userId}/approve`, {_token: '{{ csrf_token() }}'}, function() {
+                $.post(`/admin/users/${profileId}/approve`, {_token: '{{ csrf_token() }}'}, function() {
                     Swal.fire('تایید شد!', 'عضویت کاربر تایید شد', 'success')
                         .then(() => location.reload());
+                }).fail(function() {
+                    Swal.fire('خطا', 'امکان تایید عضویت وجود ندارد.', 'error');
                 });
             }
         });
@@ -322,7 +313,7 @@ $(function() {
 
     // Reject
     $('.reject-user').click(function() {
-        const userId = {{ $user->id }};
+        const profileId = $(this).data('id');
         Swal.fire({
             title: 'رد عضویت؟',
             text: 'آیا مطمئن هستید؟',
@@ -333,9 +324,11 @@ $(function() {
             confirmButtonColor: '#dc3545'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post(`/admin/users/${userId}/reject`, {_token: '{{ csrf_token() }}'}, function() {
+                $.post(`/admin/users/${profileId}/reject`, {_token: '{{ csrf_token() }}'}, function() {
                     Swal.fire('رد شد!', 'عضویت کاربر رد شد', 'success')
                         .then(() => location.reload());
+                }).fail(function() {
+                    Swal.fire('خطا', 'امکان رد عضویت وجود ندارد.', 'error');
                 });
             }
         });

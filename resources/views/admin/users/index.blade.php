@@ -47,8 +47,8 @@
                 <tbody>
                     @foreach($users as $user)
                         <tr id="row-{{ $user->id }}">
-                            <td>{{ toPersianNumber($user->profile->membership_id) }}</td>
-                            <td>{{ $user->profile->first_name ?? '-' }} {{ $user->profile->last_name ?? '' }}</td>
+                            <td>{{ toPersianNumber(optional($user->profile)->membership_id ?? '-') }}</td>
+                            <td>{{ optional($user->profile)->first_name ?? '-' }} {{ optional($user->profile)->last_name ?? '' }}</td>
                             <td>{{ toPersianNumber($user->phone) }}</td>
                             <td>
                                 @if($user->profile && $user->profile->membership_status === 'approved')
@@ -61,7 +61,7 @@
                                     <span class="badge bg-secondary">نامشخص</span>
                                 @endif
                             </td>
-                            <td>{{ toPersianNumber(jdate($user->created_at)->format('Y/m/d')) }}</td>
+                            <td>{{ $user->created_at ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($user->created_at)->format('Y/m/d')) : '-' }}</td>
                             <td>
                                 <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-info text-white">
                                     <i class="bi bi-eye-fill"></i> مشاهده

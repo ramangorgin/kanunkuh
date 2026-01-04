@@ -25,19 +25,25 @@
     {{-- Insurance Info --}}
     <div class="col-md-3">
         <label class="form-label">تاریخ صدور بیمه</label>
-        <input type="text" name="insurance_issue_date" 
-               value="{{ old('insurance_issue_date', $medical->insurance_issue_date ? \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($medical->insurance_issue_date))->format('Y/m/d') : '') }}" 
-               class="form-control" data-jdp autocomplete="off">
+        <div class="input-group">
+            <input type="text" name="insurance_issue_date" 
+                   value="{{ old('insurance_issue_date', $medical->insurance_issue_date ? \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($medical->insurance_issue_date))->format('Y/m/d') : '') }}" 
+                   class="form-control jalali-picker" data-jdp autocomplete="off">
+            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+        </div>
     </div>
     <div class="col-md-3">
         <label class="form-label">تاریخ انقضای بیمه</label>
-        <input type="text" name="insurance_expiry_date" 
-               value="{{ old('insurance_expiry_date', $medical->insurance_expiry_date ? \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($medical->insurance_expiry_date))->format('Y/m/d') : '') }}" 
-               class="form-control" data-jdp autocomplete="off">
+        <div class="input-group">
+            <input type="text" name="insurance_expiry_date" 
+                   value="{{ old('insurance_expiry_date', $medical->insurance_expiry_date ? \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($medical->insurance_expiry_date))->format('Y/m/d') : '') }}" 
+                   class="form-control jalali-picker" data-jdp autocomplete="off">
+            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+        </div>
     </div>
     <div class="col-12">
         <label class="form-label">فایل بیمه ورزشی</label>
-        <input type="file" name="insurance_file" class="filepond" accept="image/*,application/pdf">
+        <input type="file" name="insurance_file" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
         @if($medical->insurance_file)
             <div class="mt-2">
                 <a href="{{ asset('storage/'.$medical->insurance_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">مشاهده فایل فعلی</a>

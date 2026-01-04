@@ -72,7 +72,7 @@
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             @if($program->report)
-                                                <a href="{{ route('program_reports.show', $program->report->id) }}" 
+                                                <a href="{{ route('dashboard.program_reports.show', $program->report->id) }}" 
                                                    class="btn btn-success" 
                                                    title="مشاهده گزارش">
                                                     <i class="bi bi-file-text"></i>
@@ -84,7 +84,7 @@
                                                     $executionDatePassed = $program->execution_date && now()->startOfDay()->gte($program->execution_date->startOfDay());
                                                 @endphp
                                                 @if($executionDatePassed)
-                                                    <a href="{{ route('program_reports.create', $program->id) }}" 
+                                                    <a href="{{ route('dashboard.program_reports.create', $program->id) }}" 
                                                        class="btn btn-primary" 
                                                        title="نوشتن گزارش">
                                                         <i class="bi bi-pencil-square"></i>
@@ -106,7 +106,7 @@
                 <i class="bi bi-calendar-x display-1 text-muted d-block mb-3"></i>
                 <h5 class="text-muted">شما هنوز در هیچ برنامه‌ای شرکت نکرده‌اید</h5>
                 <p class="text-muted">پس از ثبت‌نام و تأیید در برنامه‌ها، آن‌ها در اینجا نمایش داده می‌شوند.</p>
-                <a href="{{ route('programs.index') }}" class="btn btn-primary mt-3">
+                <a href="{{ route('programs.archive') }}" class="btn btn-primary mt-3">
                     <i class="bi bi-calendar-event me-2"></i> مشاهده برنامه‌های موجود
                 </a>
             </div>

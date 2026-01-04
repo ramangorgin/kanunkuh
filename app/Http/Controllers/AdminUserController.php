@@ -182,25 +182,38 @@ class AdminUserController extends Controller
                 $eduFiles = $request->file('educations') ?: [];
 
                 foreach ($request->educations as $index => $edu) {
-                    if (!empty($edu['federation_course_id'])) {
-                        $education = new EducationalHistory([
-                            'user_id' => $user->id,
-                            'federation_course_id' => $edu['federation_course_id'],
-                        ]);
+                    $courseId = $edu['federation_course_id'] ?? null;
+                    $customTitle = $edu['custom_course_title'] ?? null;
 
-                        $certificate = null;
-                        if (isset($eduFiles[$index]['certificate_file']) && $eduFiles[$index]['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
-                            $certificate = $eduFiles[$index]['certificate_file']->store("{$userBase}/education/certificates", 'public');
-                        } elseif (isset($edu['certificate_file']) && $edu['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
-                            $certificate = $edu['certificate_file']->store("{$userBase}/education/certificates", 'public');
-                        }
-
-                        if ($certificate) {
-                            $education->certificate_file = $certificate;
-                        }
-
-                        $education->save();
+                    // allow custom course selection
+                    if ($courseId === '_custom') {
+                        $courseId = null;
                     }
+
+                    // skip empty rows
+                    if (!$courseId && !$customTitle) {
+                        continue;
+                    }
+
+                    $education = new EducationalHistory([
+                        'user_id' => $user->id,
+                        'federation_course_id' => $courseId,
+                        'custom_course_title' => $customTitle,
+                        'issue_date' => $this->jalaliToGregorian($edu['issue_date'] ?? null),
+                    ]);
+
+                    $certificate = null;
+                    if (isset($eduFiles[$index]['certificate_file']) && $eduFiles[$index]['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
+                        $certificate = $eduFiles[$index]['certificate_file']->store("{$userBase}/education/certificates", 'public');
+                    } elseif (isset($edu['certificate_file']) && $edu['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
+                        $certificate = $edu['certificate_file']->store("{$userBase}/education/certificates", 'public');
+                    }
+
+                    if ($certificate) {
+                        $education->certificate_file = $certificate;
+                    }
+
+                    $education->save();
                 }
             }
         });
@@ -310,25 +323,36 @@ class AdminUserController extends Controller
                 $eduFiles = $request->file('educations') ?: [];
 
                 foreach ($request->educations as $index => $edu) {
-                    if (!empty($edu['federation_course_id'])) {
-                        $education = new EducationalHistory([
-                            'user_id' => $user->id,
-                            'federation_course_id' => $edu['federation_course_id'],
-                        ]);
+                    $courseId = $edu['federation_course_id'] ?? null;
+                    $customTitle = $edu['custom_course_title'] ?? null;
 
-                        $certificate = null;
-                        if (isset($eduFiles[$index]['certificate_file']) && $eduFiles[$index]['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
-                            $certificate = $eduFiles[$index]['certificate_file']->store("{$userBase}/education/certificates", 'public');
-                        } elseif (isset($edu['certificate_file']) && $edu['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
-                            $certificate = $edu['certificate_file']->store("{$userBase}/education/certificates", 'public');
-                        }
-
-                        if ($certificate) {
-                            $education->certificate_file = $certificate;
-                        }
-
-                        $education->save();
+                    if ($courseId === '_custom') {
+                        $courseId = null;
                     }
+
+                    if (!$courseId && !$customTitle) {
+                        continue;
+                    }
+
+                    $education = new EducationalHistory([
+                        'user_id' => $user->id,
+                        'federation_course_id' => $courseId,
+                        'custom_course_title' => $customTitle,
+                        'issue_date' => $this->jalaliToGregorian($edu['issue_date'] ?? null),
+                    ]);
+
+                    $certificate = null;
+                    if (isset($eduFiles[$index]['certificate_file']) && $eduFiles[$index]['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
+                        $certificate = $eduFiles[$index]['certificate_file']->store("{$userBase}/education/certificates", 'public');
+                    } elseif (isset($edu['certificate_file']) && $edu['certificate_file'] instanceof \Illuminate\Http\UploadedFile) {
+                        $certificate = $edu['certificate_file']->store("{$userBase}/education/certificates", 'public');
+                    }
+
+                    if ($certificate) {
+                        $education->certificate_file = $certificate;
+                    }
+
+                    $education->save();
                 }
             }
         });

@@ -69,11 +69,17 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">تاریخ شروع عضویت</label>
-                    <input type="text" name="membership_start" value="{{ old('membership_start', $jalali['membership_start'] ?? '') }}" class="form-control" data-jdp>
+                    <div class="input-group">
+                        <input type="text" name="membership_start" value="{{ old('membership_start', $jalali['membership_start'] ?? '') }}" class="form-control jalali-picker" data-jdp autocomplete="off">
+                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    </div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">تاریخ پایان اعتبار</label>
-                    <input type="text" name="membership_expiry" value="{{ old('membership_expiry', $jalali['membership_expiry'] ?? '') }}" class="form-control" data-jdp>
+                    <div class="input-group">
+                        <input type="text" name="membership_expiry" value="{{ old('membership_expiry', $jalali['membership_expiry'] ?? '') }}" class="form-control jalali-picker" data-jdp autocomplete="off">
+                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,7 +120,10 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">تاریخ تولد <span class="text-danger">*</span></label>
-                    <input type="text" name="birth_date" value="{{ old('birth_date', $jalali['birth_date'] ?? '') }}" class="form-control" data-jdp>
+                    <div class="input-group">
+                        <input type="text" name="birth_date" value="{{ old('birth_date', $jalali['birth_date'] ?? '') }}" class="form-control jalali-picker" data-jdp autocomplete="off">
+                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    </div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">وضعیت تأهل</label>
@@ -153,7 +162,7 @@
                 {{-- Files --}}
                 <div class="col-md-6">
                     <label class="form-label">عکس پرسنلی</label>
-                    <input type="file" name="photo" class="filepond" accept="image/*">
+                    <input type="file" name="photo" class="filepond" accept="image/*" data-label-idle="برای بارگذاری عکس کلیک کنید یا بکشید و رها کنید">
                     @if($profile->photo)
                         <div class="mt-2">
                             <img src="{{ asset('storage/'.$profile->photo) }}" alt="عکس فعلی" class="img-thumbnail" style="height: 100px;">
@@ -162,7 +171,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">تصویر کارت ملی</label>
-                    <input type="file" name="national_card" class="filepond" accept="image/*">
+                    <input type="file" name="national_card" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
                     @if($profile->national_card)
                         <div class="mt-2">
                             <a href="{{ asset('storage/'.$profile->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary">مشاهده کارت ملی فعلی</a>
@@ -205,3 +214,34 @@
     </div>
 
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.jalaliDatepicker) {
+            jalaliDatepicker.startWatch({ autoHide: true, showTodayBtn: true, persianDigits: true });
+            document.addEventListener('click', function (e) {
+                const target = e.target.closest('.jalali-picker');
+                if (target) {
+                    jalaliDatepicker.show(target);
+                }
+            });
+        }
+
+        if (window.FilePond) {
+            FilePond.setOptions({
+                credits: false,
+                storeAsFile: true,
+                labelIdle: 'برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید'
+            });
+            document.querySelectorAll('.filepond').forEach(function (input) {
+                FilePond.create(input, {
+                    allowImagePreview: true,
+                    imagePreviewHeight: 120,
+                    labelIdle: input.dataset.labelIdle || 'برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید'
+                });
+            });
+        }
+    });
+</script>
+@endpush

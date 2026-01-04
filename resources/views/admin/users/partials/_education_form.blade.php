@@ -33,14 +33,17 @@
 
                 <div class="col-md-4">
                     <label class="form-label">تاریخ صدور مدرک</label>
-                    <input type="text" name="educations[{{ $index }}][issue_date]" 
-                           value="{{ old("educations.$index.issue_date", $edu->issue_date ? \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($edu->issue_date))->format('Y/m/d') : '') }}" 
-                           class="form-control" data-jdp autocomplete="off">
+                    <div class="input-group">
+                        <input type="text" name="educations[{{ $index }}][issue_date]" 
+                               value="{{ old("educations.$index.issue_date", $edu->issue_date ? \Morilog\Jalali\Jalalian::fromCarbon(\Carbon\Carbon::parse($edu->issue_date))->format('Y/m/d') : '') }}" 
+                               class="form-control jalali-picker" data-jdp autocomplete="off">
+                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    </div>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">فایل گواهینامه</label>
-                    <input type="file" name="educations[{{ $index }}][certificate_file]" class="filepond" accept="image/*,application/pdf">
+                    <input type="file" name="educations[{{ $index }}][certificate_file]" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
                     @if($edu->certificate_file)
                         <div class="mt-2">
                             <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -92,11 +95,14 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">تاریخ صدور مدرک</label>
-                            <input type="text" name="educations[${eduIndex}][issue_date]" class="form-control" data-jdp autocomplete="off">
+                            <div class="input-group">
+                                <input type="text" name="educations[${eduIndex}][issue_date]" class="form-control jalali-picker" data-jdp autocomplete="off">
+                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            </div>
                         </div>
                         <div class="col-12">
                             <label class="form-label">فایل گواهینامه</label>
-                            <input type="file" name="educations[${eduIndex}][certificate_file]" class="filepond" accept="image/*,application/pdf">
+                            <input type="file" name="educations[${eduIndex}][certificate_file]" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
                         </div>
                     </div>
                 </div>
