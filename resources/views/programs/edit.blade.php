@@ -680,7 +680,6 @@
 
                 imageInput.files = dt.files;
                 renderPreviews();
-                imageInput.value = '';
             });
 
             $(document).on('click', '.remove-image', function() {

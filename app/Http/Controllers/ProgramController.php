@@ -201,7 +201,7 @@ class ProgramController extends Controller
             'roles.*.role_title' => 'required|string|max:255',
             'roles.*.user_id' => 'nullable|exists:users,id',
             'roles.*.user_name' => 'nullable|string|max:255',
-            'report_photos' => 'nullable|array|max:10',
+            'report_photos' => 'nullable',
             'report_photos.*' => 'image|mimes:jpeg,jpg,png,gif|max:2048',
         ], [
             'name.required' => 'لطفاً نام برنامه را وارد کنید.',
@@ -244,21 +244,21 @@ class ProgramController extends Controller
             'roles.*.role_title.max' => 'سمت مسئول نمی‌تواند بیشتر از 255 کاراکتر باشد.',
             'roles.*.user_id.exists' => 'کاربر انتخاب شده معتبر نیست.',
             'roles.*.user_name.max' => 'نام فرد نمی‌تواند بیشتر از 255 کاراکتر باشد.',
-            'report_photos.max' => 'حداکثر 10 تصویر مجاز است.',
             'report_photos.*.image' => 'فایل بارگذاری شده باید تصویر باشد.',
             'report_photos.*.mimes' => 'فرمت‌های مجاز: JPG, JPEG, PNG, GIF.',
             'report_photos.*.max' => 'حجم هر تصویر باید کمتر از 2 مگابایت باشد.',
         ]);
 
         // Enforce max image count (defensive)
-        $newFiles = $request->file('report_photos', []);
+        $newFiles = $request->file('report_photos');
+        $newFiles = is_array($newFiles) ? $newFiles : ($newFiles ? [$newFiles] : []);
         if (count($newFiles) > 10) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'report_photos' => 'حداکثر 10 تصویر مجاز است.'
             ]);
         }
 
-        DB::transaction(function () use ($validated, $request) {
+        DB::transaction(function () use ($validated, $request, $newFiles) {
             // Prepare transport info as JSON for move_from fields
             $moveFromTehran = null;
             $moveFromKaraj = null;
@@ -329,17 +329,15 @@ class ProgramController extends Controller
             ]);
 
             // Handle file uploads
-            if ($request->hasFile('report_photos')) {
-                foreach ($request->file('report_photos') as $file) {
-                    if ($file->isValid()) {
-                        $path = $file->store('programs/images', 'public');
-                        ProgramFile::create([
-                            'program_id' => $program->id,
-                            'file_type' => 'image',
-                            'file_path' => $path,
-                            'caption' => null,
-                        ]);
-                    }
+            foreach ($newFiles as $file) {
+                if ($file->isValid()) {
+                    $path = $file->store('programs/images', 'public');
+                    ProgramFile::create([
+                        'program_id' => $program->id,
+                        'file_type' => 'image',
+                        'file_path' => $path,
+                        'caption' => null,
+                    ]);
                 }
             }
 
@@ -397,7 +395,7 @@ class ProgramController extends Controller
             'roles.*.role_title' => 'required|string|max:255',
             'roles.*.user_id' => 'nullable|exists:users,id',
             'roles.*.user_name' => 'nullable|string|max:255',
-            'report_photos' => 'nullable|array|max:10',
+            'report_photos' => 'nullable',
             'report_photos.*' => 'image|mimes:jpeg,jpg,png,gif|max:2048',
             'removed_file_ids' => 'nullable|array',
             'removed_file_ids.*' => 'integer|exists:program_files,id',
@@ -442,7 +440,6 @@ class ProgramController extends Controller
             'roles.*.role_title.max' => 'سمت مسئول نمی‌تواند بیشتر از 255 کاراکتر باشد.',
             'roles.*.user_id.exists' => 'کاربر انتخاب شده معتبر نیست.',
             'roles.*.user_name.max' => 'نام فرد نمی‌تواند بیشتر از 255 کاراکتر باشد.',
-            'report_photos.max' => 'حداکثر 10 تصویر مجاز است.',
             'report_photos.*.image' => 'فایل بارگذاری شده باید تصویر باشد.',
             'report_photos.*.mimes' => 'فرمت‌های مجاز: JPG, JPEG, PNG, GIF.',
             'report_photos.*.max' => 'حجم هر تصویر باید کمتر از 2 مگابایت باشد.',
@@ -458,7 +455,9 @@ class ProgramController extends Controller
             ->all();
 
         $existingFilesCount = $program->files()->count();
-        $newFilesCount = $request->hasFile('report_photos') ? count($request->file('report_photos')) : 0;
+        $newFiles = $request->file('report_photos');
+        $newFiles = is_array($newFiles) ? $newFiles : ($newFiles ? [$newFiles] : []);
+        $newFilesCount = count($newFiles);
         $remainingAfterRemoval = max(0, $existingFilesCount - count($removedFileIds));
 
         if (($remainingAfterRemoval + $newFilesCount) > 10) {
@@ -467,7 +466,7 @@ class ProgramController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($program, $validated, $request, $removedFileIds) {
+        DB::transaction(function () use ($program, $validated, $request, $removedFileIds, $newFiles) {
             // Prepare transport info as JSON for move_from fields
             $moveFromTehran = null;
             $moveFromKaraj = null;
@@ -553,17 +552,15 @@ class ProgramController extends Controller
             }
 
             // Handle file uploads
-            if ($request->hasFile('report_photos')) {
-                foreach ($request->file('report_photos') as $file) {
-                    if ($file->isValid()) {
-                        $path = $file->store('programs/images', 'public');
-                        ProgramFile::create([
-                            'program_id' => $program->id,
-                            'file_type' => 'image',
-                            'file_path' => $path,
-                            'caption' => null,
-                        ]);
-                    }
+            foreach ($newFiles as $file) {
+                if ($file->isValid()) {
+                    $path = $file->store('programs/images', 'public');
+                    ProgramFile::create([
+                        'program_id' => $program->id,
+                        'file_type' => 'image',
+                        'file_path' => $path,
+                        'caption' => null,
+                    ]);
                 }
             }
 
