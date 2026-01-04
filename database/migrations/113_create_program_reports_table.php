@@ -50,49 +50,34 @@ return new class extends Migration {
             $table->enum('road_type', ['آسفالت','خاکی','ترکیبی'])->nullable();
             $table->json('transport_types')->nullable();
 
-            // امکانات رفاهی
             $table->json('facilities')->nullable();
 
-            // نقاط و زمان‌بندی
             $table->json('geo_points')->nullable();
             $table->json('timeline')->nullable();
 
-            // شرکت‌کنندگان
             $table->json('participants')->nullable();
             $table->integer('participants_count')->nullable();
 
-            // 1. اطلاعات کلی گزارش
-            $table->datetime('report_date')->nullable()->after('program_id');
+            $table->datetime('report_date')->nullable();
             
-            // 4. مشخصات گزارشگر و سرپرست
-            $table->foreignId('reporter_id')->nullable()->after('program_id')->constrained('users')->onDelete('set null');
-            $table->string('reporter_name')->nullable()->after('reporter_id'); // برای وارد کردن دستی
-            $table->foreignId('leader_id')->nullable()->after('reporter_name')->constrained('users')->onDelete('set null');
-            $table->string('leader_name')->nullable()->after('leader_id'); // برای وارد کردن دستی
+            $table->foreignId('reporter_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('reporter_name')->nullable(); 
+            $table->foreignId('leader_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('leader_name')->nullable(); 
             
-            // 7. اطلاعات کلی برنامه (در گزارش)
-            $table->enum('report_program_type', ['کوهنوردی', 'کوهپیمایی', 'صخره‌نوردی', 'یخ‌نوردی', 'غارنوردی', 'دیگر'])->nullable()->after('program_id');
-            $table->string('report_program_name')->nullable()->after('report_program_type');
-            $table->string('report_region_route')->nullable()->after('report_program_name');
-            $table->date('report_start_date')->nullable()->after('report_region_route');
-            $table->date('report_end_date')->nullable()->after('report_start_date');
-            $table->string('report_duration')->nullable()->after('report_end_date');
+            $table->enum('report_program_type', ['کوهنوردی', 'کوهپیمایی', 'صخره‌نوردی', 'یخ‌نوردی', 'غارنوردی', 'دیگر'])->nullable();
+            $table->string('report_program_name')->nullable();
+            $table->string('report_region_route')->nullable();
+            $table->date('report_start_date')->nullable();
+            $table->date('report_end_date')->nullable();
+            $table->string('report_duration')->nullable();
             
-            // 8. عوامل اجرایی برنامه - در program_user_roles ذخیره می‌شود
+    
+            $table->enum('technical_feature', ['عمومی', 'تخصصی', 'خانوادگی'])->nullable();
             
-            // 9. ویژگی فنی برنامه
-            $table->enum('technical_feature', ['عمومی', 'تخصصی', 'خانوادگی'])->nullable()->after('report_duration');
-            
-            // 11. نوع جاده - road_type قبلاً وجود دارد
-            // transport_types قبلاً وجود دارد
-            
-            // 12. مشخصات رفاهی منطقه - facilities قبلاً وجود دارد اما باید فیلدهای جدید اضافه کنیم
-            // facilities به صورت JSON ذخیره می‌شود: ['piped_water', 'seasonal_spring', 'permanent_spring', 'school', 'phone', 'electricity', 'post', 'mobile_coverage']
-            
-            // 13. اطلاعات محلی
-            $table->string('local_village_name')->nullable()->after('start_location_name');
-            $table->text('local_guide_info')->nullable()->after('local_village_name');
-            $table->text('shelters_info')->nullable()->after('local_guide_info');
+            $table->string('local_village_name')->nullable();
+            $table->text('local_guide_info')->nullable();
+            $table->text('shelters_info')->nullable();
             $table->json('shelters')->nullable();
 
             $table->timestamps();
