@@ -32,12 +32,19 @@
                 @method('PUT')
 
                 @php
+                    use Hekmatinasser\Verta\Verta;
                     // Parse transport data from JSON
                     $transportTehran = $program->move_from_tehran ? json_decode($program->move_from_tehran, true) : null;
                     $transportKaraj = $program->move_from_karaj ? json_decode($program->move_from_karaj, true) : null;
                     $paymentInfo = $program->payment_info ?? [];
                     $hasTransport = ($transportTehran || $transportKaraj) ? '1' : '0';
                     $isFree = empty($paymentInfo) ? '1' : '0';
+
+                    // Jalali formatted dates for inputs
+                    $jalaliExecutionDate = old('execution_date') ?? ($program->execution_date ? Verta::instance($program->execution_date)->format('Y/m/d') : null);
+                    $jalaliDepartureTehran = old('departure_datetime_tehran') ?? (($transportTehran['datetime'] ?? null) ? Verta::instance($transportTehran['datetime'])->format('Y/m/d H:i') : null);
+                    $jalaliDepartureKaraj = old('departure_datetime_karaj') ?? (($transportKaraj['datetime'] ?? null) ? Verta::instance($transportKaraj['datetime'])->format('Y/m/d H:i') : null);
+                    $jalaliRegisterDeadline = old('register_deadline') ?? ($program->register_deadline ? Verta::instance($program->register_deadline)->format('Y/m/d H:i') : null);
                 @endphp
 
                 {{-- 1. مشخصات اولیه --}}
@@ -80,7 +87,7 @@
                         <label class="form-label">تاریخ اجرا <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" name="execution_date" id="execution_date" class="form-control" data-jdp 
-                                   value="{{ old('execution_date', $program->execution_date) }}" required autocomplete="off">
+                                value="{{ $jalaliExecutionDate }}" required autocomplete="off">
                             <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                         </div>
                     </div>
@@ -109,8 +116,8 @@
                                 <div class="mb-3">
                                     <label class="form-label">تاریخ و ساعت حرکت</label>
                                     <div class="input-group">
-                                        <input type="text" name="departure_datetime_tehran" id="departure_datetime_tehran" class="form-control" data-jdp data-jdp-time="true" 
-                                               value="{{ old('departure_datetime_tehran', $transportTehran['datetime'] ?? null) }}" autocomplete="off">
+                                             <input type="text" name="departure_datetime_tehran" id="departure_datetime_tehran" class="form-control" data-jdp data-jdp-time="true" 
+                                                 value="{{ $jalaliDepartureTehran }}" autocomplete="off">
                                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                                     </div>
                                 </div>
@@ -138,8 +145,8 @@
                                 <div class="mb-3">
                                     <label class="form-label">تاریخ و ساعت حرکت</label>
                                     <div class="input-group">
-                                        <input type="text" name="departure_datetime_karaj" id="departure_datetime_karaj" class="form-control" data-jdp data-jdp-time="true" 
-                                               value="{{ old('departure_datetime_karaj', $transportKaraj['datetime'] ?? null) }}" autocomplete="off">
+                                             <input type="text" name="departure_datetime_karaj" id="departure_datetime_karaj" class="form-control" data-jdp data-jdp-time="true" 
+                                                 value="{{ $jalaliDepartureKaraj }}" autocomplete="off">
                                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                                     </div>
                                 </div>
@@ -327,7 +334,7 @@
                         <label class="form-label">مهلت ثبت‌نام</label>
                         <div class="input-group">
                             <input type="text" name="register_deadline" id="register_deadline" class="form-control" data-jdp data-jdp-time="true" 
-                                   value="{{ old('register_deadline', $program->register_deadline) }}" autocomplete="off">
+                                value="{{ $jalaliRegisterDeadline }}" autocomplete="off">
                             <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                         </div>
                     </div>
@@ -357,6 +364,7 @@
                                 @endforeach
                             @endif
                         </div>
+                        <div id="removed-files"></div>
                     </div>
                 </div>
 
@@ -401,6 +409,7 @@
 @endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
     <script>
         $(document).ready(function() {
@@ -624,6 +633,7 @@
             const uploadArea = document.getElementById('upload-area');
             const imageInput = document.getElementById('image-input');
             const imagePreview = document.getElementById('image-preview');
+            const removedFilesContainer = document.getElementById('removed-files');
             const dt = new DataTransfer();
 
             uploadArea.addEventListener('click', () => imageInput.click());
@@ -682,10 +692,37 @@
 
             // Remove existing image (would need AJAX call to delete from server)
             $(document).on('click', '.remove-existing-image', function() {
-                if (confirm('آیا از حذف این تصویر مطمئن هستید؟')) {
-                    $(this).closest('.image-preview-item').remove();
-                    // TODO: Add AJAX call to delete file from server
-                }
+                const button = $(this);
+                const fileId = button.data('file-id');
+
+                Swal.fire({
+                    title: 'حذف تصویر',
+                    text: 'آیا از حذف این تصویر مطمئن هستید؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله، حذف شود',
+                    cancelButtonText: 'انصراف'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        button.closest('.image-preview-item').remove();
+
+                        if (!removedFilesContainer.querySelector(`input[value="${fileId}"]`)) {
+                            const hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = 'removed_file_ids[]';
+                            hiddenInput.value = fileId;
+                            removedFilesContainer.appendChild(hiddenInput);
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'حذف شد',
+                            text: 'تصویر برای حذف علامت‌گذاری شد',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             });
 
             // Add role functionality
