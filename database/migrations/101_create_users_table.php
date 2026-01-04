@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('otp_code')->nullable();           
             $table->timestamp('otp_expires_at')->nullable();    
             $table->string('role')->default('member'); 
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

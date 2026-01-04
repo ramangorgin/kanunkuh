@@ -31,8 +31,8 @@
                 <div class="col-md-4">
                     <label class="form-label">وضعیت حساب</label>
                     <select name="status" class="form-select">
-                        <option value="active">فعال</option>
-                        <option value="inactive">غیرفعال</option>
+                        <option value="active" {{ old('status', $user->status ?? 'active') == 'active' ? 'selected' : '' }}>فعال</option>
+                        <option value="inactive" {{ old('status', $user->status ?? '') == 'inactive' ? 'selected' : '' }}>غیرفعال</option>
                     </select>
                 </div>
             </div>
@@ -174,7 +174,12 @@
                     <input type="file" name="national_card" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
                     @if($profile->national_card)
                         <div class="mt-2">
-                            <a href="{{ asset('storage/'.$profile->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary">مشاهده کارت ملی فعلی</a>
+                            @php $ncExt = strtolower(pathinfo($profile->national_card, PATHINFO_EXTENSION)); @endphp
+                            @if(in_array($ncExt, ['jpg','jpeg','png','gif','webp']))
+                                <img src="{{ asset('storage/'.$profile->national_card) }}" alt="تصویر کارت ملی" class="img-thumbnail" style="max-height: 140px;">
+                            @else
+                                <a href="{{ asset('storage/'.$profile->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary">دانلود کارت ملی فعلی</a>
+                            @endif
                         </div>
                     @endif
                 </div>

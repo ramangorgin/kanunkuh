@@ -9,7 +9,7 @@ class FederationCoursesSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('federation_courses')->insert([
+        $data = [
             ['id' => 4, 'title' => 'کارگاه آموزشی نقشه خوانی و کار با قطب نما'],
             ['id' => 1, 'title' => 'کار آموزی کوهپیمایی'],
             ['id' => 2, 'title' => 'کارگاه آموزشی حفظ محیط کوهستان'],
@@ -41,7 +41,10 @@ class FederationCoursesSeeder extends Seeder
             ['id' => 29, 'title' => 'راهنمایان کوهستان سطح باشگاه های دره نوردی'],
             ['id' => 30, 'title' => 'راهنمایان کوهستان سطح باشگاه های یخ نوردی'],
             ['id' => 31, 'title' => 'راهنمایان کوهستان سطح باشگاه های کوهنوردی بالسکی'],
-        ]);
+        ];
+
+        // Upsert to avoid duplicate key errors on reruns
+        DB::table('federation_courses')->upsert($data, ['id'], ['title']);
     }
 }
 

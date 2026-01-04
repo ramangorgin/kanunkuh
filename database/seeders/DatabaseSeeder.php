@@ -12,6 +12,12 @@ class DatabaseSeeder extends Seeder
             FederationCoursesSeeder::class,
             InitialDataSeeder::class,
             NotificationTemplateSeeder::class,
+            UsersSeeder::class,
+            ProfilesSeeder::class,
+            ProgramsSeeder::class,
+            CoursesSeeder::class,
+            EducationalHistoriesSeeder::class,
+            PaymentsSeeder::class,
         ]);
     }
 }

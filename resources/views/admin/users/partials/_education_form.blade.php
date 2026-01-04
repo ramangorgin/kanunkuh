@@ -45,10 +45,15 @@
                     <label class="form-label">فایل گواهینامه</label>
                     <input type="file" name="educations[{{ $index }}][certificate_file]" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
                     @if($edu->certificate_file)
+                        @php $certExt = strtolower(pathinfo($edu->certificate_file, PATHINFO_EXTENSION)); @endphp
                         <div class="mt-2">
-                            <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                مشاهده فایل فعلی ({{ basename($edu->certificate_file) }})
-                            </a>
+                            @if(in_array($certExt, ['jpg','jpeg','png','gif','webp']))
+                                <img src="{{ asset('storage/'.$edu->certificate_file) }}" alt="گواهینامه" class="img-thumbnail" style="max-height: 140px;">
+                            @else
+                                <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    دانلود فایل فعلی ({{ basename($edu->certificate_file) }})
+                                </a>
+                            @endif
                         </div>
                     @endif
                 </div>

@@ -65,7 +65,14 @@
                         <div class="col-12 mt-3">
                             <strong>تصویر کارت ملی:</strong>
                             @if(optional($user->profile)->national_card)
-                                <a href="{{ asset('storage/'.optional($user->profile)->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">مشاهده فایل</a>
+                                @php $ncExt = strtolower(pathinfo(optional($user->profile)->national_card, PATHINFO_EXTENSION)); @endphp
+                                @if(in_array($ncExt, ['jpg','jpeg','png','gif','webp']))
+                                    <div class="mt-2">
+                                        <img src="{{ asset('storage/'.optional($user->profile)->national_card) }}" alt="کارت ملی" class="img-thumbnail" style="max-height: 160px;">
+                                    </div>
+                                @else
+                                    <a href="{{ asset('storage/'.optional($user->profile)->national_card) }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">دانلود کارت ملی</a>
+                                @endif
                             @else
                                 <span class="text-muted">ندارد</span>
                             @endif
@@ -134,7 +141,14 @@
                         <div class="mb-2">
                             <strong>بیمه ورزشی:</strong>
                             @if(optional($user->medicalRecord)->insurance_file)
-                                <a href="{{ asset('storage/'.optional($user->medicalRecord)->insurance_file) }}" target="_blank" class="badge bg-primary text-decoration-none">دانلود فایل</a>
+                                @php $insExt = strtolower(pathinfo(optional($user->medicalRecord)->insurance_file, PATHINFO_EXTENSION)); @endphp
+                                @if(in_array($insExt, ['jpg','jpeg','png','gif','webp']))
+                                    <div class="mt-2">
+                                        <img src="{{ asset('storage/'.optional($user->medicalRecord)->insurance_file) }}" alt="بیمه" class="img-thumbnail" style="max-height: 160px;">
+                                    </div>
+                                @else
+                                    <a href="{{ asset('storage/'.optional($user->medicalRecord)->insurance_file) }}" target="_blank" class="badge bg-primary text-decoration-none">دانلود فایل</a>
+                                @endif
                             @else
                                 <span class="badge bg-secondary">ندارد</span>
                             @endif
@@ -188,7 +202,12 @@
                                     <div class="d-flex justify-content-between">
                                         <strong class="mb-1">{{ $edu->federationCourse->title ?? $edu->custom_course_title }}</strong>
                                         @if($edu->certificate_file)
-                                            <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="text-primary"><i class="bi bi-download"></i></a>
+                                            @php $certExt = strtolower(pathinfo($edu->certificate_file, PATHINFO_EXTENSION)); @endphp
+                                            @if(in_array($certExt, ['jpg','jpeg','png','gif','webp']))
+                                                <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="text-primary"><i class="bi bi-image"></i></a>
+                                            @else
+                                                <a href="{{ asset('storage/'.$edu->certificate_file) }}" target="_blank" class="text-primary"><i class="bi bi-download"></i></a>
+                                            @endif
                                         @endif
                                     </div>
                                         <small class="text-muted">تاریخ صدور: {{ isset($edu->issue_date) ? toPersianNumber(\Hekmatinasser\Verta\Verta::instance($edu->issue_date)->format('Y/m/d')) : '-' }}</small>

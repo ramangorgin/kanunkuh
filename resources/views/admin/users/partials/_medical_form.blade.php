@@ -46,7 +46,12 @@
         <input type="file" name="insurance_file" class="filepond" accept="image/*,application/pdf" data-label-idle="برای بارگذاری فایل کلیک کنید یا بکشید و رها کنید">
         @if($medical->insurance_file)
             <div class="mt-2">
-                <a href="{{ asset('storage/'.$medical->insurance_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">مشاهده فایل فعلی</a>
+                @php $insExt = strtolower(pathinfo($medical->insurance_file, PATHINFO_EXTENSION)); @endphp
+                @if(in_array($insExt, ['jpg','jpeg','png','gif','webp']))
+                    <img src="{{ asset('storage/'.$medical->insurance_file) }}" alt="بیمه" class="img-thumbnail" style="max-height: 140px;">
+                @else
+                    <a href="{{ asset('storage/'.$medical->insurance_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">دانلود فایل فعلی</a>
+                @endif
             </div>
         @endif
     </div>

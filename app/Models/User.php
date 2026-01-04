@@ -15,7 +15,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone', // allow phone mass assignment
+        'phone',   // allow phone mass assignment
+        'role',    // admin / member
+        'status',  // active / inactive
     ];
 
     public function Admin()

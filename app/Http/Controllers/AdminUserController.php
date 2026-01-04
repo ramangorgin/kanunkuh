@@ -89,6 +89,8 @@ class AdminUserController extends Controller
     {
         $request->validate([
             'phone' => 'required|unique:users,phone',
+            'role'  => 'nullable|in:member,admin',
+            'status'=> 'nullable|in:active,inactive',
             'first_name' => 'required',
             'last_name' => 'required',
             'national_id' => 'required',
@@ -103,6 +105,7 @@ class AdminUserController extends Controller
             $user = User::create([
                 'phone' => $request->phone,
                 'role' => $request->role ?? 'member',
+                'status' => $request->status ?? 'active',
             ]);
 
             $userBase = "users/{$user->id}";
@@ -247,6 +250,8 @@ class AdminUserController extends Controller
 
         $request->validate([
             'phone' => 'required|unique:users,phone,' . $user->id,
+            'role'  => 'nullable|in:member,admin',
+            'status'=> 'nullable|in:active,inactive',
             'first_name' => 'required',
             'last_name' => 'required',
             'photo' => 'nullable|image|max:4096',
@@ -258,7 +263,8 @@ class AdminUserController extends Controller
 
             $user->update([
                 'phone' => $request->phone,
-                'role' => $request->role,
+                'role' => $request->role ?? $user->role,
+                'status' => $request->status ?? $user->status,
             ]);
 
             $userBase = "users/{$user->id}";
