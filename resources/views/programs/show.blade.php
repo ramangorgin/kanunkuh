@@ -122,7 +122,14 @@
     @if($programImages->count() > 0)
         <div class="image-slideshow">
             @foreach($programImages as $index => $image)
-                <img src="{{ asset('storage/' . $image->file_path) }}" 
+                @php
+                    $imagePath = $image->file_path;
+                    $storageExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath);
+                    $fullSrc = $storageExists
+                        ? asset('storage/' . $imagePath)
+                        : (filter_var($imagePath, FILTER_VALIDATE_URL) ? $imagePath : asset($imagePath));
+                @endphp
+                <img src="{{ $fullSrc }}" 
                      alt="{{ $image->caption ?? 'تصویر برنامه' }}"
                      class="{{ $index === 0 ? 'active' : '' }}"
                      data-index="{{ $index }}">
@@ -212,7 +219,7 @@
 
             @if($program->rules)
             <hr>
-            <h5 class="mb-3">قوانین و شرایط</h5>
+            <h5 class="mb-3">توضیحات</h5>
             <div class="bg-light p-4 rounded">
                 {!! $program->rules !!}
         </div>        
@@ -509,7 +516,7 @@
         const images = document.querySelectorAll('.image-slideshow img');
         const indicators = document.querySelectorAll('.image-slideshow .indicator');
         let currentIndex = 0;
-        const slideInterval = 2000; // 2 seconds
+        const slideInterval = 3000; // 3 seconds
         
         function showSlide(index) {
             // Remove active class from all images and indicators
@@ -530,8 +537,16 @@
             showSlide(currentIndex);
         }
         
-        // Auto-advance slides
-        setInterval(nextSlide, slideInterval);
+        let timer = setInterval(nextSlide, slideInterval);
+
+        // Pause on hover
+        const slideshow = document.querySelector('.image-slideshow');
+        if (slideshow) {
+            slideshow.addEventListener('mouseenter', () => clearInterval(timer));
+            slideshow.addEventListener('mouseleave', () => {
+                timer = setInterval(nextSlide, slideInterval);
+            });
+        }
         
         // Click on indicator to jump to slide
         indicators.forEach((ind, index) => {

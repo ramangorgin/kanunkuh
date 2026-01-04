@@ -301,10 +301,10 @@
 
                 <hr>
 
-                {{-- 6. قوانین و شرایط --}}
-                <h5 class="mb-3 text-primary"><i class="bi bi-file-text me-2"></i> قوانین و شرایط</h5>
+                {{-- 6. توضیحات --}}
+                <h5 class="mb-3 text-primary"><i class="bi bi-file-text me-2"></i> توضیحات</h5>
                 <div class="mb-4">
-                    <label class="form-label">قوانین و شرایط</label>
+                    <label class="form-label">توضیحات</label>
                     <textarea name="rules" id="rules" class="form-control" rows="10">{{ old('rules', $program->rules) }}</textarea>
                 </div>
 
@@ -620,47 +620,25 @@
                 }, 500);
             }
 
-            // Image upload handling
+            // Image upload handling with removable previews
             const uploadArea = document.getElementById('upload-area');
             const imageInput = document.getElementById('image-input');
             const imagePreview = document.getElementById('image-preview');
-            let imageFiles = [];
+            const dt = new DataTransfer();
 
-            uploadArea.addEventListener('click', () => {
-                imageInput.click();
-            });
+            uploadArea.addEventListener('click', () => imageInput.click());
 
-            imageInput.addEventListener('change', function(e) {
-                const files = Array.from(e.target.files);
-                
-                // Check total count
-                const existingImages = $('.image-preview-item').length;
-                if (existingImages + imageFiles.length + files.length > 10) {
-                    toastr.error('حداکثر 10 تصویر مجاز است');
-                    return;
-                }
-
-                files.forEach(file => {
-                    // Check file size (2MB)
-                    if (file.size > 2 * 1024 * 1024) {
-                        toastr.error(`فایل ${file.name} بزرگتر از 2 مگابایت است`);
-                        return;
-                    }
-
-                    // Check file type
-                    if (!file.type.match('image.*')) {
-                        toastr.error(`فایل ${file.name} یک تصویر معتبر نیست`);
-                        return;
-                    }
-
-                    imageFiles.push(file);
+            function renderPreviews() {
+                // Preserve existing images in DOM; only rebuild new previews
+                $('#image-preview .new-image-item').remove();
+                Array.from(dt.files).forEach((file, idx) => {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function(ev) {
                         const div = document.createElement('div');
-                        div.className = 'col-md-3 col-sm-6 image-preview-item';
+                        div.className = 'col-md-3 col-sm-6 image-preview-item new-image-item';
                         div.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview">
-                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-image" data-index="${imageFiles.length - 1}">
+                            <img src="${ev.target.result}" alt="Preview">
+                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-image" data-index="${idx}">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         `;
@@ -668,19 +646,38 @@
                     };
                     reader.readAsDataURL(file);
                 });
+            }
 
-                // Don't update file input programmatically - browser handles it
-                // Files will be submitted with form normally
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                const existingImages = $('#image-preview .image-preview-item').length - $('#image-preview .new-image-item').length;
+
+                files.forEach(file => {
+                    if (existingImages + dt.files.length >= 10) {
+                        toastr.error('حداکثر 10 تصویر مجاز است');
+                        return;
+                    }
+                    if (file.size > 2 * 1024 * 1024) {
+                        toastr.error(`فایل ${file.name} بزرگتر از 2 مگابایت است`);
+                        return;
+                    }
+                    if (!file.type.match('image.*')) {
+                        toastr.error(`فایل ${file.name} یک تصویر معتبر نیست`);
+                        return;
+                    }
+                    dt.items.add(file);
+                });
+
+                imageInput.files = dt.files;
+                renderPreviews();
+                imageInput.value = '';
             });
 
-            // Remove image
             $(document).on('click', '.remove-image', function() {
-                const index = $(this).data('index');
-                imageFiles.splice(index, 1);
-                $(this).closest('.image-preview-item').remove();
-                
-                // Don't update file input programmatically
-                // We'll handle file removal on server side or use FormData
+                const idx = $(this).data('index');
+                dt.items.remove(idx);
+                imageInput.files = dt.files;
+                renderPreviews();
             });
 
             // Remove existing image (would need AJAX call to delete from server)
