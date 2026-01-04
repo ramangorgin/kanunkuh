@@ -40,15 +40,20 @@
 
                     <div class="col-md-6">
                         <label class="form-label">نوع برنامه <span class="text-danger">*</span></label>
-                        <select name="program_type" class="form-select" required>
+                        @php
+                            $defaultProgramTypes = ['کوهنوردی', 'پیمایش‌های سبک', 'سنگ‌نوردی', 'یخ‌نوردی', 'غارنوردی', 'فرهنگی'];
+                            $selectedProgramType = old('program_type');
+                        @endphp
+                        <select name="program_type" class="form-select select2-program-type" required>
                             <option value="">انتخاب کنید</option>
-                            <option value="کوهنوردی" {{ old('program_type') == 'کوهنوردی' ? 'selected' : '' }}>کوهنوردی</option>
-                            <option value="طبیعت‌گردی" {{ old('program_type') == 'طبیعت‌گردی' ? 'selected' : '' }}>طبیعت‌گردی</option>
-                            <option value="سنگ‌نوردی" {{ old('program_type') == 'سنگ‌نوردی' ? 'selected' : '' }}>سنگ‌نوردی</option>
-                            <option value="یخ‌نوردی" {{ old('program_type') == 'یخ‌نوردی' ? 'selected' : '' }}>یخ‌نوردی</option>
-                            <option value="غارنوردی" {{ old('program_type') == 'غارنوردی' ? 'selected' : '' }}>غارنوردی</option>
-                            <option value="فرهنگی" {{ old('program_type') == 'فرهنگی' ? 'selected' : '' }}>فرهنگی</option>
+                            @foreach($defaultProgramTypes as $type)
+                                <option value="{{ $type }}" {{ $selectedProgramType === $type ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
+                            @if($selectedProgramType && !in_array($selectedProgramType, $defaultProgramTypes))
+                                <option value="{{ $selectedProgramType }}" selected>{{ $selectedProgramType }}</option>
+                            @endif
                         </select>
+                        <small class="text-muted">می‌توانید نوع جدید را تایپ کنید </small>
                     </div>
 
                     <div class="col-md-4">
@@ -149,7 +154,7 @@
                         <div class="row g-2 align-items-end">
                             <div class="col-md-4">
                                 <label class="form-label">سمت</label>
-                                <input type="text" name="roles[0][role_title]" class="form-control" placeholder="مثلاً: سرپرست">
+                                <input type="text" name="roles[0][role_title]" class="form-control">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">شناسه کاربر</label>
@@ -162,7 +167,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">نام فرد (در صورت نبودن اکانت)</label>
-                                <input type="text" name="roles[0][user_name]" class="form-control" placeholder="مثلاً: علی رضایی">
+                                <input type="text" name="roles[0][user_name]" class="form-control">
                             </div>
                             <div class="col-md-12 mt-2 text-end">
                                 <button type="button" class="btn btn-danger btn-sm remove-role">حذف</button>
@@ -229,8 +234,8 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">شماره شبا <span class="text-danger">*</span></label>
-                        <input type="text" name="sheba_number" class="form-control" value="{{ old('sheba_number') }}" required>
+                        <label class="form-label">شماره شبا</label>
+                        <input type="text" name="sheba_number" class="form-control" value="{{ old('sheba_number') }}">
                     </div>
 
                     <div class="col-md-6">
@@ -351,6 +356,26 @@
                 dir: "rtl",
                 width: '100%',
                 theme: 'bootstrap-5'
+            });
+
+            // Program type with ability to add custom labels
+            $('.select2-program-type').select2({
+                tags: true,
+                dir: "rtl",
+                width: '100%',
+                theme: 'bootstrap-5',
+                placeholder: 'نوع برنامه را انتخاب یا تایپ کنید',
+                createTag: function (params) {
+                    const term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true
+                    };
+                }
             });
 
             // Initialize Select2 with tags for equipments and meals
@@ -610,7 +635,7 @@
                         <div class="row g-2 align-items-end">
                             <div class="col-md-4">
                                 <label class="form-label">سمت</label>
-                                <input type="text" name="roles[${roleIndex}][role_title]" class="form-control" placeholder="مثلاً: سرپرست">
+                                <input type="text" name="roles[${roleIndex}][role_title]" class="form-control" >
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">شناسه کاربر</label>
@@ -623,7 +648,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">نام فرد (در صورت نبودن اکانت)</label>
-                                <input type="text" name="roles[${roleIndex}][user_name]" class="form-control" placeholder="مثلاً: علی رضایی">
+                                <input type="text" name="roles[${roleIndex}][user_name]" class="form-control" >
                             </div>
                             <div class="col-md-12 mt-2 text-end">
                                 <button type="button" class="btn btn-danger btn-sm remove-role">حذف</button>
