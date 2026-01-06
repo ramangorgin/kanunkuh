@@ -17,6 +17,16 @@ class ProgramReportController extends Controller
         return view('program_reports.index', compact('reports'));
     }
 
+    public function publicArchive()
+    {
+        $reports = ProgramReport::with(['program.files', 'program.userRoles'])
+            ->orderByDesc('report_date')
+            ->orderByDesc('created_at')
+            ->paginate(12);
+
+        return view('program_reports.archive', compact('reports'));
+    }
+
     public function create()
     {
         // Get programs where execution date has passed (including today)

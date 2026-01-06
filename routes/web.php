@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\User\UserNotificationController;
 use App\Http\Controllers\User\TicketController as UserTicketController;
 use App\Http\Controllers\Admin\TicketController as AdminTicketController;
+use App\Http\Controllers\ContactController;
 
 
 use App\Http\Controllers\AuthController;
@@ -37,6 +38,10 @@ use App\Http\Controllers\AuthController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::view('/conditions', 'conditions')->name('conditions');
+Route::view('/about', 'pages.about')->name('about');
+Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::get('/program-reports', [ProgramReportController::class, 'publicArchive'])->name('program_reports.archive');
 
 // Auth: Login & Register
 // ==========================

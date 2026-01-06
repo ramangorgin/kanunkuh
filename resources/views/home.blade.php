@@ -113,6 +113,7 @@
             </div>
             <div class="col-lg-7">
                 <div class="timeline">
+
                     @foreach($historyItems as $item)
                         <div class="timeline-item">
                             <div class="timeline-year">{{ $item['year'] }}</div>
@@ -150,19 +151,19 @@
                         <div class="row g-3">
                             @forelse($latestPrograms as $program)
                                 <div class="col-12 col-md-6 col-xl-3">
+                                    @php $programImage = optional($program->files->first())->file_path ? asset('storage/'.optional($program->files->first())->file_path) : $fallbackImage; @endphp
                                     <div class="content-card h-100">
-                                        @php $programImage = optional($program->files->first())->file_path ? asset('storage/'.optional($program->files->first())->file_path) : $fallbackImage; @endphp
-                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.4), rgba(0,0,0,.55)), url('{{ $programImage }}');"></div>
+                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.45), rgba(0,0,0,.6)), url('{{ $programImage }}');"></div>
                                         <div class="content-body">
-                                            <div class="d-flex justify-content-between mb-1 text-muted small">
-                                                <span><i class="bi bi-geo-alt ms-1"></i>{{ $program->region_name ?? 'مسیر ویژه' }}</span>
-                                                <span><i class="bi bi-calendar3 ms-1"></i>{{ $program->execution_date ? toPersianNumber(jdate($program->execution_date)->format('Y/m/d')) : '-' }}</span>
+                                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ $program->execution_date ? toPersianNumber(jdate($program->execution_date)->format('Y/m/d')) : '-' }}</span>
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-geo-alt"></i>{{ $program->region_name ?? 'مسیر ویژه' }}</span>
                                             </div>
-                                            <h6 class="fw-bold mb-2">{{ $program->name ?? $program->title ?? 'برنامه باشگاه' }}</h6>
+                                            <h6 class="content-title">{{ $program->name ?? $program->title ?? 'برنامه باشگاه' }}</h6>
                                             <p class="text-muted small mb-2">ارتفاع قله: {{ toPersianNumber($program->peak_height ?? 0) }} متر</p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="badge bg-success-subtle text-success"><i class="bi bi-cash-coin ms-1"></i>{{ toPersianNumber($program->cost_member ?? 0) }} تومان</span>
-                                                <a href="{{ route('programs.show', $program->id) }}" class="btn btn-sm btn-outline-primary">ادامه مطلب</a>
+                                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                <span class="badge bg-success-subtle text-success d-inline-flex align-items-center gap-1"><i class="bi bi-cash-coin"></i>{{ toPersianNumber($program->cost_member ?? 0) }} تومان</span>
+                                                <a href="{{ route('programs.show', $program->id) }}" class="btn btn-sm btn-outline-primary">ادامه</a>
                                             </div>
                                         </div>
                                     </div>
@@ -189,19 +190,21 @@
                         <div class="row g-3">
                             @forelse($latestCourses as $course)
                                 <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="content-card h-100">
-                                        @php $courseImage = optional($course->files->first())->file_path ? asset('storage/'.optional($course->files->first())->file_path) : $fallbackImage; @endphp
-                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.45), rgba(0,0,0,.55)), url('{{ $courseImage }}');"></div>
+                                    <div class="content-card content-card-plain h-100">
                                         <div class="content-body">
-                                            <div class="d-flex justify-content-between mb-1 text-muted small">
-                                                <span><i class="bi bi-calendar3 ms-1"></i>{{ $course->start_date ? toPersianNumber(jdate($course->start_date)->format('Y/m/d')) : '-' }}</span>
-                                                <span><i class="bi bi-clock ms-1"></i>{{ $course->end_date ? toPersianNumber(jdate($course->end_date)->format('Y/m/d')) : '' }}</span>
+                                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ $course->start_date ? toPersianNumber(jdate($course->start_date)->format('Y/m/d')) : '-' }}</span>
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-clock"></i>{{ $course->end_date ? toPersianNumber(jdate($course->end_date)->format('Y/m/d')) : '' }}</span>
                                             </div>
-                                            <h6 class="fw-bold mb-2">{{ $course->title }}</h6>
-                                            <p class="text-muted small mb-2">ظرفیت: {{ toPersianNumber($course->capacity ?? 0) }} نفر</p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="badge bg-info-subtle text-info"><i class="bi bi-cash-coin ms-1"></i>{{ toPersianNumber($course->member_cost ?? 0) }} تومان</span>
-                                                <a href="{{ route('courses.show', $course->id) }}" class="btn btn-sm btn-outline-primary">ادامه مطلب</a>
+                                            <h6 class="content-title">{{ $course->title }}</h6>
+                                            <p class="text-muted small mb-2 line-clamp-2">{{ \Illuminate\Support\Str::limit(strip_tags($course->description), 110, '...') }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="badge bg-info-subtle text-info d-inline-flex align-items-center gap-1"><i class="bi bi-cash-coin"></i>{{ toPersianNumber($course->member_cost ?? 0) }} تومان</span>
+                                                <span class="badge bg-light text-dark d-inline-flex align-items-center gap-1"><i class="bi bi-people"></i>{{ toPersianNumber($course->capacity ?? 0) }} نفر</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                <small class="text-muted d-inline-flex align-items-center gap-1"><i class="bi bi-geo-alt"></i>{{ $course->place ?? 'محل برگزاری متعاقباً' }}</small>
+                                                <a href="{{ route('courses.show', $course->id) }}" class="btn btn-sm btn-outline-primary">ادامه</a>
                                             </div>
                                         </div>
                                     </div>
@@ -228,22 +231,27 @@
                         <div class="row g-3">
                             @forelse($latestReports as $report)
                                 <div class="col-12 col-md-6 col-xl-3">
+                                    @php
+                                        $program = $report->program;
+                                        $reportImage = $program && $program->files->first() ? asset('storage/'.$program->files->first()->file_path) : $fallbackImage;
+                                        $reportLink = auth()->check()
+                                            ? (auth()->user()->role === 'admin'
+                                                ? route('admin.program_reports.show', $report->id)
+                                                : route('dashboard.program_reports.show', $report->id))
+                                            : route('auth.login');
+                                    @endphp
                                     <div class="content-card h-100">
-                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.5), rgba(0,0,0,.6)), url('{{ $fallbackImage }}');"></div>
+                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.55), rgba(0,0,0,.65)), url('{{ $reportImage }}');"></div>
                                         <div class="content-body">
-                                            <div class="d-flex justify-content-between mb-1 text-muted small">
-                                                <span><i class="bi bi-calendar3 ms-1"></i>{{ $report->report_date ? toPersianNumber(jdate($report->report_date)->format('Y/m/d')) : '-' }}</span>
-                                                <span><i class="bi bi-geo-alt ms-1"></i>{{ $report->report_region_route ?? 'مسیر کوهستانی' }}</span>
+                                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ $report->report_date ? toPersianNumber(jdate($report->report_date)->format('Y/m/d')) : '-' }}</span>
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-geo-alt"></i>{{ $report->report_region_route ?? ($program->region_name ?? 'مسیر کوهستانی') }}</span>
                                             </div>
-                                            <h6 class="fw-bold mb-2">{{ $report->report_program_name ?? optional($report->program)->name ?? 'گزارش برنامه' }}</h6>
+                                            <h6 class="content-title">{{ $report->report_program_name ?? optional($report->program)->name ?? 'گزارش برنامه' }}</h6>
                                             <p class="text-muted small mb-2">سرپرست: {{ $report->leader_name ?? 'نامشخص' }}</p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="badge bg-light text-dark"><i class="bi bi-people ms-1"></i>{{ toPersianNumber($report->participants_count ?? 0) }} نفر</span>
-                                                @auth
-                                                    <a href="{{ route('admin.program_reports.show', $report->id) }}" class="btn btn-sm btn-outline-primary">ادامه مطلب</a>
-                                                @else
-                                                    <a href="{{ route('auth.login') }}" class="btn btn-sm btn-outline-primary">ورود برای مشاهده</a>
-                                                @endauth
+                                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                <span class="badge bg-light text-dark d-inline-flex align-items-center gap-1"><i class="bi bi-people"></i>{{ toPersianNumber($report->participants_count ?? 0) }} نفر</span>
+                                                <a href="{{ $reportLink }}" class="btn btn-sm btn-outline-primary">ادامه</a>
                                             </div>
                                         </div>
                                     </div>
@@ -268,18 +276,19 @@
                         <div class="row g-3">
                             @forelse($latestPosts as $post)
                                 <div class="col-12 col-md-6 col-xl-3">
+                                    @php $postImage = $post->featured_image ? asset('storage/'.$post->featured_image) : $fallbackImage; @endphp
                                     <div class="content-card h-100">
-                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.45), rgba(0,0,0,.55)), url('{{ $post->featured_image ? asset('storage/'.$post->featured_image) : $fallbackImage }}');"></div>
+                                        <div class="content-cover" style="background-image: linear-gradient(135deg, rgba(0,0,0,.5), rgba(0,0,0,.65)), url('{{ $postImage }}');"></div>
                                         <div class="content-body">
-                                            <div class="d-flex justify-content-between mb-1 text-muted small">
-                                                <span><i class="bi bi-calendar3 ms-1"></i>{{ $post->published_at ? toPersianNumber($post->published_at->format('Y/m/d')) : '-' }}</span>
-                                                <span><i class="bi bi-eye ms-1"></i>{{ toPersianNumber($post->view_count) }}</span>
+                                            <div class="d-flex justify-content-between text-muted small mb-1">
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-calendar3"></i>{{ $post->published_at ? toPersianNumber($post->published_at->format('Y/m/d')) : '-' }}</span>
+                                                <span class="d-inline-flex align-items-center gap-1"><i class="bi bi-eye"></i>{{ toPersianNumber($post->view_count) }}</span>
                                             </div>
-                                            <h6 class="fw-bold mb-2">{{ $post->title }}</h6>
-                                            <p class="text-muted small mb-2">{{ Str::limit(strip_tags($post->excerpt ?: $post->content), 100) }}</p>
-                                            <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="content-title">{{ $post->title }}</h6>
+                                            <p class="text-muted small mb-2 line-clamp-2">{{ Str::limit(strip_tags($post->excerpt ?: $post->content), 110) }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-auto">
                                                 <span class="badge bg-primary-subtle text-primary">وبلاگ</span>
-                                                <a href="{{ route('blog.show', $post->slug) }}" class="btn btn-sm btn-outline-primary">ادامه مطلب</a>
+                                                <a href="{{ route('blog.show', $post->slug) }}" class="btn btn-sm btn-outline-primary">ادامه</a>
                                             </div>
                                         </div>
                                     </div>
@@ -373,168 +382,49 @@
 
 @push('styles')
 <style>
+.hero-slider { position: relative; width: 100%; height: 100vh; overflow: hidden; }
+.carousel-container { position: relative; width: 100%; height: 100%; }
+.carousel-slide { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; z-index: 1; }
+.carousel-slide.active { opacity: 1; z-index: 2; }
+.slide-image { width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scale(1.05); transition: transform 8s ease-in-out; }
+.carousel-slide.active .slide-image { transform: scale(1.15); }
+.hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 3; }
+.hero-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 4; width: 90%; max-width: 1200px; text-align: center; color: #fff; }
+
+.mini-card { background:#fff; border-radius: 12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.05); text-align:center; height:100%; }
+
+.timeline { position: relative; padding-right: 25px; border-right: 2px solid rgba(13,110,253,0.2); }
+.timeline-item { position: relative; padding-bottom: 18px; }
+.timeline-year { font-weight:700; color:#0d6efd; margin-bottom:4px; }
+.timeline-dot { position:absolute; right:-10px; top:6px; width:12px; height:12px; background:#0d6efd; border-radius:50%; box-shadow:0 0 0 6px rgba(13,110,253,0.1); }
+.timeline-card { background:#fff; border-radius:10px; padding:12px 14px; }
+
+.content-card { background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 15px 35px rgba(0,0,0,0.08); display:flex; flex-direction:column; transition:transform .25s ease, box-shadow .25s ease; min-height:100%; }
+.content-card:hover { transform: translateY(-6px); box-shadow:0 18px 40px rgba(0,0,0,0.12); }
+.content-card-plain { border: 1px solid #eef1f5; box-shadow:0 8px 22px rgba(0,0,0,0.05); }
+.content-cover { height: 170px; background-size: cover; background-position: center; }
+.content-body { padding:14px; display:flex; flex-direction:column; height:100%; }
+.content-title { font-weight:700; font-size:16px; margin:10px 0 12px; line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:48px; }
+.line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.line-clamp-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+.check-chip { background: rgba(255,255,255,0.12); color:#fff; padding:10px 12px; border-radius:12px; display:inline-flex; align-items:center; gap:6px; font-size:14px; }
+.icon-circle { width:44px; height:44px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:20px; }
+
+.scenic-section { background-size: cover; background-position: center; }
+.chip-light { background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.2); color:#fff; padding:10px 14px; border-radius:999px; font-size:14px; display:inline-flex; align-items:center; gap:6px; }
+.mini-visual { border-radius:14px; height:140px; background-size:cover; background-position:center; padding:14px; color:#fff; display:flex; align-items:flex-end; box-shadow:0 18px 38px rgba(0,0,0,0.12); }
+.visual-card { border-radius:16px; height:220px; background-size:cover; background-position:center; position:relative; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.12); }
+.visual-content { position:absolute; bottom:14px; right:14px; left:14px; color:#fff; }
+.feedback-card { background:#fff; border-radius:14px; padding:16px; box-shadow:0 15px 30px rgba(0,0,0,0.07); }
+.avatar-placeholder { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; }
+
+.badge i, .content-body i, .chip-light i, .check-chip i { margin-left:6px; }
 
 @media (max-width: 768px) {
-    .hero-slider {
-        height: 80vh;
-    }
-    
-    .hero-content {
-        padding: 0 20px;
-    }
-    
-    .slide-image {
-        object-position: center center;
-    }
-}
-.hero-slider {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.carousel-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.carousel-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-    z-index: 1;
-}
-
-.carousel-slide.active {
-    opacity: 1;
-    z-index: 2;
-}
-
-.slide-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transform: scale(1.05);
-    transition: transform 8s ease-in-out;
-}
-
-.carousel-slide.active .slide-image {
-    transform: scale(1.15);
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 3;
-}
-
-.hero-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 4;
-    width: 90%;
-    max-width: 1200px;
-    text-align: center;
-    color: white;
-}
-
-.mini-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    text-align: center;
-    height: 100%;
-}
-
-.timeline {
-    position: relative;
-    padding-right: 25px;
-    border-right: 2px solid rgba(13,110,253,0.2);
-}
-
-.timeline-item {
-    position: relative;
-    padding-bottom: 18px;
-}
-
-.timeline-year {
-    font-weight: 700;
-    color: #0d6efd;
-    margin-bottom: 4px;
-}
-
-.timeline-dot {
-    position: absolute;
-    right: -10px;
-    top: 6px;
-    width: 12px;
-    height: 12px;
-    background: #0d6efd;
-    border-radius: 50%;
-    box-shadow: 0 0 0 6px rgba(13,110,253,0.1);
-}
-
-.timeline-card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 12px 14px;
-}
-
-.content-card {
-    position: relative;
-    border-radius: 14px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-}
-
-.content-cover {
-    width: 100%;
-    height: 140px;
-    background-size: cover;
-    background-position: center;
-}
-
-.content-body {
-    padding: 12px 14px 14px;
-}
-
-.check-chip {
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    padding: 10px 12px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-}
-
-.icon-circle {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-}
-
-@media (max-width: 768px) {
+    .hero-slider { height: 80vh; }
+    .hero-content { padding: 0 20px; }
+    .slide-image { object-position: center center; }
     .content-cover { height: 170px; }
     .timeline { border: none; padding-right: 0; }
     .timeline-dot { display: none; }

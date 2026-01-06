@@ -16,7 +16,7 @@ class HomeController extends Controller
             'latestPrograms' => Program::with('files')->latest('execution_date')->take(4)->get(),
             'latestCourses' => Course::with('files')->latest('start_date')->take(4)->get(),
             'latestPosts' => Post::published()->latest('published_at')->take(4)->get(),
-            'latestReports' => ProgramReport::with('program')->latest('report_date')->take(4)->get(),
+            'latestReports' => ProgramReport::with(['program.files', 'program.userRoles'])->latest('report_date')->take(4)->get(),
             'stats' => [
                 'members' => User::count(),
                 'programs' => Program::count(),

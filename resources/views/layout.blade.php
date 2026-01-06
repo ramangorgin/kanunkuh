@@ -50,6 +50,9 @@
                             @if(Route::has('blog.index'))
                                 <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}" style="font-size: 15pt;">بلاگ</a></li>
                             @endif
+                            <li class="nav-item"><a class="nav-link" href="{{ route('program_reports.archive') }}" style="font-size: 15pt;">گزارش برنامه‌ها</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('about') }}" style="font-size: 15pt;">درباره ما</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}" style="font-size: 15pt;">تماس با ما</a></li>
                         </ul>
                     </div>
 
@@ -86,6 +89,9 @@
                         @if(Route::has('blog.index'))
                             <li class="nav-item"><a class="nav-link" href="{{ route('blog.index') }}">بلاگ</a></li>
                         @endif
+                        <li class="nav-item"><a class="nav-link" href="{{ route('program_reports.archive') }}">گزارش برنامه‌ها</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">درباره ما</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">تماس با ما</a></li>
                     </ul>
 
                     <hr>
@@ -129,7 +135,7 @@
                         </li>
                         <li class="mb-5">
                             <i class="bi bi-envelope-fill"></i>
-                            <a href="#" class="text-info text-decoration-none">رایانامه</a>
+                            <a href="mailto:info@kanoonkooh.ir" class="text-info text-decoration-none">info@kanoonkooh.ir</a>
                         </li>
                         <li class="mb-5">
                             <i class="bi bi-instagram"></i>
@@ -149,7 +155,11 @@
                     <ul class="list-unstyled fs-6 m-0 p-0 d-flex flex-column align-items-center">
                         <li class="mb-4 mt-4 w-100"><a href="{{ route('courses.archive') }}" class="text-light text-decoration-none d-inline-block w-100">آخرین دوره‌ها</a></li>
                         <li class="mb-4 w-100"><a href="{{ route('programs.archive') }}" class="text-light text-decoration-none d-inline-block w-100">آخرین برنامه‌ها</a></li>
+                        <li class="mb-4 w-100"><a href="{{ route('program_reports.archive') }}" class="text-light text-decoration-none d-inline-block w-100">گزارش برنامه‌ها</a></li>
+                        <li class="mb-4 w-100"><a href="{{ route('blog.index') }}" class="text-light text-decoration-none d-inline-block w-100">آخرین مطالب بلاگ</a></li>
                         <li class="w-100"><a href="{{ route('conditions') }}" class="text-light text-decoration-none d-inline-block w-100">شرایط عضویت</a></li>
+                        <li class="w-100"><a href="{{ route('about') }}" class="text-light text-decoration-none d-inline-block w-100">درباره ما</a></li>
+                        <li class="w-100"><a href="{{ route('contact') }}" class="text-light text-decoration-none d-inline-block w-100">تماس با ما</a></li>
                     </ul>
                 </div>
 

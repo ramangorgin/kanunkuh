@@ -93,7 +93,10 @@ class ProgramController extends Controller
     }
     public function archive()
     {
-        $programs = Program::all();
+        $programs = Program::with('files')
+            ->orderByDesc('execution_date')
+            ->orderByDesc('created_at')
+            ->paginate(12);
         return view('programs.archive', compact('programs'));
     }
 
