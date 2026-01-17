@@ -37,6 +37,8 @@ use App\Http\Controllers\AuthController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::view('/map', [HomeController::class, 'map'])->name('map');
+
 Route::view('/conditions', 'conditions')->name('conditions');
 Route::view('/about', 'pages.about')->name('about');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');

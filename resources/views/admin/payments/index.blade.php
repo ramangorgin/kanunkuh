@@ -151,14 +151,15 @@ table.dataTable thead th {
 @endsection
 
 @push('scripts')
-<!-- DataTables -->
+
+<!-- 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
-<!-- SweetAlert -->
+ SweetAlert 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+-->
 <script>
 $(document).on('click', '.details-btn', function() {
     let id = $(this).data('id');

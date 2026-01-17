@@ -1,0 +1,57 @@
+/* Font faces (from public/fonts) */
+@font-face {
+  font-family: "PeydaLight";
+  src: url("/fonts/Peyda-Light.ttf") format("truetype");
+  font-weight: 300 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PeydaBlack";
+  src: url("/fonts/Peyda-Black.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "ModamMedium";
+  src: url("/fonts/Modam-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* variables */
+:root{
+  --ff-heading: "PeydaBlack", sans-serif;
+  --ff-body:    "PeydaLight", sans-serif;
+  --ff-ui:      "ModamMedium", sans-serif;
+}
+
+/* Calendar widget overrides (jalali-datepicker) */
+.jalali-datepicker,
+.jalali-datepicker * {
+  font-family: var(--ff-body) !important;
+  direction: rtl;
+}
+
+/* calendar title / legend */
+.jalali-datepicker .jalali-datepicker-legend,
+.jalali-datepicker .jalali-datepicker-header {
+  font-family: var(--ff-heading) !important;
+  font-weight: 700 !important;
+}
+
+/* toolbar/buttons */
+.jalali-datepicker .jalali-datepicker-toolbar,
+.jalali-datepicker .jalali-datepicker-footer,
+.jalali-datepicker button,
+.jalali-datepicker .jalali-datepicker-action {
+  font-family: var(--ff-ui) !important;
+  font-weight: 500 !important;
+}
+
+/* keep z-index as you had */
+.jalali-datepicker { z-index: 2000 !important; }
+.jalali-datepicker .jalali-datepicker-legend { z-index: 2001 !important; }
+.jalali-datepicker-portal { z-index: 2000 !important; }

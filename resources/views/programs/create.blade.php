@@ -339,7 +339,8 @@
 @endpush
 
 @push('scripts')
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+    <script src="{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}"></script>
+
     <script>
         $(document).ready(function() {
             // Initialize CKEditor
@@ -496,6 +497,7 @@
                 });
             }
 
+            /*
             // Initialize Leaflet maps
             function initMap(divId, latInputId, lonInputId, defaultLat = 35.6892, defaultLon = 51.3890, existingLat = null, existingLon = null) {
                 try {
@@ -557,6 +559,7 @@
                     mapsInitialized = true;
                 }, 500);
             }
+            */
 
             // Image upload handling with removable previews
             const uploadArea = document.getElementById('upload-area');

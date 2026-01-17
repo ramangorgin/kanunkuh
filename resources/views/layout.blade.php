@@ -8,17 +8,42 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"
-              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap/5.3.2/css/bootstrap.rtl.min.css') }}'">
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"
-              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/bootstrap-icons/1.10.5/font/bootstrap-icons.css') }}'">
-          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}'" />
-        <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
-          <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"
-              onerror="this.onerror=null;this.href='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.css') }}'" />
-        <link rel="stylesheet" href="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.css') }}">
+
+        <link rel="stylesheet" href="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.css"/>
+        <script src="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.js"></script>
+
+        {{-- Jalali Datepicker --}}
+        <link rel="stylesheet" href="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.css') }}"></script>
+
+        {{-- App CSS --}}
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
+
+        {{-- Bootstrap & Icons --}}
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/bootstrap/5.3.2/css/bootstrap.rtl.min.css') }}"></script>
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/bootstrap-icons/1.10.5/font/bootstrap-icons.css') }}"></script>
+                
+        {{-- SweetAlert & Animate --}}
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.css') }}"></script>
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/animate.css/4.1.1/animate.min.css') }}"></script>
+
+        {{-- DataTables --}}
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/datatables/1.13.6/dataTables.bootstrap5.min.css') }}"></script>
+
+        {{-- Select2 --}}
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.css') }}"></script>
+
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css') }}"></script>
+
+        {{-- Leaflet --}}
+       <!-- <link rel="stylesheet" href="{{  asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}"></script> -->
+
+
+        {{-- FilePond --}}
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/filepond/4/filepond.min.css') }}"></script>
+
+        {{-- Toastr --}}           
+        <link rel="stylesheet" href="{{ asset('vendor/cdn/toastr/latest/toastr.min.css') }}"></script>
         @arcaptchaScript
         @stack('styles')
 
@@ -190,17 +215,34 @@
         </div>
     </footer>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/jquery/3.6.0/jquery.min.js') }}';document.head.appendChild(s);"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/bootstrap/5.3.0/js/bootstrap.bundle.min.js') }}';document.head.appendChild(s);"></script>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}';document.head.appendChild(s);"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
-            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}';document.head.appendChild(s);"></script>
-        <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"
-            onerror="this.onerror=null;this.remove();var s=document.createElement('script');s.src='{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}';document.head.appendChild(s);"></script>
-        {{-- نقشه و تاریخ --}}
+               {{-- JS --}}
+    
+                <script src="{{ asset('vendor/cdn/jquery/3.7.0/jquery.min.js') }}"></script> 
+
+                <script src="{{ asset('vendor/cdn/bootstrap/5.3.2/js/bootstrap.bundle.min.js') }}"></script>
+
+            {{-- Plugins --}}
+                <script src="{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.js') }}"></script>
+                    
+                <script src="{{ asset('vendor/cdn/datatables/1.13.6/jquery.dataTables.min.js') }}"></script>
+
+                <script src="{{ asset('vendor/cdn/datatables/1.13.6/dataTables.bootstrap5.min.js') }}"></script>
+
+                <script src="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}"></script>
+
+                <script src="{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}"></script>
+
+                <script src="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}"></script>
+
+                <!--
+                <script src="{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}"></script>
+        -->
+
+                <script src="{{ asset('vendor/cdn/filepond/4/filepond.min.js') }}"></script>
+
+                <script src="{{ asset('vendor/cdn/toastr/latest/toastr.min.js') }}"></script>
+
+            {{-- نقشه و تاریخ --}}
         <script>
             // سال شمسی به فارسی
             try {
@@ -209,12 +251,30 @@
                 document.getElementById('shamsi-year').innerText = year.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
             } catch (e) {}
 
+            /*
             // نقشه
             var map = L.map('map').setView([35.8232941, 50.9331318], 16);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
             L.marker([35.8232941, 50.9331318]).addTo(map);
+            */
+
+        </script>
+
+        <script>
+            // Create a Leaflet map
+            const neshanMap = new L.Map("map", {
+                key: "web.34d371d6df614e62afe2604d5ee25b1f", 
+                maptype: "neshan",
+                poi: true,
+                traffic: true,
+                center: [35.8232941, 50.9331318],
+                zoom: 16,
+            })
+
+            // add marker to map
+            let marker = L.marker([35.8232941, 50.9331318]).addTo(neshanMap);
         </script>
 
     <script src="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}"></script>
