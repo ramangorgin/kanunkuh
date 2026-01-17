@@ -410,7 +410,9 @@
 @endpush
 
 @push('scripts')
+<!--
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+    -->
     <script>
         $(document).ready(function() {
             // Initialize CKEditor for description

@@ -7,7 +7,9 @@
 @endsection
 
 @push('styles')
+<!--
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+-->
 <style>
     
     /* File input styling */
@@ -270,8 +272,9 @@ if (! function_exists('toPersianDate')) {
 <script>
         jalaliDatepicker.startWatch({ persianDigits: true });
 </script>
+<!--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+-->
 <script>
 (function() {
     'use strict';

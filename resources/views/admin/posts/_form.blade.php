@@ -118,8 +118,10 @@
 </div>
 
 @push('scripts')
+<!--
 <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
 <script>
+-->
     const appUrl = @json(rtrim(config('app.url'), '/'));
     const csrfToken = @json(csrf_token());
     const slugInput = document.getElementById('slug');

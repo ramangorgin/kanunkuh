@@ -3,7 +3,9 @@
 @section('title', $course->title)
 
 @push('styles')
+<!--
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+-->
 <style>
     .course-header-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -380,7 +382,9 @@
 @endsection
 
 @push('scripts')
+<!--
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+-->
 <script>
     @if($course->place_lat && $course->place_lon)
     (function() {

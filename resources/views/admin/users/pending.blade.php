@@ -63,6 +63,7 @@
 @endsection
 
 @push('scripts')
+<!--
 {{-- DataTables --}}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -70,7 +71,7 @@
 
 {{-- SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+-->
 <script>
 $(document).ready(function() {
     $('#pendingTable').DataTable({

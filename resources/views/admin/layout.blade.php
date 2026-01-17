@@ -35,9 +35,10 @@
 
     <link rel="stylesheet" href="{{ asset('vendor/cdn/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css') }}"></script>
 
+    <!--
     {{-- Leaflet --}}
     <link rel="stylesheet" href="{{  asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}"></script>
-
+-->
 
     {{-- FilePond --}}
     <link rel="stylesheet" href="{{ asset('vendor/cdn/filepond/4/filepond.min.css') }}"></script>
@@ -391,9 +392,9 @@
         <script src="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}"></script>
 
         <script src="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}"></script>
-
+<!--
         <script src="{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}"></script>
-
+    -->
         <script src="{{ asset('vendor/cdn/filepond/4/filepond.min.js') }}"></script>
 
         <script src="{{ asset('vendor/cdn/toastr/latest/toastr.min.js') }}"></script>

@@ -7,7 +7,9 @@
 @endsection
 
 @push('styles')
+<!--
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+-->
 <style>
     /* Jalali datepicker z-index fixes */
     .jalali-datepicker { z-index: 2000 !important; }
@@ -241,8 +243,9 @@ if (! function_exists('toPersianDate')) {
 @endsection
 
 @push('scripts')
+<!--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+                -->
 <script>
 (function() {
     'use strict';

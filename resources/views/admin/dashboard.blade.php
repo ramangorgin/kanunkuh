@@ -210,14 +210,15 @@
                     @forelse($latestUsers as $u)
                         <tr>
                             <td>{{ $u->profile->first_name ?? '' }} {{ $u->profile->last_name ?? '' }}</td>
-                            <td>{{ toPersianNumber($u->phone) }}</td>
                             <td>
-                                @if($u->profile->membership_status == 'approved')
+                                @if($u->profile?->membership_status == 'approved')
                                     <span class="badge bg-success">تایید شده</span>
-                                @elseif($u->profile->membership_status == 'pending')
+                                @elseif($u->profile?->membership_status == 'pending')
                                     <span class="badge bg-warning text-dark">در انتظار</span>
-                                @else
+                                @elseif($u->profile?->membership_status == 'rejected')
                                     <span class="badge bg-danger">رد شده</span>
+                                @else
+                                    <span class="badge bg-danger">بدون اطلاعات</span>
                                 @endif
                             </td>
                             <td>{{ toPersianNumber(jdate($u->created_at)->format('Y/m/d')) }}</td>
@@ -235,7 +236,9 @@
 @endsection
 
 @push('scripts')
+<!--
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+-->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const ctx = document.getElementById('paymentsChart').getContext('2d');

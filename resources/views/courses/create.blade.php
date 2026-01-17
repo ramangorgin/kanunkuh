@@ -158,7 +158,8 @@
     </form>
     @push('scripts')
 <!-- CKEditor 5 Classic -->
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+ <!--
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script> -->
 <script>
     ClassicEditor
         .create(document.querySelector('#description'), {
@@ -206,10 +207,10 @@ $(document).ready(function () {
 </script>
 
 
-<!-- Leaflet.js -->
+<!-- Leaflet.js 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+-->
 <script>
     var map = L.map('map').setView([35.6997, 51.3380], 11); // Tehran default
 

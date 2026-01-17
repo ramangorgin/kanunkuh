@@ -1,8 +1,10 @@
 @extends('layout')
 
 @push('styles')
+<!--
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+-->
 <style>
     .image-slideshow {
         position: relative;
@@ -508,7 +510,9 @@
 @endsection
 
 @push('scripts')
+<!--
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                                    -->
 <script>
     // Image Slideshow
     @if($programImages->count() > 0)
