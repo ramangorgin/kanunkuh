@@ -510,6 +510,38 @@
 @endsection
 
 @push('scripts')
+
+    <script>
+        const dataKaraj = @json($transportKaraj);
+        const neshanMapKaraj = new L.Map("map-karaj", {
+                key: "web.34d371d6df614e62afe2604d5ee25b1f",
+                maptype: "neshan",
+                poi: true,
+                traffic: true,
+                center: [dataKaraj.lat, dataKaraj.lon],
+                zoom: 15,
+            });
+
+        if (dataKaraj && dataKaraj.lat && dataKaraj.lon) {
+            let markerKaraj = L.marker([dataKaraj.lat, dataKaraj.lon]).addTo(neshanMapKaraj);
+        }
+    </script>
+
+    <script>
+        const dataTehran = @json($transportTehran);
+        const neshanMapTehran = new L.Map("map-tehran", {
+            key: "web.34d371d6df614e62afe2604d5ee25b1f",
+            maptype: "neshan",
+            poi: true,
+            traffic: true,
+            center: [dataTehran.lat, dataTehran.lon],
+            zoom: 15,
+        });
+
+        if (dataTehran && dataTehran.lat && dataTehran.lon) {
+            let markerTehran = L.marker([dataTehran.lat, dataTehran.lon]).addTo(neshanMapTehran);
+        }
+    </script>
 <!--
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                                     -->
@@ -562,7 +594,9 @@
     })();
     @endif
     
-    // Initialize Maps
+
+
+    /*
     @if($transportTehran && !empty($transportTehran['lat']) && !empty($transportTehran['lon']))
     (function() {
         const mapTehran = L.map('map-tehran').setView([{{ $transportTehran['lat'] }}, {{ $transportTehran['lon'] }}], 15);
@@ -592,5 +626,6 @@
             .bindPopup('{{ $transportKaraj['place'] ?? "محل حرکت از کرج" }}');
     })();
         @endif
+    */    
 </script>
 @endpush

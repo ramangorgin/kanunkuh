@@ -395,11 +395,44 @@
 @endpush
 
 @push('scripts')
-<!--
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
-    -->
+    <script>
+        // Creating the Map
+                const map = new L.Map("course_location_map", {
+                    key: "web.34d371d6df614e62afe2604d5ee25b1f",
+                    maptype: "neshan",
+                    poi: true,
+                    traffic: true,
+                    center: [35.8327, 50.9344],
+                    zoom: 11,
+                });
+
+                // Marker
+                let marker = null;
+
+                // Click Event
+                map.on('click', function(e) {
+                    // Removing the old Marker if existing
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+
+                    // Creating the new Marker
+                    marker = L.marker(e.latlng).addTo(map);
+
+                    // Saving data to fields.
+                    document.getElementById("place_lat").value = e.latlng.lat.toFixed(7);
+                    document.getElementById("place_lon").value = e.latlng.lng.toFixed(7);
+                });
+            
+
+    </script>
+    <script src="{{ asset('vendor/cdn/jquery/3.7.0/jquery.min.js') }}"></script> 
+    <script src="{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}"></script>
+    <script src="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}"></script>
+
     <script>
         $(document).ready(function() {
+        
             // Initialize CKEditor for description
             ClassicEditor
                 .create(document.querySelector('#description'), {
@@ -408,7 +441,7 @@
                 .catch(error => {
                     console.error('CKEditor error:', error);
                 });
-
+            
             // Initialize Select2 for prerequisites
             $('#prerequisites').select2({
                 dir: "rtl",
@@ -674,52 +707,42 @@
                     teacherImagePreview.innerHTML = '';
                 });
             }
-
-            // Initialize Leaflet map for course location (Golshahr, Karaj)
+            /*
             function initCourseLocationMap() {
-                try {
-                    // Default: Golshahr, Karaj (approximately 35.8327, 50.9344)
-                    const defaultLat = 35.8327;
-                    const defaultLon = 50.9344;
-                    const existingLat = $('#place_lat').val();
-                    const existingLon = $('#place_lon').val();
-                    
-                    const lat = existingLat ? parseFloat(existingLat) : defaultLat;
-                    const lon = existingLon ? parseFloat(existingLon) : defaultLon;
-                    
-                    const map = L.map('course_location_map').setView([lat, lon], existingLat ? 15 : 12);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 18,
-                        attribution: '© OpenStreetMap contributors',
-                        crossOrigin: true
-                    }).addTo(map);
+                // Creating the Map
+                const map = new L.Map("course_location_map", {
+                    key: "web.34d371d6df614e62afe2604d5ee25b1f",
+                    maptype: "neshan",
+                    poi: true,
+                    traffic: true,
+                    center: [35.8327, 50.9344],
+                    zoom: 11,
+                });
 
-                    let marker = null;
-                    if (existingLat && existingLon) {
-                        marker = L.marker([lat, lon]).addTo(map);
-                        $('#place_lat').val(lat.toFixed(7));
-                        $('#place_lon').val(lon.toFixed(7));
+                // Marker
+                let marker = null;
+
+                // Click Event
+                map.on('click', function(e) {
+                    // Removing the old Marker if existing
+                    if (marker) {
+                        map.removeLayer(marker);
                     }
-                    
-                    map.on('click', function(e) {
-                        if (marker) {
-                            map.removeLayer(marker);
-                        }
-                        marker = L.marker(e.latlng).addTo(map);
-                        $('#place_lat').val(e.latlng.lat.toFixed(7));
-                        $('#place_lon').val(e.latlng.lng.toFixed(7));
-                    });
-                } catch (error) {
-                    console.warn('خطا در بارگذاری نقشه:', error);
-                    $('#course_location_map').html('<div class="alert alert-warning">نقشه در دسترس نیست. لطفاً مختصات را به صورت دستی وارد کنید.</div>');
-                }
+
+                    // Creating the new Marker
+                    marker = L.marker(e.latlng).addTo(map);
+
+                    // Saving data to fields.
+                    document.getElementById("place_lat").value = e.latlng.lat.toFixed(7);
+                    document.getElementById("place_lon").value = e.latlng.lng.toFixed(7);
+                });
             }
 
             // Initialize map after a short delay
             setTimeout(function() {
                 initCourseLocationMap();
             }, 500);
+            */
         });
     </script>
 @endpush
-

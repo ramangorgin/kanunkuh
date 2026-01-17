@@ -35,16 +35,15 @@
 
     <link rel="stylesheet" href="{{ asset('vendor/cdn/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css') }}"></script>
 
-    <!--
-    {{-- Leaflet --}}
-    <link rel="stylesheet" href="{{  asset('vendor/cdn/leaflet/1.9.4/leaflet.css') }}"></script>
--->
-
     {{-- FilePond --}}
     <link rel="stylesheet" href="{{ asset('vendor/cdn/filepond/4/filepond.min.css') }}"></script>
 
     {{-- Toastr --}}           
     <link rel="stylesheet" href="{{ asset('vendor/cdn/toastr/latest/toastr.min.css') }}"></script>
+
+    {{-- Neshan --}}           
+    <link rel="stylesheet" href="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.css"/>
+
 
     <style>
         body {
@@ -376,13 +375,12 @@
         @yield('content')
     </main>
 
-    {{-- JS --}}
+    {{-- JS and Plugins --}}
     
-        <script src="{{ asset('vendor/cdn/jquery/3.7.0/jquery.min.js') }}"></script> 
+        <script src="{{ asset('vendor/cdn/jquery/3.6.0/jquery.min.js') }}"></script> 
 
         <script src="{{ asset('vendor/cdn/bootstrap/5.3.2/js/bootstrap.bundle.min.js') }}"></script>
 
-    {{-- Plugins --}}
         <script src="{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.js') }}"></script>
             
         <script src="{{ asset('vendor/cdn/datatables/1.13.6/jquery.dataTables.min.js') }}"></script>
@@ -392,12 +390,13 @@
         <script src="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}"></script>
 
         <script src="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}"></script>
-<!--
-        <script src="{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}"></script>
-    -->
+
         <script src="{{ asset('vendor/cdn/filepond/4/filepond.min.js') }}"></script>
 
         <script src="{{ asset('vendor/cdn/toastr/latest/toastr.min.js') }}"></script>
+
+        <script src="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.js"></script>
+
  
     @stack('modals')
 

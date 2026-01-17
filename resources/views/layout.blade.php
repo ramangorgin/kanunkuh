@@ -214,71 +214,58 @@
             </div>
         </div>
     </footer>
+    {{-- JS and Plugins --}}
+    <script src="{{ asset('vendor/cdn/jquery/3.7.0/jquery.min.js') }}"></script> 
 
-               {{-- JS --}}
-    
-                <script src="{{ asset('vendor/cdn/jquery/3.7.0/jquery.min.js') }}"></script> 
+    <script src="{{ asset('vendor/cdn/bootstrap/5.3.2/js/bootstrap.bundle.min.js') }}"></script>
 
-                <script src="{{ asset('vendor/cdn/bootstrap/5.3.2/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.js') }}"></script>
+        
+    <script src="{{ asset('vendor/cdn/datatables/1.13.6/jquery.dataTables.min.js') }}"></script>
 
-            {{-- Plugins --}}
-                <script src="{{ asset('vendor/cdn/sweetalert2/11/sweetalert2.min.js') }}"></script>
-                    
-                <script src="{{ asset('vendor/cdn/datatables/1.13.6/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/cdn/datatables/1.13.6/dataTables.bootstrap5.min.js') }}"></script>
 
-                <script src="{{ asset('vendor/cdn/datatables/1.13.6/dataTables.bootstrap5.min.js') }}"></script>
-
-                <script src="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}"></script>
-
-                <script src="{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}"></script>
-
-                <script src="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}"></script>
-
-                <!--
-                <script src="{{ asset('vendor/cdn/leaflet/1.9.4/leaflet.js') }}"></script>
-        -->
-
-                <script src="{{ asset('vendor/cdn/filepond/4/filepond.min.js') }}"></script>
-
-                <script src="{{ asset('vendor/cdn/toastr/latest/toastr.min.js') }}"></script>
-
-            {{-- نقشه و تاریخ --}}
-        <script>
-            // سال شمسی به فارسی
-            try {
-                const date = new Date();
-                const year = new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric' }).format(date);
-                document.getElementById('shamsi-year').innerText = year.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-            } catch (e) {}
-
-            /*
-            // نقشه
-            var map = L.map('map').setView([35.8232941, 50.9331318], 16);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            L.marker([35.8232941, 50.9331318]).addTo(map);
-            */
-
-        </script>
-
-        <script>
-            // Create a Leaflet map
-            const neshanMap = new L.Map("map", {
-                key: "web.34d371d6df614e62afe2604d5ee25b1f", 
-                maptype: "neshan",
-                poi: true,
-                traffic: true,
-                center: [35.8232941, 50.9331318],
-                zoom: 16,
-            })
-
-            // add marker to map
-            let marker = L.marker([35.8232941, 50.9331318]).addTo(neshanMap);
-        </script>
+    <script src="{{ asset('js/jalali-datepicker-init.js') }}"></script>
 
     <script src="{{ asset('vendor/jalali-datepicker/dist/jalalidatepicker.min.js') }}"></script>
-    <script src="{{ asset('js/jalali-datepicker-init.js') }}"></script>
+
+    <script src="{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}"></script>
+
+    <script src="{{ asset('vendor/cdn/select2/4.1.0-rc.0/select2.min.js') }}"></script>
+
+    <script src="{{ asset('vendor/cdn/filepond/4/filepond.min.js') }}"></script>
+
+    <script src="{{ asset('vendor/cdn/toastr/latest/toastr.min.js') }}"></script>
+
+
+    {{-- نقشه و تاریخ --}}
+    <script>
+        // سال شمسی به فارسی
+        try {
+            const date = new Date();
+            const year = new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric' }).format(date);
+            document.getElementById('shamsi-year').innerText = year.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+        } catch (e) {}
+
+    </script>
+
+    <script>
+        // Create a Leaflet map
+        const neshanMap = new L.Map("map", {
+            key: "web.34d371d6df614e62afe2604d5ee25b1f", 
+            maptype: "neshan",
+            poi: true,
+            traffic: true,
+            center: [35.8232941, 50.9331318],
+            zoom: 16,
+        })
+
+        // add marker to map
+        let marker = L.marker([35.8232941, 50.9331318]).addTo(neshanMap);
+    </script>
+    
+
+
 
     @stack('modals')
 

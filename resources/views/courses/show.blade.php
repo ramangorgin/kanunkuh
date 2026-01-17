@@ -380,25 +380,22 @@
     </div>
 </div>
 @endsection
-
+@push('styles')
+<link rel="stylesheet" href="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.css"/>
+@endpush
 @push('scripts')
-<!--
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
--->
+<script src="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.js"></script>
 <script>
-    @if($course->place_lat && $course->place_lon)
-    (function() {
-        const map = L.map('course_location_map').setView([{{ $course->place_lat }}, {{ $course->place_lon }}], 15);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '',
-            maxZoom: 19
-        }).addTo(map);
-        
-        L.marker([{{ $course->place_lat }}, {{ $course->place_lon }}])
-            .addTo(map)
-            .bindPopup('{{ $course->place ?? "محل برگزاری دوره" }}');
-    })();
-    @endif
+    const locationMap = new L.Map("course_location_map", {
+        key: "web.34d371d6df614e62afe2604d5ee25b1f",
+        maptype: "neshan",
+        poi: true,
+        traffic: true,
+        center: [{{ $course->place_lat }}, {{ $course->place_lon }}],
+        zoom: 15,
+    });
+
+    let locationMarker = L.marker([{{ $course->place_lat }}, {{ $course->place_lon }}]).addTo(locationMap);
+
 </script>
 @endpush

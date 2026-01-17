@@ -339,6 +339,65 @@
 @endpush
 
 @push('scripts')
+    <script>
+        // Creating the Map
+        const neshanMapKaraj = new L.Map("map_karaj", {
+            key: "web.34d371d6df614e62afe2604d5ee25b1f",
+            maptype: "neshan",
+            poi: false,
+            traffic: false,
+            center: [35.8327, 50.9344],
+            zoom: 10,
+        });
+
+        // Marker
+        let markerKaraj = null;
+
+        // Click Event
+        neshanMapKaraj.on('click', function(e) {
+            // Removing the old Marker if existing
+            if (markerKaraj) {
+                neshanMap.removeLayer(markerKaraj);
+            }
+
+            // Creating the new Marker
+            markerKaraj = L.marker(e.latlng).addTo(neshanMapKaraj);
+
+            // Saving data to fields.
+            document.getElementById("lat_karaj").value = e.latlng.lat.toFixed(7);
+            document.getElementById("lon_karaj").value = e.latlng.lng.toFixed(7);
+        });
+    </script>
+    
+    <script>
+        // Creating the Map
+        const neshanMapTehran = new L.Map("map_tehran", {
+            key: "web.34d371d6df614e62afe2604d5ee25b1f",
+            maptype: "neshan",
+            poi: false,
+            traffic: false,
+            center: [35.6892, 51.3890],
+            zoom: 10,
+        });
+
+        // Marker
+        let markerTehran = null;
+
+        // Click Event
+        neshanMapTehran.on('click', function(e) {
+            // Removing the old Marker if existing
+            if (markerTehran) {
+                neshanMap.removeLayer(markerTehran);
+            }
+
+            // Creating the new Marker
+            markerTehran = L.marker(e.latlng).addTo(neshanMapTehran);
+
+            // Saving data to fields.
+            document.getElementById("lat_tehran").value = e.latlng.lat.toFixed(7);
+            document.getElementById("lon_tehran").value = e.latlng.lng.toFixed(7);
+        });
+    </script>
     <script src="{{ asset('vendor/cdn/ckeditor5/41.3.1/classic/ckeditor.js') }}"></script>
 
     <script>
@@ -497,6 +556,7 @@
                 });
             }
 
+        
             /*
             // Initialize Leaflet maps
             function initMap(divId, latInputId, lonInputId, defaultLat = 35.6892, defaultLon = 51.3890, existingLat = null, existingLon = null) {
