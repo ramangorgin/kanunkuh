@@ -1,3 +1,4 @@
+{{-- Admin payments management view. --}}
 @extends('admin.layout')
 
 @section('title', 'مدیریت پرداخت‌ها')

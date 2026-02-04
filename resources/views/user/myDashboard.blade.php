@@ -1,3 +1,4 @@
+{{-- User dashboard overview page. --}}
 @extends('user.layout')
 
 

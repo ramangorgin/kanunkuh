@@ -1,3 +1,4 @@
+{{-- Admin course list view. --}}
 @extends('admin.layout')
 
 @section('title', 'لیست دوره‌ها')

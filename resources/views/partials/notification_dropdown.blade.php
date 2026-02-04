@@ -1,3 +1,4 @@
+{{-- Notification dropdown partial for user/admin contexts. --}}
 @php
     $context = $panel ?? 'user';
     $isAdmin = $context === 'admin';

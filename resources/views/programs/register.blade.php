@@ -1,3 +1,4 @@
+{{-- Program registration form view. --}}
 @extends('layout')
 
 @section('title', 'ثبت‌نام در برنامه: ' . $program->name)

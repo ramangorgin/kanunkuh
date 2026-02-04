@@ -1,3 +1,4 @@
+{{-- Base layout for admin pages. --}}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>

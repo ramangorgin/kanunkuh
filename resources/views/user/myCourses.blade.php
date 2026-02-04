@@ -1,3 +1,4 @@
+{{-- User courses list page. --}}
 @extends('user.layout')
 
 @section('title', 'دوره‌های من')

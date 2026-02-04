@@ -1,3 +1,4 @@
+{{-- User medical record edit page. --}}
 @extends('user.layout')
 
 @section('title', 'ویرایش پرونده پزشکی')

@@ -1,3 +1,4 @@
+{{-- User tickets list view. --}}
 @extends('user.layout')
 
 @section('title', 'تیکت‌های من')

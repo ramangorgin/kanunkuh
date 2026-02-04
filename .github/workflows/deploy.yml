@@ -23,7 +23,7 @@ jobs:
             set -e
 
             echo "🔹 1. Entering to the project directory"
-            cd /var/www/kanoonkoh  
+            cd /var/www/kanunkuh  
 
             echo "🔹 2. Adding GitHub to known_hosts"
             mkdir -p ~/.ssh
@@ -33,7 +33,7 @@ jobs:
             sudo git pull origin main
 
             echo "🔹 4. Setting file ownership for ubuntu"
-            sudo chown -R ubuntu:www-data /var/www/kanoonkoh
+            sudo chown -R ubuntu:www-data /var/www/kanunkuh
             sudo chmod -R 775 storage bootstrap/cache
 
             echo "🔹 5. Ensuring .env file exists and switching to production"

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin registration management for programs and courses.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -16,9 +20,14 @@ use Morilog\Jalali\Jalalian;
 use Carbon\Carbon;
 
 
+/**
+ * Handles manual registration creation, listing, and exports.
+ */
 class RegistrationController extends Controller
 {
-
+    /**
+     * Show the admin form for creating a program registration.
+     */
     public function createProgram($programId)
     {
         $program = Program::findOrFail($programId);
@@ -33,7 +42,9 @@ class RegistrationController extends Controller
         ]);
     }
 
-
+    /**
+     * Show the admin form for creating a course registration.
+     */
     public function createCourse($courseId)
     {
         $course = Course::findOrFail($courseId);
@@ -46,6 +57,9 @@ class RegistrationController extends Controller
         ]);
     }
 
+    /**
+     * Store a program registration and handle associated files.
+     */
     public function ProgramStore(Request $request, Program $program)
     {
         $rules = [
@@ -119,7 +133,6 @@ class RegistrationController extends Controller
             $data['guest_emergency_phone'] = null;
         }
 
-        // چک تکراری با اسکیمای جدید
         $already = Auth::check()
             ? \App\Models\Registration::where('type','program')
                 ->where('related_id', $program->id)
@@ -141,6 +154,9 @@ class RegistrationController extends Controller
             ->with('success', 'ثبت‌نام شما با موفقیت انجام شد. پس از تأیید اطلاع‌رسانی خواهد شد.');
     }
 
+    /**
+     * Store a course registration and handle associated files.
+     */
     public function CourseStore(Request $request, Course $course)
     {
         $isFree = (property_exists($course, 'is_free') && $course->is_free)
@@ -148,7 +164,7 @@ class RegistrationController extends Controller
 
         $rules = [
             'transaction_code'       => $isFree ? 'nullable' : 'required|string',
-            'payment_date'           => $isFree ? 'nullable' : 'required|string', // از فرم شمسی می‌آید
+            'payment_date'           => $isFree ? 'nullable' : 'required|string',
             'receipt_file'           => 'nullable|file|mimes:jpg,png,pdf|max:2048',
 
             'guest_name'             => 'nullable|string',
@@ -235,6 +251,9 @@ class RegistrationController extends Controller
             ->with('success', 'ثبت‌نام شما با موفقیت انجام شد. پس از تأیید اطلاع‌رسانی خواهد شد.');
     }
 
+    /**
+     * Show the admin registrations landing page.
+     */
     public function index()
     {
         $programs = Program::latest()->take(10)->get();
@@ -243,7 +262,9 @@ class RegistrationController extends Controller
         return view('admin.registrations.index', compact('programs', 'courses'));
     }
 
- 
+    /**
+     * Display registrations for a program or course with filters.
+     */
     public function show(Request $request, $type, $id)
     {
         if (!in_array($type, ['program', 'course'], true)) {
@@ -252,21 +273,18 @@ class RegistrationController extends Controller
 
         $model = $type === 'program' ? Program::findOrFail($id) : Course::findOrFail($id);
 
-        $query = Registration::with(['user.profile']) // ← پروفایل هم لود می‌شود
+        $query = Registration::with(['user.profile'])
             ->where('type', $type)
             ->where('related_id', $id);
 
-        // وضعیت تأیید
         if ($request->filled('approved') && in_array($request->approved, ['0','1'], true)) {
             $query->where('approved', (bool) $request->approved);
         }
 
-        // محل سوارشو
         if ($request->filled('pickup_location') && in_array($request->pickup_location, ['tehran','karaj'], true)) {
             $query->where('pickup_location', $request->pickup_location);
         }
 
-        // جستجو: first_name/last_name در profiles است
         if ($request->filled('q')) {
             $q = trim($request->q);
             $query->where(function ($qq) use ($q) {
@@ -274,7 +292,7 @@ class RegistrationController extends Controller
                         $p->where('first_name', 'like', "%{$q}%")
                         ->orWhere('last_name',  'like', "%{$q}%");
                     })
-                ->orWhereHas('user', function ($u) use ($q) { // برای ایمیل هنوز روی users
+                ->orWhereHas('user', function ($u) use ($q) {
                         $u->where('email', 'like', "%{$q}%");
                     })
                 ->orWhere('guest_name',        'like', "%{$q}%")
@@ -284,7 +302,6 @@ class RegistrationController extends Controller
             });
         }
 
-        // بازه تاریخ پرداخت (شمسی)
         [$from, $to] = [$request->input('from'), $request->input('to')];
         if ($from || $to) {
             if ($from) {
@@ -313,6 +330,9 @@ class RegistrationController extends Controller
     }
 
 
+    /**
+     * Approve a registration.
+     */
     public function approve(Registration $registration)
     {
         $registration->update(['approved' => true]);
@@ -320,19 +340,24 @@ class RegistrationController extends Controller
     }
 
 
+    /**
+     * Reject a registration.
+     */
     public function reject(Registration $registration)
     {
         $registration->update(['approved' => false]);
         return back()->with('success', 'ثبت‌نام رد شد.');
     }
 
+    /**
+     * Export registrations to an Excel file with current filters.
+     */
     public function export($type, $id, Request $request)
     {
         if (!in_array($type, ['program', 'course'], true)) {
             abort(404);
         }
 
-        // ساخت همان query که در show استفاده شد (تا خروجی و لیست همسان باشند)
         $query = Registration::with('user')
             ->where('type', $type)
             ->where('related_id', $id);
@@ -373,14 +398,9 @@ class RegistrationController extends Controller
             } catch (\Throwable $e) {}
         }
 
-        // نام فایل بر اساس فیلتر وضعیت
         $statusPart = $request->filled('approved') ? ($request->approved === '1' ? 'approved' : 'not_approved') : 'all';
         $filename = "{$type}_{$id}_{$statusPart}_registrations.xlsx";
 
-        // اگر کلاس اکسپورت اختصاصی داری:
-        // return Excel::download(new RegistrationsExport($query->clone()), $filename);
-
-        // در غیر این صورت یک اکسپورت سریع از کوئری (نمونه ساده):
         $rows = $query->orderByDesc('id')->get()->map(function ($r) {
             return [
                 'ID'               => $r->id,
@@ -398,7 +418,6 @@ class RegistrationController extends Controller
             ];
         });
 
-        // ساخت اکسل با Maatwebsite\Excel از آرایه
         return Excel::download(new class($rows) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings {
             private $rows;
             public function __construct($rows) { $this->rows = $rows; }
@@ -407,6 +426,9 @@ class RegistrationController extends Controller
         }, $filename);
     }
 
+    /**
+     * Convert Persian digits to ASCII digits.
+     */
     private function toEnglishDigits(string $str): string
     {
         $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹','٫','،'];

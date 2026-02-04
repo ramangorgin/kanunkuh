@@ -1,3 +1,4 @@
+{{-- Blog post detail view. --}}
 @php
     use Illuminate\Support\Str;
     $metaDescription = $post->seo_description ?? Str::limit(strip_tags($post->content), 155, '');

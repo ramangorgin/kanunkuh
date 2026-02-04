@@ -1,3 +1,4 @@
+{{-- Admin course edit form. --}}
 @extends('admin.layout')
 
 @section('title', 'ویرایش دوره')

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User ticket management for creating, replying, and closing requests.
+ */
+
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
@@ -13,13 +17,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Handles user-facing support tickets and attachments.
+ */
 class TicketController extends Controller
 {
+    /**
+     * Initialize controller with notification service and authentication middleware.
+     */
     public function __construct(private NotificationService $notifications)
     {
         $this->middleware('auth');
     }
 
+    /**
+     * List the current user's tickets with optional status filtering.
+     */
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -32,11 +45,17 @@ class TicketController extends Controller
         return view('user.tickets.index', compact('tickets'));
     }
 
+    /**
+     * Show the ticket creation form.
+     */
     public function create()
     {
         return view('user.tickets.create');
     }
 
+    /**
+     * Create a new ticket, store its initial message, and notify admins.
+     */
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -62,7 +81,6 @@ class TicketController extends Controller
 
         $this->storeAttachments($request, $message, $ticket->id);
 
-        // Notify admins
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $this->notifications->notify('ticket_created', $admin, [
@@ -79,6 +97,9 @@ class TicketController extends Controller
             ->with('success', 'تیکت ثبت شد و به زودی پاسخ داده می‌شود.');
     }
 
+    /**
+     * Show a specific ticket with its messages and attachments.
+     */
     public function show(Ticket $ticket)
     {
         $this->authorizeTicket($ticket);
@@ -86,6 +107,9 @@ class TicketController extends Controller
         return view('user.tickets.show', compact('ticket'));
     }
 
+    /**
+     * Post a reply to a ticket and notify admins.
+     */
     public function reply(Request $request, Ticket $ticket)
     {
         $this->authorizeTicket($ticket);
@@ -129,6 +153,9 @@ class TicketController extends Controller
         return back()->with('success', 'پاسخ شما ثبت شد.');
     }
 
+    /**
+     * Close a ticket and notify admins of the status change.
+     */
     public function close(Ticket $ticket)
     {
         $this->authorizeTicket($ticket);
@@ -149,6 +176,9 @@ class TicketController extends Controller
         return back()->with('success', 'تیکت بسته شد.');
     }
 
+    /**
+     * Reopen a ticket and notify admins of the status change.
+     */
     public function reopen(Ticket $ticket)
     {
         $this->authorizeTicket($ticket);
@@ -170,6 +200,9 @@ class TicketController extends Controller
         return back()->with('success', 'تیکت مجدداً باز شد.');
     }
 
+    /**
+     * Download a ticket attachment if it belongs to the current user.
+     */
     public function downloadAttachment(TicketAttachment $attachment)
     {
         $attachment->load('message.ticket');
@@ -183,6 +216,9 @@ class TicketController extends Controller
         return Storage::disk('public')->download($attachment->path, $attachment->original_name);
     }
 
+    /**
+     * Store uploaded attachments for a ticket message.
+     */
     private function storeAttachments(Request $request, TicketMessage $message, int $ticketId): void
     {
         if (!$request->hasFile('attachments')) {
@@ -195,7 +231,7 @@ class TicketController extends Controller
                 continue;
             }
             if (++$i > 5) {
-                break; // hard cap
+                break;
             }
             $path = $file->store("tickets/{$ticketId}/messages/{$message->id}", 'public');
             TicketAttachment::create([
@@ -208,6 +244,9 @@ class TicketController extends Controller
         }
     }
 
+    /**
+     * Ensure the ticket belongs to the current user.
+     */
     private function authorizeTicket(Ticket $ticket): void
     {
         if ($ticket->user_id !== Auth::id()) {

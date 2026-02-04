@@ -1,3 +1,4 @@
+{{-- Admin course registration list view. --}}
 @extends('admin.layout')
 
 @section('title', 'ثبت‌نام‌های دوره: ' . $course->title)

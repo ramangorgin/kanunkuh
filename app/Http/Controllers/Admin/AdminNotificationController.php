@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin notification endpoints for listing and managing in-app alerts.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -7,13 +11,22 @@ use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+/**
+ * Provides APIs for viewing, marking, and deleting admin notifications.
+ */
 class AdminNotificationController extends Controller
 {
+    /**
+     * Enforce admin authentication for notification management.
+     */
     public function __construct()
     {
         $this->middleware(['auth', 'admin']);
     }
 
+    /**
+     * Display the notifications index page.
+     */
     public function index()
     {
         $user = auth()->user();
@@ -24,6 +37,9 @@ class AdminNotificationController extends Controller
         return view('admin.notifications.index', compact('notifications'));
     }
 
+    /**
+     * Return the latest notifications and unread count for the admin panel.
+     */
     public function panel(Request $request)
     {
         $user = auth()->user();
@@ -32,7 +48,6 @@ class AdminNotificationController extends Controller
         $notifications = $query->take(10)->get();
         $unreadCount = (clone $query)->where('is_read', false)->count();
 
-        // Auto mark as read if requested (when dropdown opened)
         if ($request->boolean('mark')) {
             $this->baseQuery($user)
                 ->where('is_read', false)
@@ -53,6 +68,9 @@ class AdminNotificationController extends Controller
         ]);
     }
 
+    /**
+     * Mark a single notification as read.
+     */
     public function markAsRead(Notification $notification)
     {
         $this->authorizeNotification($notification);
@@ -61,6 +79,9 @@ class AdminNotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Mark all notifications as read for the current admin.
+     */
     public function markAllAsRead()
     {
         $user = auth()->user();
@@ -71,6 +92,9 @@ class AdminNotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Delete a notification after authorization.
+     */
     public function destroy(Notification $notification)
     {
         $this->authorizeNotification($notification);
@@ -79,6 +103,9 @@ class AdminNotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Ensure the notification belongs to the current admin.
+     */
     protected function authorizeNotification(Notification $notification): void
     {
         $user = auth()->user();
@@ -87,6 +114,9 @@ class AdminNotificationController extends Controller
         }
     }
 
+    /**
+     * Base query for admin-visible notifications.
+     */
     protected function baseQuery(User $user)
     {
         return Notification::where('notifiable_id', $user->id)

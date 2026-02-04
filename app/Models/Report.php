@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Legacy report model for program reporting data.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * Stores report content and related relationships.
+ */
 class Report extends Model
 {
    use HasFactory;
@@ -63,20 +70,32 @@ class Report extends Model
         'peak_coords' => 'array',
     ];
 
+    /**
+     * Get the authoring user.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the related program.
+     */
     public function program()
     {
         return $this->belongsTo(Program::class);
     }
+    /**
+     * Get user roles associated with this report.
+     */
     public function userRoles()
     {
         return $this->hasMany(ReportUserRole::class);
     }
 
+    /**
+     * Get participants associated with this report.
+     */
     public function participants()
     {
         return $this->hasMany(ReportParticipant::class);

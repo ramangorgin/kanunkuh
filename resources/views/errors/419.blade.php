@@ -1,3 +1,4 @@
+{{-- 419 Page Expired error page. --}}
 @extends('errors.layout')
 
 @section('code', '۴۱۹')

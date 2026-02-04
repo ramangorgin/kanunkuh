@@ -1,20 +1,33 @@
 <?php
 
+/**
+ * Public contact page and form handling.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * Handles contact form display and submission (sends notification email).
+ */
 class ContactController extends Controller
 {
     public function show()
     {
+        /**
+         * Display the contact form page.
+         */
         return view('pages.contact');
     }
 
     public function submit(Request $request)
     {
+        /**
+         * Validate and process contact form submissions; attempt to email recipients.
+         */
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],

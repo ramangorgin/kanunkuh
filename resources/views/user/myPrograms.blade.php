@@ -1,3 +1,4 @@
+{{-- User programs list page. --}}
 @extends('user.layout')
 
 @section('title', 'برنامه‌های من')

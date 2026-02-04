@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Web routes for public, user dashboard, and admin endpoints.
+ */
+
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
@@ -45,8 +49,6 @@ Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 Route::get('/program-reports', [ProgramReportController::class, 'publicArchive'])->name('program_reports.archive');
 
-// Auth: Login & Register
-// ==========================
 Route::get('/auth/phone', [AuthController::class, 'showPhoneForm'])->name('auth.phone');
 Route::post('/auth/phone', [AuthController::class, 'requestOtp'])->name('auth.requestOtp');
 
@@ -64,67 +66,47 @@ Route::get('/auth/register', [AuthController::class, 'showRegisterForm'])->name(
 Route::post('/auth/register/request-otp', [AuthController::class, 'registerRequestOtp'])->name('auth.register.requestOtp');
 Route::get('/auth/register/verify', [AuthController::class, 'showRegisterVerifyForm'])->name('auth.register.verifyForm');
 Route::post('/auth/register/verify', [AuthController::class, 'registerVerifyOtp'])->name('auth.register.verifyOtp');
-// ==========================
-
-// Old 3-step wizard routes removed (replaced by dashboard onboarding)
-
-//general Programs
 Route::get('/programs', [ProgramController::class, 'archive'])->name('programs.archive');
 Route::get('/programs/{program}', [ProgramController::class, 'show'])->name('programs.show');
 
-// Program Registration
 Route::get('/programs/{program}/register', [App\Http\Controllers\ProgramRegistrationController::class, 'create'])->name('programs.register.create');
 Route::post('/programs/{program}/register', [App\Http\Controllers\ProgramRegistrationController::class, 'store'])->name('programs.register.store');
 
-
-//general Courses
 Route::get('/courses', [CourseController::class, 'archive'])->name('courses.archive');
 Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
 
-// Course Registration
 Route::get('/courses/{course}/register', [App\Http\Controllers\CourseRegistrationController::class, 'create'])->name('courses.register.create');
 Route::post('/courses/{course}/register', [App\Http\Controllers\CourseRegistrationController::class, 'store'])->name('courses.register.store');
 
-
-
-// User Dashboard routes (single canonical set)
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [UserDashboardController::class, 'index'])->name('index');
 
-    // Notifications - User
     Route::get('/notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/panel', [UserNotificationController::class, 'panel'])->name('notifications.panel');
     Route::post('/notifications/{notification}/read', [UserNotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [UserNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
     Route::delete('/notifications/{notification}', [UserNotificationController::class, 'destroy'])->name('notifications.destroy');
 
-    // Profile
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Medical Record
     Route::get('/medical', [MedicalRecordController::class, 'show'])->name('medicalRecord.edit');
     Route::put('/medical', [MedicalRecordController::class, 'update'])->name('medicalRecord.update');
 
-    // Educational History
     Route::get('/educational-histories', [EducationalHistoryController::class, 'index'])->name('educationalHistory.index');
     Route::post('/educational-histories', [EducationalHistoryController::class, 'store'])->name('educationalHistory.store');
     Route::put('/educational-histories/{id}', [EducationalHistoryController::class, 'update'])->name('educationalHistory.update');
     Route::delete('/educational-histories/{id}', [EducationalHistoryController::class, 'destroy'])->name('educationalHistory.destroy');
 
-    // Payments & Settings
     Route::get('/my-payments', [PaymentController::class, 'UserIndex'])->name('payments.index');
     Route::post('/my-payments', [PaymentController::class, 'store'])->name('payments.store');
     
-    // Programs
     Route::get('/my-programs', [UserDashboardController::class, 'programs'])->name('programs.index');
     
-    // Courses
     Route::get('/my-courses', [UserDashboardController::class, 'courses'])->name('courses.index');
     Route::get('/courses/{registration}/download-certificate', [App\Http\Controllers\UserCourseController::class, 'downloadCertificate'])->name('courses.downloadCertificate');
 
-    // Tickets
     Route::get('/tickets/attachments/{attachment}', [UserTicketController::class, 'downloadAttachment'])->name('tickets.attachments.download');
     Route::get('/tickets', [UserTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/create', [UserTicketController::class, 'create'])->name('tickets.create');
@@ -134,7 +116,6 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::post('/tickets/{ticket}/close', [UserTicketController::class, 'close'])->name('tickets.close');
     Route::post('/tickets/{ticket}/reopen', [UserTicketController::class, 'reopen'])->name('tickets.reopen');
     
-    // Program Reports (User)
     Route::get('/program-reports/create/{program}', [App\Http\Controllers\UserProgramReportController::class, 'create'])->name('program_reports.create');
     Route::post('/program-reports/{program}', [App\Http\Controllers\UserProgramReportController::class, 'store'])->name('program_reports.store');
     Route::get('/program-reports/{programReport}', [ProgramReportController::class, 'show'])->name('program_reports.show');
@@ -147,24 +128,15 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
 Route::get('/api/programs/list', [PaymentController::class, 'getPrograms']);
 Route::get('/api/courses/list', [PaymentController::class, 'getCourses']);
 
-// Registratoins for Users:
-
-//get the form of registrations
 Route::get('registrations/program/{program}', [RegistrationController::class, 'createProgram'])->name('registrations.program.create');
 Route::get('registrations/course/{course}', [RegistrationController::class, 'createCourse'])->name('registrations.course.create');
 
-// post the form of regsitrations
 Route::post('/registrations/program/{program}', [RegistrationController::class, 'ProgramStore'])->name('registration.program.store');
 Route::post('/registrations/course/{course}', [RegistrationController::class, 'CourseStore'])->name('registration.course.store');
-
-
-
-//Admin Dashboard routes:
 
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Notifications - Admin
     Route::middleware('admin')->group(function () {
         Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
         Route::get('/notifications/panel', [AdminNotificationController::class, 'panel'])->name('admin.notifications.panel');
@@ -193,7 +165,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/payments/{id}/approve', [AdminPaymentController::class, 'approve'])->name('admin.payments.approve');
     Route::post('/payments/{id}/reject', [AdminPaymentController::class, 'reject'])->name('admin.payments.reject');
 
-    // Programs
     Route::get('/programs', [ProgramController::class, 'index'])->name('admin.programs.index');
     Route::get('/programs/create', [ProgramController::class, 'create'])->name('admin.programs.create');
     Route::post('/programs', [ProgramController::class, 'store'])->name('admin.programs.store');

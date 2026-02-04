@@ -1,3 +1,4 @@
+{{-- Admin view for pending memberships. --}}
 @extends('admin.layout')
 
 @section('title', 'عضویت‌های در انتظار تأیید')

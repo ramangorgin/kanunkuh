@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User program report submission flow and related sanitization helpers.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -12,6 +16,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Allows participants to create and submit program reports with attachments.
+ */
 class UserProgramReportController extends Controller
 {
     /**
@@ -19,7 +26,6 @@ class UserProgramReportController extends Controller
      */
     public function create(Program $program)
     {
-        // Check if user has participated in this program
         $userRegistration = $program->registrations()
             ->where('user_id', Auth::id())
             ->where('status', 'approved')
@@ -31,39 +37,32 @@ class UserProgramReportController extends Controller
                 ->with('error', 'شما در این برنامه شرکت نکرده‌اید.');
         }
         
-        // Check if execution date has passed (including today)
-        // execution_date is already a Carbon instance due to $casts in Program model
         if (!$program->execution_date || now()->startOfDay()->lt($program->execution_date->copy()->startOfDay())) {
             return redirect()
                 ->route('programs.index')
                 ->with('error', 'هنوز زمان نوشتن گزارش فرا نرسیده است.');
         }
         
-        // Load program data for form
         $program->load('userRoles.user.profile', 'registrations.user.profile');
         
-        // Get approved registrations (members)
         $approvedRegistrations = $program->registrations()
             ->where('status', 'approved')
             ->whereNotNull('user_id')
             ->with('user.profile')
             ->get();
         
-        // Get guest registrations
         $guestRegistrations = $program->registrations()
             ->where('status', 'approved')
             ->whereNull('user_id')
             ->whereNotNull('guest_name')
             ->get();
         
-        // Check if report already exists
         if ($program->report) {
             return redirect()
                 ->route('program_reports.show', $program->report->id)
                 ->with('info', 'گزارش این برنامه قبلاً نوشته شده است.');
         }
         
-        // Get users for reporter/leader selection (for admin, but user can't change reporter)
         $users = \App\Models\User::with('profile')->get();
         $isAdmin = false;
         return view('program_reports.create', compact('program', 'users', 'isAdmin', 'approvedRegistrations', 'guestRegistrations'));
@@ -74,7 +73,6 @@ class UserProgramReportController extends Controller
      */
     public function store(Request $request, Program $program)
     {
-        // Check if user has participated
         $userRegistration = $program->registrations()
             ->where('user_id', Auth::id())
             ->where('status', 'approved')
@@ -84,18 +82,14 @@ class UserProgramReportController extends Controller
             return back()->with('error', 'شما در این برنامه شرکت نکرده‌اید.');
         }
         
-        // Validate
         $validated = $this->validateReport($request);
         
         DB::transaction(function () use ($validated, $program, $request) {
-            // Convert dates
             $validated = $this->convertDates($validated);
             $validated = $this->applySanitizers($validated, $request);
             
-            // Create report
             $report = ProgramReport::create($validated);
             
-            // Handle file uploads
             if ($request->hasFile('report_images')) {
                 foreach ($request->file('report_images') as $file) {
                     if ($file->isValid()) {
@@ -178,17 +172,15 @@ class UserProgramReportController extends Controller
     }
     
     /**
-     * Convert Jalali dates to Gregorian
+     * Normalize report payload data before persistence.
      */
     private function convertDates(array $data)
     {
-        // No date fields in program_reports table that need conversion
-        // All dates are stored as execution_date from program
         return $data;
     }
     
     /**
-     * Convert Persian/Arabic digits to English
+     * Convert Persian/Arabic digits to ASCII digits.
      */
     private function toEnglishDigits(string $str): string
     {
@@ -202,6 +194,9 @@ class UserProgramReportController extends Controller
         return $str;
     }
 
+    /**
+     * Apply structured sanitizers and derived values to the validated payload.
+     */
     private function applySanitizers(array $validated, Request $request): array
     {
         $validated['geo_points'] = $this->sanitizeGeoPoints($request);
@@ -213,6 +208,9 @@ class UserProgramReportController extends Controller
         return $validated;
     }
 
+    /**
+     * Sanitize and normalize geo-point entries.
+     */
     private function sanitizeGeoPoints(Request $request): ?array
     {
         $points = collect($request->input('geo_points', []))
@@ -232,6 +230,9 @@ class UserProgramReportController extends Controller
         return empty($points) ? null : $points;
     }
 
+    /**
+     * Sanitize and normalize timeline entries.
+     */
     private function sanitizeTimeline(Request $request): ?array
     {
         $timeline = collect($request->input('timeline', []))
@@ -250,6 +251,9 @@ class UserProgramReportController extends Controller
         return empty($timeline) ? null : $timeline;
     }
 
+    /**
+     * Sanitize and normalize shelter entries.
+     */
     private function sanitizeShelters(Request $request): ?array
     {
         $shelters = collect($request->input('shelters', []))
@@ -268,6 +272,9 @@ class UserProgramReportController extends Controller
         return empty($shelters) ? null : $shelters;
     }
 
+    /**
+     * Compute report duration from Jalali start/end dates.
+     */
     private function computeDuration(Request $request): ?string
     {
         $start = $request->input('report_start_date');

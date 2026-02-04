@@ -1,11 +1,18 @@
 <?php
 
+/**
+ * Profile model storing user personal and membership details.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Represents a user's profile data and related mutators.
+ */
 class Profile extends Model
 {
     use HasFactory;
@@ -41,37 +48,36 @@ class Profile extends Model
         'birth_date' => 'date',
     ];
 
+    /**
+     * Normalize and store the birth date value.
+     */
     public function setBirthDateAttribute($value)
     {
-        // اگر مقدار خالی یا نال بود، هیچی تنظیم نکن
         if (empty($value)) {
             $this->attributes['birth_date'] = null;
             return;
         }
 
-        // اگر مقدار از قبل به فرمت میلادی (Y-m-d) است، مستقیم ذخیره کن
-        // کنترلر تبدیل شمسی به میلادی را انجام می‌دهد
         if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
             $this->attributes['birth_date'] = $value;
             return;
         }
 
-        // اگر به فرمت شمسی (Y/m/d) است، تبدیل کن
         try {
-            // فقط اعداد فارسی → انگلیسی
             $value = str_replace(['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], ['0','1','2','3','4','5','6','7','8','9'], $value);
 
-            // تبدیل از شمسی به میلادی
             [$year, $month, $day] = explode('/', $value);
             $this->attributes['birth_date'] = (new \Morilog\Jalali\Jalalian($year, $month, $day))
                 ->toCarbon()
-                ->toDateString(); // ذخیره به فرمت YYYY-MM-DD
+                ->toDateString();
         } catch (\Exception $e) {
             $this->attributes['birth_date'] = null;
         }
     }
 
-
+    /**
+     * Store the profile photo path if present.
+     */
     public function setPhotoAttribute($value)
     {
         if (!empty($value) && $value !== 'profiles/') {
@@ -79,6 +85,9 @@ class Profile extends Model
         }
     }
 
+    /**
+     * Store the national card path if present.
+     */
     public function setNationalCardAttribute($value)
     {
         if (!empty($value) && $value !== 'profiles/') {
@@ -87,12 +96,17 @@ class Profile extends Model
     }
 
 
+    /**
+     * Get the user that owns this profile.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-
+    /**
+     * Generate the next membership id.
+     */
     public static function generateMembershipId()
     {
         $lastId = self::max('membership_id');

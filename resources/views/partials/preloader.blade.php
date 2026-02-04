@@ -1,3 +1,4 @@
+{{-- Global preloader overlay partial. --}}
 <div id="global-preloader">
     <div class="preloader-content">
         <img src="{{ asset('images/logo.png') }}" alt="Loading..." class="preloader-logo">

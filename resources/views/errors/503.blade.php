@@ -1,3 +1,4 @@
+{{-- 503 Service Unavailable error page. --}}
 @extends('errors.layout')
 
 @section('code', '۵۰۳')

@@ -1,3 +1,4 @@
+{{-- Login form view. --}}
 @extends('layout')
 
 @section('title', 'ورود')

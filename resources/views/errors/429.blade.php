@@ -1,3 +1,4 @@
+{{-- 429 Too Many Requests error page. --}}
 @extends('errors.layout')
 
 @section('code', '۴۲۹')

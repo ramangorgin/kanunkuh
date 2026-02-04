@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin program report management and public report archive.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -9,14 +13,23 @@ use App\Models\Program;
 use Illuminate\Support\Facades\DB;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Provides CRUD actions and PDF export for program reports.
+ */
 class ProgramReportController extends Controller
 {
+    /**
+     * List program reports for the admin view.
+     */
     public function index()
     {
         $reports = ProgramReport::with('program.files')->latest()->get();
         return view('program_reports.index', compact('reports'));
     }
 
+    /**
+     * Display the public archive of program reports.
+     */
     public function publicArchive()
     {
         $reports = ProgramReport::with(['program.files', 'program.userRoles'])
@@ -27,16 +40,17 @@ class ProgramReportController extends Controller
         return view('program_reports.archive', compact('reports'));
     }
 
+    /**
+     * Show the report creation form for eligible programs.
+     */
     public function create()
     {
-        // Get programs where execution date has passed (including today)
         $programs = Program::whereNotNull('execution_date')
             ->whereRaw('DATE(execution_date) <= DATE(NOW())')
-            ->whereDoesntHave('report') // Programs without existing report
+            ->whereDoesntHave('report')
             ->orderBy('execution_date', 'desc')
             ->get();
         
-        // Get users for reporter/leader selection
         $users = \App\Models\User::with('profile')->get();
         
         $isAdmin = true;
@@ -44,7 +58,6 @@ class ProgramReportController extends Controller
         $approvedRegistrations = collect();
         $guestRegistrations = collect();
         
-        // If a program is selected in old input, load it
         if (old('program_id')) {
             $program = Program::with('userRoles.user.profile', 'registrations.user.profile')->find(old('program_id'));
             if ($program) {
@@ -64,6 +77,9 @@ class ProgramReportController extends Controller
         return view('program_reports.create', compact('programs', 'users', 'isAdmin', 'program', 'approvedRegistrations', 'guestRegistrations'));
     }
 
+    /**
+     * Store a newly created program report and attached files.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -130,7 +146,6 @@ class ProgramReportController extends Controller
         DB::transaction(function () use ($validated, $request) {
             $program = Program::findOrFail($validated['program_id']);
             
-            // Check if report already exists
             if ($program->report) {
                 throw new \Exception('گزارش این برنامه قبلاً ثبت شده است.');
             }
@@ -138,7 +153,6 @@ class ProgramReportController extends Controller
             $payload = $this->applySanitizers($validated, $request);
             $report = ProgramReport::create($payload);
             
-            // Handle file uploads
             if ($request->hasFile('report_images')) {
                 foreach ($request->file('report_images') as $file) {
                     if ($file->isValid()) {
@@ -167,6 +181,9 @@ class ProgramReportController extends Controller
         return redirect()->route('admin.program_reports.index')->with('success', 'گزارش برنامه با موفقیت ثبت شد.');
     }
 
+    /**
+     * Display a single program report.
+     */
     public function show(ProgramReport $programReport)
     {
         $programReport->load([
@@ -177,6 +194,9 @@ class ProgramReportController extends Controller
         return view('program_reports.show', compact('programReport'));
     }
 
+    /**
+     * Download the report as a PDF file.
+     */
     public function downloadPdf(ProgramReport $programReport)
     {
         $programReport->load([
@@ -191,9 +211,11 @@ class ProgramReportController extends Controller
         return $pdf->download($filename);
     }
 
+    /**
+     * Show the report edit form with related program data.
+     */
     public function edit(ProgramReport $programReport)
     {
-        // Load program with necessary relationships
         $programReport->load([
             'program.files',
             'program.userRoles.user.profile',
@@ -203,23 +225,19 @@ class ProgramReportController extends Controller
         
         $program = $programReport->program;
         
-        // Get users for reporter/leader selection
         $users = \App\Models\User::with('profile')->get();
         
-        // Get programs list (for admin to change program if needed)
         $programs = Program::whereNotNull('execution_date')
             ->where('execution_date', '<=', now())
             ->orderBy('execution_date', 'desc')
             ->get();
         
-        // Get approved registrations (members)
         $approvedRegistrations = $program->registrations()
             ->where('status', 'approved')
             ->whereNotNull('user_id')
             ->with('user.profile')
             ->get();
         
-        // Get guest registrations
         $guestRegistrations = $program->registrations()
             ->where('status', 'approved')
             ->whereNull('user_id')
@@ -238,6 +256,9 @@ class ProgramReportController extends Controller
         ));
     }
 
+    /**
+     * Update a program report and manage file changes.
+     */
     public function update(Request $request, ProgramReport $programReport)
     {
         $validated = $request->validate([
@@ -307,7 +328,6 @@ class ProgramReportController extends Controller
             
             $program = $programReport->program;
             
-            // Handle file uploads
             if ($request->hasFile('report_images')) {
                 foreach ($request->file('report_images') as $file) {
                     if ($file->isValid()) {
@@ -332,7 +352,6 @@ class ProgramReportController extends Controller
                 ]);
             }
             
-            // Handle file deletions
             if ($request->filled('deleted_files')) {
                 $deletedFileIds = is_array($request->deleted_files) 
                     ? $request->deleted_files 
@@ -353,12 +372,18 @@ class ProgramReportController extends Controller
         return redirect()->route('admin.program_reports.index')->with('success', 'گزارش برنامه با موفقیت ویرایش شد.');
     }
 
+    /**
+     * Delete a program report.
+     */
     public function destroy(ProgramReport $programReport)
     {
         $programReport->delete();
         return redirect()->route('admin.program_reports.index')->with('success', 'گزارش برنامه با موفقیت حذف شد.');
     }
 
+    /**
+     * Apply sanitizers and derived values to the report payload.
+     */
     private function applySanitizers(array $validated, Request $request): array
     {
         $validated['report_date'] = $this->convertJalaliDate($request->input('report_date'));
@@ -372,6 +397,9 @@ class ProgramReportController extends Controller
         return $validated;
     }
 
+    /**
+     * Normalize geo-point entries.
+     */
     private function sanitizeGeoPoints(Request $request): ?array
     {
         $points = collect($request->input('geo_points', []))
@@ -391,6 +419,9 @@ class ProgramReportController extends Controller
         return empty($points) ? null : $points;
     }
 
+    /**
+     * Normalize timeline entries.
+     */
     private function sanitizeTimeline(Request $request): ?array
     {
         $timeline = collect($request->input('timeline', []))
@@ -409,6 +440,9 @@ class ProgramReportController extends Controller
         return empty($timeline) ? null : $timeline;
     }
 
+    /**
+     * Normalize shelter entries.
+     */
     private function sanitizeShelters(Request $request): ?array
     {
         $shelters = collect($request->input('shelters', []))
@@ -427,6 +461,9 @@ class ProgramReportController extends Controller
         return empty($shelters) ? null : $shelters;
     }
 
+    /**
+     * Compute report duration from Jalali start/end dates.
+     */
     private function computeDuration(Request $request): ?string
     {
         $start = $request->input('report_start_date');
@@ -450,11 +487,17 @@ class ProgramReportController extends Controller
         return $days . ' روز';
     }
 
+    /**
+     * Convert Persian/Arabic digits to ASCII digits.
+     */
     private function toEnglishDigits(string $value): string
     {
         return strtr($value, ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9','٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9']);
     }
 
+    /**
+     * Convert a Jalali date string to Carbon, optionally with time.
+     */
     private function convertJalaliDate(?string $value, bool $withTime = false)
     {
         if (!$value) {

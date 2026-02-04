@@ -1,3 +1,4 @@
+{{-- Admin posts list view. --}}
 @extends('admin.layout')
 
 @section('title', 'مدیریت پست‌ها')

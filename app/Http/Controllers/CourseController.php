@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Course administration and public course presentation endpoints.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -12,6 +16,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Manages course CRUD, registration context, and date normalization.
+ */
 class CourseController extends Controller
 {
     /**
@@ -83,12 +90,18 @@ class CourseController extends Controller
         return null;
     }
 
+    /**
+     * Show the public archive of courses.
+     */
     public function archive()
     {
         $courses = Course::with('teacher', 'federationCourse')->latest()->paginate(10);
         return view('courses.archive', compact('courses'));
     }
 
+    /**
+     * List courses for the admin index.
+     */
     public function index()
     {
         $courses = Course::with('teacher', 'federationCourse')
@@ -97,6 +110,9 @@ class CourseController extends Controller
         return view('admin.courses.index', compact('courses'));
     }
 
+    /**
+     * Show the admin course creation form.
+     */
     public function create()
     {
         $teachers = Teacher::orderBy('last_name')->get();
@@ -105,6 +121,9 @@ class CourseController extends Controller
         return view('admin.courses.create', compact('teachers', 'federationCourses'));
     }
 
+    /**
+     * Store a new course and related prerequisites.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -273,6 +292,9 @@ class CourseController extends Controller
             ->with('success', 'دوره با موفقیت ایجاد شد.');
     }
 
+    /**
+     * Display a course with registration context for the current user.
+     */
     public function show(Course $course)
     {
         $course->load('teacher', 'federationCourse', 'registrations.user.profile');
@@ -340,6 +362,9 @@ class CourseController extends Controller
         ));
     }
 
+    /**
+     * Show the admin course edit form.
+     */
     public function edit(Course $course)
     {
         $course->load('federationCourse', 'teacher');
@@ -357,6 +382,9 @@ class CourseController extends Controller
         return view('admin.courses.edit', compact('course', 'teachers', 'federationCourses', 'currentPrerequisites'));
     }
 
+    /**
+     * Update a course and related prerequisites.
+     */
     public function update(Request $request, Course $course)
     {
         $validated = $request->validate([
@@ -536,6 +564,9 @@ class CourseController extends Controller
             ->with('success', 'دوره با موفقیت به‌روزرسانی شد.');
     }
 
+    /**
+     * Delete a course record.
+     */
     public function destroy(Course $course)
     {
         $course->delete();

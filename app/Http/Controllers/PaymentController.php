@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User and admin payment management endpoints.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -13,6 +17,9 @@ use Morilog\Jalali\Jalalian;
 use Illuminate\Support\Facades\Session;
 use App\Services\NotificationService;
 
+/**
+ * Handles payment creation, listing, and approval actions.
+ */
 class PaymentController extends Controller
 {
     protected NotificationService $notifications;
@@ -23,7 +30,7 @@ class PaymentController extends Controller
     }
     
     /**
-     * نمایش فرم پرداخت و سوابق کاربر
+     * Show the user's payment history.
      */
     public function UserIndex()
     {
@@ -36,7 +43,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * ذخیره پرداخت جدید
+        * Store a new payment request and notify admins.
      */
     public function store(Request $request)
     {
@@ -54,13 +61,10 @@ class PaymentController extends Controller
 
         $user = Auth::user();
 
-        // شناسه عضویت (در آینده هنگام تایید اکانت کاربر ست می‌شود)
         $membershipCode = $user->membership_code ?? null;
 
-        // شناسه واریز ده‌رقمی تصادفی
         $transactionCode = random_int(1000000000, 9999999999);
 
-        // ذخیره پرداخت
         $payment = new Payment([
             'user_id'          => $user->id,
             'amount'           => $request->amount,
@@ -88,7 +92,6 @@ class PaymentController extends Controller
             ]);
         }
 
-        // ارسال شناسه‌ها به Blade از طریق Session
         Session::flash('payment_success', [
             'membership_code' => $membershipCode ?? 'نامشخص',
             'transaction_code' => $transactionCode,
@@ -98,6 +101,9 @@ class PaymentController extends Controller
             ->with('status', 'پرداخت با موفقیت ثبت شد.');
     }
 
+    /**
+     * Build a contextual label for payment notifications.
+     */
     private function buildContext(Payment $payment): string
     {
         if ($payment->type === 'program') {
@@ -110,7 +116,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * فهرست برنامه‌ها (برای AJAX)
+        * Return program options for AJAX consumers.
      */
     public function getPrograms()
     {
@@ -122,7 +128,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * فهرست دوره‌ها (برای AJAX)
+        * Return course options for AJAX consumers.
      */
     public function getCourses()
     {
@@ -133,6 +139,9 @@ class PaymentController extends Controller
         return response()->json($courses);
     }
 
+    /**
+     * List payments for the admin view.
+     */
     public function AdminIndex()
     {
         $payments = Payment::with(['user.profile', 'relatedProgram', 'relatedCourse'])
@@ -143,6 +152,9 @@ class PaymentController extends Controller
     }
 
 
+    /**
+     * Mark a payment as approved.
+     */
     public function approve(Payment $payment)
     {
         $payment->approved = true;
@@ -151,6 +163,9 @@ class PaymentController extends Controller
         return redirect()->back()->with('success', 'پرداخت تایید شد.');
     }
 
+    /**
+     * Mark a payment as rejected.
+     */
     public function reject(Payment $payment)
     {
         $payment->approved = null;

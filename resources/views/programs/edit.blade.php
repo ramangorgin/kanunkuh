@@ -1,3 +1,4 @@
+{{-- Admin program edit form. --}}
 @extends('admin.layout')
 
 @section('title', 'ویرایش برنامه')

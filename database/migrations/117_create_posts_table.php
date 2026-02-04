@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * Database migration for creating the posts table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates and drops the posts table.
+ */
 return new class extends Migration
 {
     /**
@@ -21,19 +28,16 @@ return new class extends Migration
             $table->string('featured_image')->nullable();
             $table->string('featured_image_alt')->nullable();
 
-            // SEO fields
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->text('seo_keywords')->nullable();
             $table->string('canonical_url')->nullable();
 
-            // Publishing & SEO control
             $table->enum('status', ['draft', 'published'])->default('draft');
             $table->timestamp('published_at')->nullable();
             $table->boolean('is_indexable')->default(true);
             $table->boolean('is_followable')->default(true);
 
-            // Analytics
             $table->unsignedInteger('view_count')->default(0);
             $table->unsignedInteger('reading_time')->nullable();
 

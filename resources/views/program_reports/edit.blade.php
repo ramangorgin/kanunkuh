@@ -1,3 +1,4 @@
+{{-- Program report edit form. --}}
 @php
     $isAdmin = true;
     $program = $programReport->program;

@@ -1,28 +1,32 @@
 <?php
 
+/**
+ * Database migration for creating the medical_records table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates and drops the medical_records table.
+ */
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('medical_records', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            // Inusarance
             $table->date('insurance_issue_date')->nullable();
             $table->date('insurance_expiry_date')->nullable();
             $table->string('insurance_file')->nullable();
-
-            // Pyhisical details
             $table->string('blood_type', 5)->nullable();
             $table->smallInteger('height')->nullable();
             $table->smallInteger('weight')->nullable();
-
-            // Medical questions
             $table->boolean('head_injury')->nullable();
             $table->text('head_injury_details')->nullable();
             $table->boolean('eye_ear_problems')->nullable();
@@ -65,18 +69,15 @@ return new class extends Migration
             $table->text('hiv_details')->nullable();
             $table->boolean('treatment')->nullable();
             $table->text('treatment_details')->nullable();
-
-            // Extra Explonations
             $table->text('other_conditions')->nullable();
-
-            // Terms
             $table->boolean('commitment_signed')->default(0);
-
-
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('medical_records');

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Program administration and public program presentation endpoints.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -13,6 +17,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Manages program CRUD, registration context, and date normalization.
+ */
 class ProgramController extends Controller
 {
     /**
@@ -91,6 +98,9 @@ class ProgramController extends Controller
             return null;
         }
     }
+    /**
+     * Show the public archive of programs.
+     */
     public function archive()
     {
         $programs = Program::with('files')
@@ -100,18 +110,27 @@ class ProgramController extends Controller
         return view('programs.archive', compact('programs'));
     }
 
+    /**
+     * List programs for the admin index.
+     */
     public function index()
     {
         $programs = Program::latest()->get();
         return view('programs.index', compact('programs'));
     }
 
+    /**
+     * Show the admin program creation form.
+     */
     public function create()
     {
         $users = User::with('profile')->get();
         return view('programs.create' , compact('users'));
     }
 
+    /**
+     * Display a program details page by id.
+     */
     public function show($id)
     {
         $program = Program::with([
@@ -157,12 +176,18 @@ class ProgramController extends Controller
     }
 
 
+    /**
+     * Delete a program record.
+     */
     public function destroy(Program $program)
     {
         $program->delete();
 
         return redirect()->route('admin.programs.index')->with('success', 'برنامه با موفقیت حذف شد.');
     }
+    /**
+     * Show the admin program edit form.
+     */
     public function edit(Program $program)
     {
         $users = User::with('profile')->get();
@@ -170,6 +195,9 @@ class ProgramController extends Controller
         return view('programs.edit', compact('program', 'users'));
     }
 
+    /**
+     * Store a new program and related files.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -344,7 +372,7 @@ class ProgramController extends Controller
                 }
             }
 
-            // ذخیره مسئولین (اگر وجود دارند)
+            // Persist role assignments if provided.
             if ($request->filled('roles')) {
                 foreach ($request->input('roles') as $role) {
                     if (empty($role['user_id']) && empty($role['user_name'])) {
@@ -364,6 +392,9 @@ class ProgramController extends Controller
         return redirect()->route('admin.programs.index')->with('success', 'برنامه با موفقیت ثبت شد.');
     }
 
+    /**
+     * Update a program and related files.
+     */
     public function update(Request $request, Program $program)
     {
         $validated = $request->validate([
@@ -567,10 +598,10 @@ class ProgramController extends Controller
                 }
             }
 
-            // حذف مسئولین قبلی
+            // Replace existing role assignments.
             $program->userRoles()->delete();
 
-            // ذخیره مسئولین جدید
+            // Create updated role assignments.
             if ($request->filled('roles')) {
                 foreach ($request->input('roles') as $role) {
                     if (empty($role['user_id']) && empty($role['user_name'])) continue;

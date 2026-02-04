@@ -1,3 +1,4 @@
+{{-- User ticket creation form. --}}
 @extends('user.layout')
 
 @section('title', 'ایجاد تیکت جدید')

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Provides the admin dashboard view with summary metrics and recent activity.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -13,14 +17,17 @@ use App\Models\CourseRegistration;
 use Carbon\Carbon;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Builds dashboard statistics, recent records, and chart data for administrators.
+ */
 class AdminDashboardController extends Controller
 {
     /**
-     * نمایش داشبورد ادمین
+     * Renders the admin dashboard with aggregate counts, recent items, and chart series.
      */
     public function index()
     {
-        // === آمار کلی ===
+        // Aggregate summary metrics for dashboard widgets.
         $totalUsers = User::count();
         $pendingMemberships = Profile::where('membership_status', 'pending')->count();
         $approvedMembers = Profile::where('membership_status', 'approved')->count();
@@ -52,19 +59,19 @@ class AdminDashboardController extends Controller
             'course_registrations' => $courseRegistrations,
         ];
 
-        // === پرداخت‌های اخیر ===
+        // Recent payment activity for quick overview.
         $latestPayments = Payment::with('user.profile')
             ->latest()
             ->take(5)
             ->get();
 
-        // === کاربران جدید ===
+        // Recently registered users.
         $latestUsers = User::with('profile')
             ->latest()
             ->take(5)
             ->get();
 
-        // === داده‌های نمودار پرداخت‌ها (۱۲ ماه اخیر) ===
+        // Payment totals for the last 12 months in Jalali labels.
         $months = [];
         $values = [];
 

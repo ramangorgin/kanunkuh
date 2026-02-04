@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * Database migration for creating the program_reports table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates and drops the program_reports table.
+ */
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('program_reports', function (Blueprint $table) {
@@ -14,39 +24,30 @@ return new class extends Migration {
                 ->constrained()
                 ->onDelete('cascade');
 
-            // شرح گزارش
             $table->longText('report_description')->nullable();
             $table->longText('important_notes')->nullable();
-
-            // کروکی و نقشه (فایل‌ها در program_files)
             $table->string('map_author')->nullable();
             $table->string('map_scale')->nullable();
             $table->string('map_source')->nullable();
-
-            // مشخصات فنی مسیر
             $table->json('technical_equipments')->nullable();
             $table->enum('route_difficulty', ['آسان','متوسط','سخت','بسیار سخت'])->nullable();
             $table->string('slope')->nullable();
             $table->enum('rock_engagement', ['کم','متوسط','زیاد'])->nullable();
             $table->enum('ice_engagement', ['ندارد','کم','زیاد'])->nullable();
-            $table->decimal('avg_backpack_weight', 4, 1)->nullable(); // kg
+            $table->decimal('avg_backpack_weight', 4, 1)->nullable();
             $table->text('prerequisites')->nullable();
-
-            // مشخصات طبیعی
             $table->text('vegetation')->nullable();
             $table->text('wildlife')->nullable();
             $table->text('weather')->nullable();
-            $table->integer('wind_speed')->nullable(); // km/h
-            $table->decimal('temperature', 4, 1)->nullable(); // °C
+            $table->integer('wind_speed')->nullable();
+            $table->decimal('temperature', 4, 1)->nullable();
             $table->string('local_language')->nullable();
             $table->text('attractions')->nullable();
             $table->enum('food_supply', ['دارد','ندارد','محدود'])->nullable();
-
-            // اطلاعات جغرافیایی و مسیر
-            $table->integer('start_altitude')->nullable(); // متر
-            $table->integer('target_altitude')->nullable(); // متر
+            $table->integer('start_altitude')->nullable();
+            $table->integer('target_altitude')->nullable();
             $table->string('start_location_name')->nullable();
-            $table->integer('distance_from_tehran')->nullable(); // km
+            $table->integer('distance_from_tehran')->nullable();
             $table->enum('road_type', ['آسفالت','خاکی','ترکیبی'])->nullable();
             $table->json('transport_types')->nullable();
 

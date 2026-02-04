@@ -1,3 +1,4 @@
+{{-- Admin post creation form. --}}
 @extends('admin.layout')
 
 @section('title', 'ایجاد پست جدید')

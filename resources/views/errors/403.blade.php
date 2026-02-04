@@ -1,3 +1,4 @@
+{{-- 403 Forbidden error page. --}}
 @extends('errors.layout')
 
 @section('code', '۴۰۳')

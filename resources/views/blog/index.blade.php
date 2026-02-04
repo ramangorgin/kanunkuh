@@ -1,3 +1,4 @@
+{{-- Blog index view listing published posts. --}}
 @php use Illuminate\Support\Str; @endphp
 
 @extends('layout')

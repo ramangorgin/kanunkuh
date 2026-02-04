@@ -1,3 +1,4 @@
+{{-- User ticket detail view. --}}
 @extends('user.layout')
 
 @section('title', 'جزئیات تیکت')

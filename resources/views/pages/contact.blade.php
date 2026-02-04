@@ -1,3 +1,4 @@
+{{-- Contact page and form view. --}}
 @extends('layout')
 
 @section('title', 'تماس با کانون کوه')

@@ -1,11 +1,18 @@
 <?php
 
+/**
+ * Category model for classifying content.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * Represents a content category with unique slugs and relationships.
+ */
 class Category extends Model
 {
     use HasFactory;
@@ -17,6 +24,9 @@ class Category extends Model
         'seo_description',
     ];
 
+    /**
+     * Configure model event hooks for slug generation.
+     */
     protected static function booted()
     {
         static::saving(function (Category $category) {
@@ -24,11 +34,17 @@ class Category extends Model
         });
     }
 
+    /**
+     * Get posts associated with this category.
+     */
     public function posts()
     {
         return $this->belongsToMany(Post::class);
     }
 
+    /**
+     * Generate a unique slug for the category name.
+     */
     protected static function generateUniqueSlug(string $value, ?int $ignoreId = null): string
     {
         $baseSlug = Str::slug($value);

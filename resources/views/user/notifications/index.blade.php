@@ -1,3 +1,4 @@
+{{-- User notifications index view. --}}
 @extends('user.layout')
 
 @section('title', 'اعلانات من')

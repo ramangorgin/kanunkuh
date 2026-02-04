@@ -1,3 +1,4 @@
+{{-- Public program report archive view. --}}
 @extends('layout')
 
 @section('title', 'آرشیو گزارش برنامه‌ها')

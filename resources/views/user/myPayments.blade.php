@@ -1,3 +1,4 @@
+{{-- User payments history page. --}}
 @extends('user.layout')
 
 @section('title', 'پرداخت‌های من')

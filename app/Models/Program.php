@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Program model for events and trips.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Represents a program with registrations, files, roles, and reports.
+ */
 class Program extends Model
 {
     use HasFactory;
@@ -37,26 +44,41 @@ class Program extends Model
         'conditions' => 'array',
     ];
 
+    /**
+     * Get registrations for this program.
+     */
     public function registrations()
     {
         return $this->hasMany(ProgramRegistration::class);
     }
 
+    /**
+     * Get attached files for this program.
+     */
     public function files()
     {
         return $this->hasMany(ProgramFile::class);
     }
 
+    /**
+     * Get user roles assigned to this program.
+     */
     public function userRoles()
     {
         return $this->hasMany(ProgramUserRole::class);
     }
 
+    /**
+     * Get the report associated with this program.
+     */
     public function report()
     {
         return $this->hasOne(ProgramReport::class);
     }
 
+    /**
+     * Get payments related to this program.
+     */
     public function payments()
     {
         return $this->hasMany(Payment::class, 'related_id')->where('type', 'program');

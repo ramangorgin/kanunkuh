@@ -1,14 +1,23 @@
 <?php
 
+/**
+ * User dashboard pages and related profile views.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Notification;
 
+/**
+ * Renders user-facing dashboard sections and related listings.
+ */
 class UserDashboardController extends Controller
 {
-
+    /**
+     * Display the main user dashboard with profile and medical record data.
+     */
     public function index()
     {
         $user = Auth::user()->load([
@@ -23,26 +32,36 @@ class UserDashboardController extends Controller
         ]);
     }
 
+    /**
+     * Show the user profile page.
+     */
     public function profile()
     {
         return view('user.myProfile');
     }
 
+    /**
+     * Show the user insurance page.
+     */
     public function insurance()
     {
         return view('user.myInsurance');
     }
 
+    /**
+     * Show the user payments page.
+     */
     public function payments()
     {
         return view('user.myPayments');
     }
 
+    /**
+     * List approved course registrations for the current user.
+     */
     public function courses()
     {
         $user = Auth::user();
-        
-        // Get courses where user has participated (approved registrations)
         $registrations = \App\Models\CourseRegistration::where('user_id', $user->id)
             ->where('status', 'approved')
             ->with(['course.teacher', 'course.federationCourse'])
@@ -52,11 +71,12 @@ class UserDashboardController extends Controller
         return view('user.myCourses', compact('registrations'));
     }
 
+    /**
+     * List approved program participations for the current user.
+     */
     public function programs()
     {
         $user = Auth::user();
-        
-        // Get programs where user has participated (approved registrations)
         $programs = \App\Models\Program::whereHas('registrations', function($query) use ($user) {
             $query->where('user_id', $user->id)
                   ->where('status', 'approved');

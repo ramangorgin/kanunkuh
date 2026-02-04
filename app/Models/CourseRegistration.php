@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Course registration model representing member and guest enrollments.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Stores registration status, payment link, and certificate references.
+ */
 class CourseRegistration extends Model
 {
     use HasFactory;
@@ -17,7 +24,7 @@ class CourseRegistration extends Model
         'guest_phone',
         'guest_national_id',
         'status',
-        'approved', // For backward compatibility
+        'approved',
         'certificate_file',
     ];
 
@@ -25,18 +32,25 @@ class CourseRegistration extends Model
         'approved' => 'boolean',
     ];
     
-    // For backward compatibility, keep approved field but also use status
-
+    /**
+     * Get the course associated with this registration.
+     */
     public function course()
     {
         return $this->belongsTo(Course::class);
     }
 
+    /**
+     * Get the user associated with this registration.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the payment associated with this registration.
+     */
     public function payment()
     {
         return $this->belongsTo(Payment::class);

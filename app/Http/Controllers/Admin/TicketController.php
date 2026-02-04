@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin ticket management: listing, replying, and status transitions.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -13,8 +17,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Handles administrative actions for support tickets and attachments.
+ */
 class TicketController extends Controller
 {
+    /**
+     * Initialize controller with notification service and admin middleware.
+     */
     public function __construct(private NotificationService $notifications)
     {
         $this->middleware(['auth', 'admin']);
@@ -22,6 +32,9 @@ class TicketController extends Controller
 
     public function index(Request $request)
     {
+        /**
+         * Returns a paginated list of tickets with optional filters (status, query, date range).
+         */
         $query = Ticket::with(['user.profile', 'latestMessage']);
 
         if ($request->filled('status')) {
@@ -63,12 +76,18 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket)
     {
+        /**
+         * Show a ticket with its messages, attachments, and user profile.
+         */
         $ticket->load(['messages.attachments', 'messages.user.profile', 'user.profile']);
         return view('admin.tickets.show', compact('ticket'));
     }
 
     public function reply(Request $request, Ticket $ticket)
     {
+        /**
+         * Persist an admin reply with optional attachments and notify the ticket owner.
+         */
         $validated = $request->validate([
             'message' => 'required|string',
             'attachments.*' => 'file|max:5120',
@@ -103,6 +122,9 @@ class TicketController extends Controller
 
     public function close(Ticket $ticket)
     {
+        /**
+         * Mark ticket as closed and notify the ticket owner of the status change.
+         */
         $ticket->markClosed();
 
         $this->notifications->notify('ticket_status_changed', $ticket->user, [
@@ -119,6 +141,9 @@ class TicketController extends Controller
 
     public function reopen(Ticket $ticket)
     {
+        /**
+         * Reopen a closed ticket and notify the ticket owner.
+         */
         $ticket->reopen();
         $ticket->update(['status' => 'waiting_user', 'last_reply_by' => 'admin']);
 
@@ -136,6 +161,9 @@ class TicketController extends Controller
 
     public function downloadAttachment(TicketAttachment $attachment)
     {
+        /**
+         * Download an attachment if it belongs to the specified ticket message.
+         */
         $attachment->load('message.ticket');
         if (!$attachment->message || !$attachment->message->ticket) {
             abort(404);
@@ -148,6 +176,9 @@ class TicketController extends Controller
 
     private function storeAttachments(Request $request, TicketMessage $message, int $ticketId): void
     {
+        /**
+         * Store uploaded attachments for a ticket message. Limits to 10 files for admin uploads.
+         */
         if (!$request->hasFile('attachments')) {
             return;
         }
@@ -173,6 +204,10 @@ class TicketController extends Controller
 
     private function toGregorianDate(?string $value): ?string
     {
+        /**
+         * Convert a Jalali or numeric date string to a Gregorian date string (Y-m-d).
+         * Returns null for invalid input.
+         */
         if (!$value) {
             return null;
         }

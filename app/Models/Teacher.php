@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Teacher model for course instructors.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Represents an instructor and associated course assignments.
+ */
 class Teacher extends Model
 {
     use HasFactory;
@@ -19,7 +26,9 @@ class Teacher extends Model
         'certificates',
     ];
 
-    // یک مدرس می‌تواند چندین دوره داشته باشد
+    /**
+     * Get courses taught by this teacher.
+     */
     public function courses()
     {
         return $this->hasMany(Course::class);

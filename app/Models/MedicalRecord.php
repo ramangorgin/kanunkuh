@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Medical record model for user health information.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Stores medical history and insurance data for a user.
+ */
 class MedicalRecord extends Model
 {
     use HasFactory;
@@ -50,6 +57,9 @@ class MedicalRecord extends Model
     ];
 
 
+    /**
+     * Get the user that owns this medical record.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);

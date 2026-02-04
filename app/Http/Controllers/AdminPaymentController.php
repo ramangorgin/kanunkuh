@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin controller for payment lifecycle management and exports.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
@@ -11,21 +15,33 @@ use App\Services\NotificationService;
 use App\Models\Program;
 use App\Models\Course;
 
+/**
+ * Manages approval, rejection, export, and details view for payments.
+ */
 class AdminPaymentController extends Controller
 {
     protected NotificationService $notifications;
 
+    /**
+     * Inject notification service for payment events.
+     */
     public function __construct(NotificationService $notifications)
     {
         $this->notifications = $notifications;
     }
 
+    /**
+     * List all payments for the admin view.
+     */
     public function index()
     {
         $payments = Payment::with('user.profile')->latest()->get();
         return view('admin.payments.index', compact('payments'));
     }
 
+    /**
+     * Approve a payment and create related registrations if needed.
+     */
     public function approve($id)
     {
         $payment = Payment::findOrFail($id);
@@ -34,14 +50,10 @@ class AdminPaymentController extends Controller
             $payment->status = 'approved';
             $payment->approved = true;
             $payment->save();
-            
-            // Create registration with status 'paid' when payment is approved
             if ($payment->type === 'program') {
-                // Check if registration already exists
                 $existingRegistration = \App\Models\ProgramRegistration::where('payment_id', $payment->id)->first();
                 
                 if (!$existingRegistration) {
-                    // Get registration data from payment metadata
                     $metadata = $payment->metadata ? json_decode($payment->metadata, true) : [];
                     
                     \App\Models\ProgramRegistration::create([
@@ -53,17 +65,15 @@ class AdminPaymentController extends Controller
                         'guest_national_id' => $metadata['guest_national_id'] ?? null,
                         'pickup_location' => $metadata['pickup_location'] ?? null,
                         'needs_transport' => $metadata['needs_transport'] ?? false,
-                        'status' => 'paid', // Status is 'paid' - waiting for admin approval
+                        'status' => 'paid',
                     ]);
                 }
             }
             
             if ($payment->type === 'course') {
-                // Check if registration already exists
                 $existingRegistration = \App\Models\CourseRegistration::where('payment_id', $payment->id)->first();
                 
                 if (!$existingRegistration) {
-                    // Get registration data from payment metadata
                     $metadata = $payment->metadata ? json_decode($payment->metadata, true) : [];
                     
                     \App\Models\CourseRegistration::create([
@@ -73,13 +83,13 @@ class AdminPaymentController extends Controller
                         'guest_name' => $metadata['guest_name'] ?? null,
                         'guest_phone' => $metadata['guest_phone'] ?? null,
                         'guest_national_id' => $metadata['guest_national_id'] ?? null,
-                        'status' => 'paid', // Status is 'paid' - waiting for admin approval
+                        'status' => 'paid',
                     ]);
                 }
             }
         });
 
-        // Notify user about approval (site only)
+        // Notify the user through site notifications about approval.
         $this->notifications->notify('payment_approved', $payment->user, [
             'amount' => number_format($payment->amount) . ' تومان',
             'context' => $this->buildContext($payment),
@@ -89,6 +99,9 @@ class AdminPaymentController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Reject a payment and remove any pending registrations created for it.
+     */
     public function reject($id)
     {
         $payment = Payment::findOrFail($id);
@@ -96,8 +109,6 @@ class AdminPaymentController extends Controller
         $payment->approved = false;
         $payment->save();
         
-        // When payment is rejected, no registration should be created
-        // If registration exists (shouldn't happen in normal flow), delete it
         if ($payment->type === 'program') {
             $registration = \App\Models\ProgramRegistration::where('payment_id', $payment->id)->first();
             if ($registration && $registration->status === 'paid') {
@@ -112,7 +123,7 @@ class AdminPaymentController extends Controller
             }
         }
 
-        // Notify user about rejection (site only)
+        // Notify the user through site notifications about rejection.
         $this->notifications->notify('payment_rejected', $payment->user, [
             'amount' => number_format($payment->amount) . ' تومان',
             'context' => $this->buildContext($payment),
@@ -122,6 +133,9 @@ class AdminPaymentController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * Build a context label for payment notifications.
+     */
     private function buildContext(Payment $payment): string
     {
         if ($payment->type === 'program') {
@@ -133,13 +147,17 @@ class AdminPaymentController extends Controller
         return 'حق عضویت' . ($payment->year ? ' ' . $payment->year : '');
     }
 
-
+    /**
+     * Export payments to an Excel file.
+     */
     public function export()
     {
         return Excel::download(new PaymentsExport, 'payments.xlsx');
     }
 
-
+    /**
+     * Return payment details for admin modal views.
+     */
     public function show($id)
     {
         $payment = \App\Models\Payment::with('user.profile')->findOrFail($id);

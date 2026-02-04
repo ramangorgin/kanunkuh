@@ -1,3 +1,4 @@
+{{-- Course registration form view. --}}
 @extends('layout')
 
 @section('title', 'ثبت‌نام در دوره: ' . $course->title)

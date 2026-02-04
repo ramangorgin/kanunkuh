@@ -1,3 +1,4 @@
+{{-- About page content view. --}}
 @extends('layout')
 
 @section('title', 'درباره کانون کوه')

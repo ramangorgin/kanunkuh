@@ -1,3 +1,4 @@
+{{-- Admin notifications index view. --}}
 @extends('admin.layout')
 
 @section('title', 'اعلانات')

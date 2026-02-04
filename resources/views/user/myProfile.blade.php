@@ -1,3 +1,4 @@
+{{-- User profile edit page. --}}
 @extends('user.layout')
 
 @section('title', 'ویرایش مشخصات کاربری')

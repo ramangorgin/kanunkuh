@@ -1,3 +1,4 @@
+{{-- Admin ticket detail view. --}}
 @extends('admin.layout')
 
 @section('title', 'جزئیات تیکت')

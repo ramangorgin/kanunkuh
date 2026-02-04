@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User educational history management and certificate handling.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,29 +13,30 @@ use Morilog\Jalali\Jalalian;
 use App\Models\EducationalHistory;
 use App\Models\FederationCourse;
 
+/**
+ * Manages CRUD operations for user education records.
+ */
 class EducationalHistoryController extends Controller
 {
     /**
-     * نمایش لیست سوابق آموزشی کاربر
+     * Display the user's educational history list.
      */
     public function index()
     {
         $user = Auth::user();
 
-        // سوابق آموزشی کاربر همراه با عنوان دوره فدراسیون
         $histories = EducationalHistory::where('user_id', $user->id)
             ->with('federationCourse')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        // لیست دوره‌های فدراسیونی برای منوی انتخاب
         $federationCourses = FederationCourse::orderBy('title', 'asc')->get();
 
         return view('user.myEducationalHistories', compact('histories', 'federationCourses'));
     }
 
     /**
-     * افزودن سابقه جدید
+        * Create new educational history entries.
      */
     public function store(Request $request)
     {
@@ -56,7 +61,6 @@ class EducationalHistoryController extends Controller
             }
         }
 
-        // Support both single and multi-add with Persian messages
         $messages = [
             'courses.required' => 'حداقل یک ردیف دوره باید اضافه شود.',
             'courses.*.federation_course_id.exists' => 'دوره انتخاب‌شده معتبر نیست.',
@@ -93,10 +97,8 @@ class EducationalHistoryController extends Controller
 
         $hadNoHistory = !EducationalHistory::where('user_id', $user->id)->exists();
 
-        // Multi items flow
         if ($request->has('courses')) {
             foreach ($request->courses as $index => $courseData) {
-                // date
                 $issueDate = null;
                 if (!empty($courseData['issue_date'])) {
                     try {
@@ -105,7 +107,6 @@ class EducationalHistoryController extends Controller
                         return back()->withErrors(["courses.$index.issue_date" => 'تاریخ وارد شده معتبر نیست. لطفاً تاریخ را به فرمت YYYY/MM/DD وارد کنید.'])->withInput();
                     }
                 }
-                // file
                 $filePath = null;
                 $file = data_get($request->allFiles(), "courses.$index.certificate_file");
 
@@ -122,8 +123,6 @@ class EducationalHistoryController extends Controller
                 ]);
             }
         } else {
-            // Single item flow
-            // date
             $issueDate = null;
             if ($request->filled('issue_date')) {
                 try {
@@ -132,7 +131,6 @@ class EducationalHistoryController extends Controller
                     return back()->withErrors(['issue_date' => 'تاریخ وارد شده معتبر نیست. لطفاً تاریخ را به فرمت YYYY/MM/DD وارد کنید.'])->withInput();
                 }
             }
-            // file
             $filePath = null;
             if ($request->hasFile('certificate_file')) {
                 $filePath = $request->file('certificate_file')->store('educational_certificates', 'public');
@@ -157,7 +155,7 @@ class EducationalHistoryController extends Controller
     }
 
     /**
-     * به‌روزرسانی سابقه آموزشی
+        * Update an existing educational history record.
      */
     public function update(Request $request, $id)
     {
@@ -180,7 +178,6 @@ class EducationalHistoryController extends Controller
             'certificate_file'     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        // تبدیل تاریخ
         $issueDate = $history->issue_date;
         if ($request->filled('issue_date')) {
             try {
@@ -190,9 +187,7 @@ class EducationalHistoryController extends Controller
             }
         }
 
-        // اگر فایل جدید ارسال شده
         if ($request->hasFile('certificate_file')) {
-            // حذف فایل قدیمی
             if ($history->certificate_file && Storage::disk('public')->exists($history->certificate_file)) {
                 Storage::disk('public')->delete($history->certificate_file);
             }
@@ -213,7 +208,7 @@ class EducationalHistoryController extends Controller
     }
 
     /**
-     * حذف سابقه آموزشی
+        * Delete an educational history record.
      */
     public function destroy($id)
     {
@@ -231,7 +226,7 @@ class EducationalHistoryController extends Controller
     }
 
     /**
-     * تبدیل اعداد فارسی به انگلیسی
+        * Convert Persian digits to ASCII digits.
      */
     private function convertToEnglish($string)
     {

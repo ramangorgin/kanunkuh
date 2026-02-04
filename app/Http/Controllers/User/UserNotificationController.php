@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User notification endpoints for listing and managing in-app alerts.
+ */
+
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
@@ -7,13 +11,22 @@ use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+/**
+ * Provides APIs for viewing, marking, and deleting user notifications.
+ */
 class UserNotificationController extends Controller
 {
+    /**
+     * Enforce authentication for user notification access.
+     */
     public function __construct()
     {
         $this->middleware(['auth']);
     }
 
+    /**
+     * Display the notifications index page for the user.
+     */
     public function index()
     {
         $user = auth()->user();
@@ -24,6 +37,9 @@ class UserNotificationController extends Controller
         return view('user.notifications.index', compact('notifications'));
     }
 
+    /**
+     * Return the latest notifications and unread count for the user panel.
+     */
     public function panel(Request $request)
     {
         $user = auth()->user();
@@ -32,7 +48,6 @@ class UserNotificationController extends Controller
         $notifications = $query->take(10)->get();
         $unreadCount = (clone $query)->where('is_read', false)->count();
 
-        // Auto mark as read if requested (when dropdown opened)
         if ($request->boolean('mark')) {
             $this->baseQuery($user)
                 ->where('is_read', false)
@@ -53,6 +68,9 @@ class UserNotificationController extends Controller
         ]);
     }
 
+    /**
+     * Mark a single notification as read.
+     */
     public function markAsRead(Notification $notification)
     {
         $this->authorizeNotification($notification);
@@ -61,6 +79,9 @@ class UserNotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Mark all notifications as read for the current user.
+     */
     public function markAllAsRead()
     {
         $user = auth()->user();
@@ -71,6 +92,9 @@ class UserNotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Delete a notification after authorization.
+     */
     public function destroy(Notification $notification)
     {
         $this->authorizeNotification($notification);
@@ -79,6 +103,9 @@ class UserNotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Ensure the notification belongs to the current user.
+     */
     protected function authorizeNotification(Notification $notification): void
     {
         $user = auth()->user();
@@ -87,6 +114,9 @@ class UserNotificationController extends Controller
         }
     }
 
+    /**
+     * Base query for user-visible notifications.
+     */
     protected function baseQuery(User $user)
     {
         return Notification::where('notifiable_id', $user->id)

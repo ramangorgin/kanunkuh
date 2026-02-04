@@ -1,3 +1,4 @@
+{{-- Admin course creation form. --}}
 @extends('admin.layout')
 
 @section('title', 'ایجاد دوره جدید')

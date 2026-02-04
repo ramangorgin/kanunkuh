@@ -1,3 +1,4 @@
+{{-- Admin program registration list view. --}}
 @extends('admin.layout')
 
 @section('title', 'ثبت‌نام‌های برنامه: ' . $program->name)

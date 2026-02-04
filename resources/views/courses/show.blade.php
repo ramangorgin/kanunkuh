@@ -1,3 +1,4 @@
+{{-- Course detail view. --}}
 @extends('layout')
 
 @section('title', $course->title)

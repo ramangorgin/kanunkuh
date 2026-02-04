@@ -1,3 +1,4 @@
+{{-- 404 Not Found error page. --}}
 @extends('errors.layout')
 
 @section('code', '۴۰۴')

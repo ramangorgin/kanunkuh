@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User course listings combining registrations and prior education history.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,19 +12,20 @@ use Illuminate\Support\Facades\DB;
 use Morilog\Jalali\Jalalian;
 use Carbon\Carbon;
 
+/**
+ * Aggregates current and historical course records for user views.
+ */
 class UserCoursesController extends Controller
 {
     /**
-     * نمایش لیست تمام دوره‌های کاربر (باشگاه + سوابق)
+     * Display the user's courses from registrations and educational history.
      */
     public function index(Request $request)
     {
         $user = Auth::user();
         $search = $request->input('search');
 
-        /**
-         * 🏕 دوره‌های باشگاه (جدول course_registrations + courses + teachers)
-         */
+        // Registered club courses.
         $clubCourses = DB::table('course_registrations')
             ->join('courses', 'course_registrations.course_id', '=', 'courses.id')
             ->leftJoin('teachers', 'courses.teacher_id', '=', 'teachers.id')
@@ -33,9 +38,7 @@ class UserCoursesController extends Controller
             )
             ->where('course_registrations.user_id', $user->id);
 
-        /**
-         * 📘 سوابق آموزشی قبل از ثبت‌نام (educational_histories + federation_courses)
-         */
+        // Historical education entries from prior records.
         $externalCourses = DB::table('educational_histories')
             ->leftJoin('federation_courses', 'educational_histories.federation_course_id', '=', 'federation_courses.id')
             ->select(
@@ -48,14 +51,10 @@ class UserCoursesController extends Controller
             )
             ->where('educational_histories.user_id', $user->id);
 
-        /**
-         * ✨ ترکیب دو مجموعه (Union)
-         */
+        // Combine both datasets into a unified list.
         $allCourses = $clubCourses->unionAll($externalCourses);
 
-        /**
-         * 🔍 اعمال جستجو (در عنوان یا مدرس یا منبع)
-         */
+        // Apply search filtering across course title, teacher, or source.
         $allCourses = DB::query()->fromSub($allCourses, 'courses_union')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {

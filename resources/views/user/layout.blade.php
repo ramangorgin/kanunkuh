@@ -1,3 +1,4 @@
+{{-- Base layout for user dashboard pages. --}}
 <!DOCTYPE html>
 <html lang="fa">
 <head>

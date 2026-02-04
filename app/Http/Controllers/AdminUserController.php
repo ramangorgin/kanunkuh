@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin controller for user management, profiles, and related records.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -14,8 +18,14 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Morilog\Jalali\Jalalian;
 
+/**
+ * Provides CRUD operations and data normalization for user administration.
+ */
 class AdminUserController extends Controller
 {
+    /**
+     * Convert a Jalali or localized date string to Gregorian (Y-m-d).
+     */
     private function jalaliToGregorian(?string $val): ?string
     {
         if (!$val) return null;
@@ -41,6 +51,9 @@ class AdminUserController extends Controller
         }
     }
 
+    /**
+     * Render a Jalali date string for display.
+     */
     private function showJalali(?string $date): string
     {
         if (!$date) return '';
@@ -59,7 +72,9 @@ class AdminUserController extends Controller
         }
     }
 
-    /** نمایش لیست کاربران **/
+    /**
+     * Display a paginated list of users with optional search filtering.
+     */
     public function index(Request $request)
     {
         $query = User::with('profile');
@@ -76,7 +91,9 @@ class AdminUserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    /** فرم ایجاد کاربر **/
+    /**
+     * Show the user creation form.
+     */
     public function create()
     {
         $user = new User();
@@ -84,7 +101,9 @@ class AdminUserController extends Controller
         return view('admin.users.create', compact('user','jalali'));
     }
 
-    /** ذخیره کاربر جدید **/
+    /**
+     * Persist a new user along with profile, medical, and education data.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -224,7 +243,9 @@ class AdminUserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'کاربر جدید با موفقیت ایجاد شد ✅');
     }
 
-    /** فرم ویرایش **/
+    /**
+     * Show the edit form for a user and related records.
+     */
     public function edit($id)
     {
         $user = User::with(['profile','medicalRecord','educationalHistories'])->findOrFail($id);
@@ -243,7 +264,9 @@ class AdminUserController extends Controller
         return view('admin.users.edit', compact('user','jalali'));
     }
 
-    /** بروزرسانی اطلاعات **/
+    /**
+     * Update a user and related profile, medical, and education data.
+     */
     public function update(Request $request, $id)
     {
         $user = User::with(['profile', 'medicalRecord', 'educationalHistories'])->findOrFail($id);
@@ -323,7 +346,7 @@ class AdminUserController extends Controller
                 $medical->save();
             }
 
-            // rewrite educational histories
+            // Recreate educational histories to reflect current form submission.
             $user->educationalHistories()->delete();
             if ($request->has('educations')) {
                 $eduFiles = $request->file('educations') ?: [];
@@ -367,27 +390,33 @@ class AdminUserController extends Controller
             ->with('success', 'اطلاعات کاربر با موفقیت بروزرسانی شد ✅');
     }
 
-    /** حذف کاربر **/
+    /**
+     * Delete a user record.
+     */
     public function destroy($id)
     {
         User::findOrFail($id)->delete();
         return response()->json(['success' => true]);
     }
 
-    /** خروجی اکسل **/
+    /**
+     * Export users data as an Excel file.
+     */
     public function export()
     {
         return Excel::download(new UsersExport, 'users.xlsx');
     }
 
-    /** نمایش جزئیات یک کاربر **/
+    /**
+     * Display a user profile with related records and recent tickets.
+     */
     public function show($id)
     {
         $user = User::with([
             'profile',
             'medicalRecord',
             'educationalHistories',
-            'payments', // چون در show.blade.php استفاده شده
+            'payments',
         ])->findOrFail($id);
 
         $recentTickets = Ticket::where('user_id', $user->id)
@@ -399,18 +428,22 @@ class AdminUserController extends Controller
         return view('admin.users.show', compact('user', 'recentTickets'));
     }
 
-    /** عضویت‌های در انتظار (اختیاری اگر لازم دارید) **/
+    /**
+     * List profiles awaiting membership approval.
+     */
     public function pendingMemberships()
     {
         $pendingProfiles = Profile::where('membership_status', 'pending')
             ->with('user')
             ->latest()
-            ->get(); // or paginate(10) if you prefer
+            ->get();
 
         return view('admin.users.pending', compact('pendingProfiles'));
     }
 
-    /** تایید عضویت **/
+    /**
+     * Approve a membership request.
+     */
     public function approveMembership($profileId)
     {
         $profile = Profile::findOrFail($profileId);
@@ -420,7 +453,9 @@ class AdminUserController extends Controller
         return response()->json(['success' => true]);
     }
 
-    /** رد عضویت **/
+    /**
+     * Reject a membership request.
+     */
     public function rejectMembership($profileId)
     {
         $profile = Profile::findOrFail($profileId);

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin endpoints for managing course registrations and certificates.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -9,10 +13,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Handles approval workflows and file uploads for course registrations.
+ */
 class AdminCourseRegistrationController extends Controller
 {
     /**
-     * Show all registrations for a specific course
+    * Lists registrations for a given course with user, profile, and payment details.
      */
     public function index(Course $course)
     {
@@ -25,7 +32,8 @@ class AdminCourseRegistrationController extends Controller
     }
 
     /**
-     * Approve a registration (independent of payment)
+     * Approves a course registration regardless of payment status.
+     * Returns a JSON response with the updated registration state.
      */
     public function approve(Course $course, $registrationId)
     {
@@ -90,7 +98,7 @@ class AdminCourseRegistrationController extends Controller
     }
 
     /**
-     * Reject a registration
+     * Rejects a course registration and returns the updated status as JSON.
      */
     public function reject(Course $course, $registrationId)
     {
@@ -140,7 +148,7 @@ class AdminCourseRegistrationController extends Controller
     }
 
     /**
-     * Cancel a registration
+     * Cancels a course registration and returns the updated status as JSON.
      */
     public function cancel(Course $course, $registrationId)
     {
@@ -186,13 +194,15 @@ class AdminCourseRegistrationController extends Controller
     }
 
     /**
-     * Upload certificate file for a registration
+     * Uploads and replaces the certificate file for a registration.
+     * Deletes any existing certificate before saving the new file.
      */
     public function uploadCertificate(Course $course, $registrationId, Request $request)
     {
         try {
             $request->validate([
-                'certificate_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
+                // Enforce file type and size constraints for uploaded certificates.
+                'certificate_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
             ], [
                 'certificate_file.required' => 'لطفاً فایل گواهینامه را انتخاب کنید.',
                 'certificate_file.file' => 'فایل انتخاب شده معتبر نیست.',
@@ -211,12 +221,12 @@ class AdminCourseRegistrationController extends Controller
                 ], 404);
             }
 
-            // Delete old certificate if exists
+            // Remove the previous certificate to avoid orphaned files.
             if ($registration->certificate_file) {
                 Storage::disk('public')->delete($registration->certificate_file);
             }
 
-            // Store new certificate
+            // Persist the new certificate file and update the registration record.
             $certificatePath = $request->file('certificate_file')->store('course_certificates', 'public');
             $registration->certificate_file = $certificatePath;
             $registration->save();

@@ -1,3 +1,4 @@
+{{-- User educational histories page. --}}
 @extends('user.layout')
 
 @section('title', 'سوابق آموزشی من')

@@ -1,66 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# KanunKuh
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 9 platform for managing programs, courses, registrations, payments, and member services with OTP authentication, administrative workflows, and user dashboards. The application targets Persian-language users with localized content and Jalali date handling.
 
-## About Laravel
+## Highlights
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- OTP-based authentication (SMS verification)
+- Program and course catalogs with registration flows
+- Membership approvals and payment request tracking
+- Admin and user dashboards with role-based access
+- Ticketing system with attachments and status workflow
+- Notification system (site + SMS templates)
+- Program reports with PDF export
+- Excel exports for key admin datasets
+- Blog and public content pages
+- Sitemap generation
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend:** Laravel 9, PHP ^8.0.2
+- **Frontend:** Vite, Bootstrap 5, Sass, Axios
+- **Database:** MySQL (default)
+- **Key Packages:** Sanctum, DOMPDF, Maatwebsite Excel, Jalali (Morilog), Arcaptcha, Spatie Sitemap, SMS.ir SDK
 
-## Learning Laravel
+## Core Domains
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Users, Profiles, Roles, Memberships
+- Programs, Courses, Prerequisites, Files
+- Registrations (program/course)
+- Payments and approvals
+- Tickets, Messages, Attachments
+- Notifications and Templates
+- Reports and Exports
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Getting Started
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Prerequisites
 
-## Laravel Sponsors
+- PHP 8.0.2+
+- Composer
+- Node.js 16+ and npm
+- MySQL
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Installation
 
-### Premium Partners
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Configure Environment
 
-## Contributing
+Populate the required variables in `.env` (see the list below), then run:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate
+php artisan storage:link
+npm run dev
+php artisan serve
+```
 
-## Code of Conduct
+## Environment Variables
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Minimum required:
 
-## Security Vulnerabilities
+```ini
+APP_NAME=kanunkuh
+APP_ENV=local
+APP_KEY=base64:...
+APP_DEBUG=true
+APP_URL=http://localhost
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_db
+DB_USERNAME=your_user
+DB_PASSWORD=your_password
 
-## License
+SMSIR_API_KEY=your_smsir_api_key
+ARCAPTCHA_SITE_KEY=your_arcaptcha_site_key
+ARCAPTCHA_SECRET_KEY=your_arcaptcha_secret_key
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Common optional variables:
+
+```ini
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=hello@example.com
+MAIL_FROM_NAME="kanunkuh"
+```
+
+## Useful Commands
+
+```bash
+# Frontend assets
+npm run dev
+npm run build
+
+# Backend
+php artisan migrate
+php artisan serve
+```
+
+## Folder Structure
+
+```text
+app/                Application logic (controllers, models, services)
+config/             Laravel and package configuration
+database/           Migrations, factories, seeders
+resources/views/    Blade templates
+routes/             Web and API routes
+public/             Public assets
+```
+
+## Access Control
+
+Role-based access is enforced through middleware:
+
+- Public routes for browsing programs/courses, blog, and contact
+- Authenticated user dashboard (profile, registrations, payments, tickets)
+- Admin panel for approvals, content management, and reporting
+
+## Localization
+
+The app includes Persian language resources and Jalali date formatting for user-facing views.
+
+## Notes
+
+- SMS sending is disabled in the local environment by design.
+- Payment flows are request-based with admin approval.
+

@@ -1,3 +1,4 @@
+{{-- Admin users list view. --}}
 @extends('admin.layout')
 
 @section('title', 'لیست کاربران')

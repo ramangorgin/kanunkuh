@@ -1,3 +1,4 @@
+{{-- Shared admin user form fields. --}}
 @php
     $user = $user ?? new \App\Models\User();
     $profile = $user->profile ?? new \App\Models\Profile();

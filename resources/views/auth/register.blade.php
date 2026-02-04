@@ -1,3 +1,4 @@
+{{-- Registration form view. --}}
 @extends('layout')
 
 @section('title', 'ثبت‌نام')

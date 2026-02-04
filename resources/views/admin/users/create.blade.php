@@ -1,3 +1,4 @@
+{{-- Admin user creation view. --}}
 @extends('admin.layout')
 
 @section('title', 'ایجاد کاربر جدید')

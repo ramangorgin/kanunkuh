@@ -1,3 +1,4 @@
+{{-- Shared admin post form fields. --}}
 @csrf
 
 <div class="row g-4">

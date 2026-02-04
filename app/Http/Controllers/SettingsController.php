@@ -1,13 +1,23 @@
 <?php
 
+/**
+ * User settings endpoints.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Handles account settings changes such as password updates.
+ */
 class SettingsController extends Controller
 {
+    /**
+     * Update the authenticated user's password.
+     */
     public function updatePassword(Request $request)
     {
         $request->validate([

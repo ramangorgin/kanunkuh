@@ -1,3 +1,4 @@
+{{-- Admin user edit view. --}}
 @extends('admin.layout')
 
 @section('title', 'ویرایش کاربر')

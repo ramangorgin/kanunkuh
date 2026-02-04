@@ -1,3 +1,4 @@
+{{-- Partial form for education history fields. --}}
 @php
     $educations = $educations ?? collect();
 @endphp

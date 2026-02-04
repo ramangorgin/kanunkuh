@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Program report model storing structured report data.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Represents a detailed report for a program.
+ */
 class ProgramReport extends Model
 {
     use HasFactory;
@@ -80,16 +87,25 @@ class ProgramReport extends Model
         'participants_count' => 'integer',
     ];
 
+    /**
+     * Get the program associated with this report.
+     */
     public function program()
     {
         return $this->belongsTo(Program::class);
     }
     
+    /**
+     * Get the user who reported this program.
+     */
     public function reporter()
     {
         return $this->belongsTo(\App\Models\User::class, 'reporter_id');
     }
     
+    /**
+     * Get the user who led the program.
+     */
     public function leader()
     {
         return $this->belongsTo(\App\Models\User::class, 'leader_id');

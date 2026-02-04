@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Program detail model for extended report metadata.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Stores detailed report attributes for a program.
+ */
 class ProgramDetail extends Model
 {
     use HasFactory;
@@ -29,11 +36,17 @@ class ProgramDetail extends Model
         'execution_schedule' => 'array',
     ];
 
+    /**
+     * Get the program associated with these details.
+     */
     public function program()
     {
         return $this->belongsTo(Program::class);
     }
 
+    /**
+     * Get the author of the program detail.
+     */
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');

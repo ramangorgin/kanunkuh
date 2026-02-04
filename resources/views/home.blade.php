@@ -1,3 +1,4 @@
+{{-- Home page view with featured content and highlights. --}}
 @extends('layout')
 
 @section('title', 'خانه')

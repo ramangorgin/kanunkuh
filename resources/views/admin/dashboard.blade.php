@@ -1,3 +1,4 @@
+{{-- Admin dashboard view with summary metrics. --}}
 @extends('admin.layout')
 
 @section('title', 'داشبورد مدیریت')

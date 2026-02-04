@@ -1,3 +1,4 @@
+{{-- 500 Internal Server Error page. --}}
 @extends('errors.layout')
 
 @section('code', '۵۰۰')

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User profile management and onboarding flow.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -11,8 +15,14 @@ use Morilog\Jalali\Jalalian;
 
 
 
+/**
+ * Handles profile creation, updates, and related onboarding redirects.
+ */
 class ProfileController extends Controller
 {
+    /**
+     * Display the current user's profile page.
+     */
     public function show()
     {
         $user = Auth::user();
@@ -20,6 +30,9 @@ class ProfileController extends Controller
         return view('user.myProfile', compact('user', 'profile'));
     }
 
+    /**
+     * Store a new profile or update the existing one.
+     */
     public function store(Request $request)
     {
     
@@ -93,18 +106,19 @@ class ProfileController extends Controller
     }
 
 
+    /**
+     * Update the authenticated user's profile data.
+     */
     public function update(Request $request, $id)
     {
         $user = Auth::user();
 
-        // بررسی مجوز و وجود پروفایل
         if ($user->id != $id) {
             abort(403, 'شما مجاز به ویرایش این پروفایل نیستید.');
         }
 
         $profile = $user->profile;
 
-        // قوانین اعتبارسنجی
         $rules = [
             'first_name' => 'required|string',
             'last_name' => 'required|string',
@@ -124,7 +138,6 @@ class ProfileController extends Controller
             'work_address' => 'nullable|string',
         ];
 
-        // اگر پروفایل وجود ندارد، برخی فیلدها را اجباری کن
         if (!$profile) {
             $rules['photo'] = 'required|image|max:2048';
             $rules['national_card'] = 'required|file|mimes:jpg,jpeg,png,pdf|max:4096';
@@ -133,14 +146,12 @@ class ProfileController extends Controller
 
         $validated = $request->validate($rules);
 
-        // نرمال‌سازی اعداد فارسی → انگلیسی برای فیلدهای عددی
         foreach (['national_id','id_number','emergency_phone'] as $numField) {
             if (!empty($validated[$numField])) {
                 $validated[$numField] = en_digits($validated[$numField]);
             }
         }
 
-        // 🔹 تبدیل تاریخ تولد شمسی به میلادی (در صورت ارسال)
         if (!empty($validated['birth_date'])) {
             $validated['birth_date'] = en_digits($validated['birth_date']);
             try {
@@ -152,7 +163,6 @@ class ProfileController extends Controller
             }
         }
 
-        // 🔹 ذخیره‌ی فایل‌ها (در صورت وجود)
         if ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('photos', 'public');
         }
@@ -161,9 +171,7 @@ class ProfileController extends Controller
             $validated['national_card'] = $request->file('national_card')->store('national_cards', 'public');
         }
 
-        // 🔹 ایجاد یا به‌روزرسانی
         if (!$profile) {
-            // membership_id الزامی
             $validated['membership_id'] = method_exists(Profile::class, 'generateMembershipId')
                 ? Profile::generateMembershipId()
                 : (int) (time() . rand(100, 999));
@@ -172,7 +180,6 @@ class ProfileController extends Controller
             $profile->update($validated);
         }
 
-        // 🔹 در حالت راهنمای ثبت‌نام، به مرحله بعد هدایت شود
         if (session('onboarding') || !auth()->user()->medicalRecord) {
             return redirect()
                 ->route('dashboard.medicalRecord.edit')
@@ -183,6 +190,9 @@ class ProfileController extends Controller
         return redirect()->back()->with('success', 'مشخصات با موفقیت به‌روزرسانی شد.');
     }
 
+    /**
+     * Convert Persian digits to ASCII digits.
+     */
     private function convertNumbersToEnglish($string)
     {
         $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
@@ -190,6 +200,9 @@ class ProfileController extends Controller
         return str_replace($persian, $english, $string);
     }
 
+    /**
+     * Redirect to the medical record step if required by onboarding.
+     */
     public function updateMedicalRecord(Request $request, $id)
     {
         $user = auth()->user();
@@ -198,7 +211,9 @@ class ProfileController extends Controller
         }
         return redirect()->route('dashboard.index')->with('success', 'اطلاعات ذخیره شد');
     }
-     // Show edit form for authenticated user
+    /**
+     * Show the profile edit form for the authenticated user.
+     */
     public function edit()
     {
         $user = Auth::user();

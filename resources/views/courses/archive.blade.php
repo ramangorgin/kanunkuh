@@ -1,3 +1,4 @@
+{{-- Course archive view. --}}
 @extends('layout')
 
 @section('content')

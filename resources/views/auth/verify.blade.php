@@ -1,3 +1,4 @@
+{{-- OTP verification view. --}}
 @extends('layout')
 
 @section('title', 'تایید کد')

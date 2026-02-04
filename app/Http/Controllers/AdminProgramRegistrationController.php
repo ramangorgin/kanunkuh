@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin endpoints for managing program registrations.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -8,6 +12,9 @@ use App\Models\ProgramRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Handles approval workflows for program registration records.
+ */
 class AdminProgramRegistrationController extends Controller
 {
     /**

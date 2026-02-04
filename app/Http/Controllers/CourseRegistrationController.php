@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Handles course registration flows for members and guests.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -11,21 +15,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
+/**
+ * Creates course registrations and related payment records when required.
+ */
 class CourseRegistrationController extends Controller
 {
     /**
-     * Show registration form for a course
+     * Show the registration form for a course.
      */
     public function create(Course $course)
     {
-        // Check if registration deadline has passed
         if ($course->registration_deadline && now()->gt($course->registration_deadline)) {
             return redirect()
                 ->route('courses.show', $course->id)
                 ->with('error', 'مهلت ثبت‌نام به پایان رسیده است.');
         }
 
-        // Check if capacity is full
         $currentRegistrations = $course->registrations()
             ->where('status', 'approved')
             ->count();
@@ -35,7 +40,6 @@ class CourseRegistrationController extends Controller
                 ->with('error', 'ظرفیت دوره تکمیل شده است.');
         }
 
-        // Check if user is already registered
         if (Auth::check()) {
             $existingRegistration = CourseRegistration::where('course_id', $course->id)
                 ->where('user_id', Auth::id())
@@ -47,7 +51,6 @@ class CourseRegistrationController extends Controller
                     ->with('info', 'شما قبلاً در این دوره ثبت‌نام کرده‌اید.');
             }
 
-            // Check prerequisites
             if (!$course->userHasCompletedPrerequisites(Auth::id())) {
                 return redirect()
                     ->route('courses.show', $course->id)
@@ -60,7 +63,6 @@ class CourseRegistrationController extends Controller
         $user = Auth::user();
         $membershipCode = $user ? ($user->membership_code ?? $user->profile->membership_id ?? 'نامشخص') : 'GUEST';
         
-        // Generate transaction code for display
         $transactionCode = random_int(1000000000, 9999999999);
 
         return view('courses.register', compact(
@@ -73,18 +75,16 @@ class CourseRegistrationController extends Controller
     }
 
     /**
-     * Store course registration with payment
+     * Store a course registration and create payment when required.
      */
     public function store(Request $request, Course $course)
     {
-        // Check if registration deadline has passed
         if ($course->registration_deadline && now()->gt($course->registration_deadline)) {
             return redirect()
                 ->route('courses.show', $course->id)
                 ->with('error', 'مهلت ثبت‌نام به پایان رسیده است.');
         }
 
-        // Check capacity
         $currentRegistrations = $course->registrations()
             ->where('status', 'approved')
             ->count();
@@ -97,14 +97,12 @@ class CourseRegistrationController extends Controller
         $isFree = $course->is_free;
         $isGuest = !Auth::check();
 
-        // Check prerequisites for authenticated users
         if (Auth::check() && !$course->userHasCompletedPrerequisites(Auth::id())) {
             return redirect()
                 ->route('courses.show', $course->id)
                 ->with('error', 'شما پیش‌نیازهای این دوره را تکمیل نکرده‌اید.');
         }
 
-        // Validation rules
         $rules = [];
 
         if ($isGuest) {
@@ -128,7 +126,6 @@ class CourseRegistrationController extends Controller
             'transaction_code.regex' => 'کد پیگیری باید فقط شامل اعداد باشد.',
         ]);
 
-        // Check for duplicate registration
         if (Auth::check()) {
             $existing = CourseRegistration::where('course_id', $course->id)
                 ->where('user_id', Auth::id())
@@ -149,7 +146,6 @@ class CourseRegistrationController extends Controller
             $payment = null;
             
             if (!$isFree) {
-                // Only create payment record - registration will be created after payment approval
                 $amount = $isGuest ? $course->guest_cost : $course->member_cost;
                 $user = Auth::user();
                 $membershipCode = $user ? ($user->membership_code ?? $user->profile->membership_id ?? null) : 'GUEST';
@@ -172,14 +168,12 @@ class CourseRegistrationController extends Controller
                     ]),
                 ]);
 
-                // Store success message data
                 Session::flash('registration_success', [
                     'transaction_code' => $payment->transaction_code,
                     'amount' => $amount,
                     'membership_code' => $membershipCode,
                 ]);
             } else {
-                // For free courses, create registration immediately
                 $registration = CourseRegistration::create([
                     'course_id' => $course->id,
                     'user_id' => Auth::id(),

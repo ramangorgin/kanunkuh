@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Course model representing training courses and related metadata.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Encapsulates course attributes, relationships, and prerequisite checks.
+ */
 class Course extends Model
 {
     use HasFactory;
@@ -47,28 +54,40 @@ class Course extends Model
         'is_special' => 'boolean',
     ];
 
+    /**
+     * Get the assigned instructor for the course.
+     */
     public function teacher()
     {
         return $this->belongsTo(Teacher::class);
     }
 
+    /**
+     * Get the associated federation course reference.
+     */
     public function federationCourse()
     {
         return $this->belongsTo(FederationCourse::class, 'federation_course_id');
     }
 
+    /**
+     * Get registrations for this course.
+     */
     public function registrations()
     {
         return $this->hasMany(CourseRegistration::class);
     }
 
+    /**
+     * Get attached files for this course.
+     */
     public function files()
     {
         return $this->hasMany(CourseFile::class);
     }
 
     /**
-     * Get prerequisites for this course (via federation course)
+     * Get prerequisite federation courses for this course.
      */
     public function prerequisites()
     {
@@ -83,7 +102,7 @@ class Course extends Model
     }
 
     /**
-     * Check if user has completed all prerequisites
+        * Determine whether a user has completed all prerequisites.
      */
     public function userHasCompletedPrerequisites($userId)
     {
@@ -98,7 +117,6 @@ class Course extends Model
             return true;
         }
 
-        // Check if user has completed all prerequisites in educational_histories
         $completedCourses = \App\Models\EducationalHistory::where('user_id', $userId)
             ->whereIn('federation_course_id', $prerequisites)
             ->pluck('federation_course_id');

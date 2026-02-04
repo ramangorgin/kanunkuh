@@ -1,3 +1,4 @@
+{{-- Admin user detail view. --}}
 @extends('admin.layout')
 
 @section('title', 'مشاهده کاربر')

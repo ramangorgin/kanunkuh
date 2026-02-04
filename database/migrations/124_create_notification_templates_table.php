@@ -1,11 +1,21 @@
 <?php
 
+/**
+ * Database migration for creating the notification_templates table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates and drops the notification_templates table.
+ */
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('notification_templates', function (Blueprint $table) {
@@ -23,6 +33,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('notification_templates');

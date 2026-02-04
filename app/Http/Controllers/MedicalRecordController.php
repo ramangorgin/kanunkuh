@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * User medical record display and update handling.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,9 +12,14 @@ use Illuminate\Support\Facades\Storage;
 use Morilog\Jalali\Jalalian;
 use App\Models\MedicalRecord;
 
+/**
+ * Manages creation and updates of the user's medical record.
+ */
 class MedicalRecordController extends Controller
 {
-
+    /**
+     * Show the current user's medical record.
+     */
     public function show()
     {
         $user = Auth::user();
@@ -18,7 +27,9 @@ class MedicalRecordController extends Controller
         return view('user.myMedicalRecord', compact('medical'));
     }
 
-
+    /**
+     * Validate and persist medical record updates.
+     */
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -54,7 +65,6 @@ class MedicalRecordController extends Controller
             }
         }
 
-        // ذخیره فایل بیمه (در صورت ارسال)
         if ($request->hasFile('insurance_file')) {
             $validated['insurance_file'] = $request->file('insurance_file')->store('insurance', 'public');
         }
@@ -65,7 +75,6 @@ class MedicalRecordController extends Controller
         );
 
         if (!$medical) {
-            // ایجاد رکورد جدید در اولین ارسال
             $medical = new MedicalRecord($validated);
             $user->medicalRecord()->save($medical);
         } else {
@@ -84,6 +93,9 @@ class MedicalRecordController extends Controller
 
     }
 
+    /**
+     * Convert Persian digits to ASCII digits.
+     */
     private function fixPersianNumbers($string)
     {
         $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];

@@ -1,3 +1,4 @@
+{{-- Program report detail view. --}}
 @extends('admin.layout')
 
 @section('title', 'مشاهده گزارش برنامه')

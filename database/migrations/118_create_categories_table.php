@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * Database migration for creating the categories table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates and drops the categories table.
+ */
 return new class extends Migration
 {
     /**

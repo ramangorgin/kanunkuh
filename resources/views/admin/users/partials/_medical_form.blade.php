@@ -1,3 +1,4 @@
+{{-- Partial form for medical record fields. --}}
 @php
     $medical = $medical ?? new \App\Models\MedicalRecord();
 @endphp

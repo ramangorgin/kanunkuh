@@ -1,3 +1,4 @@
+{{-- Membership terms and conditions page. --}}
 @extends('layout')
 
 @section('title', 'شرایط و قوانین عضویت')

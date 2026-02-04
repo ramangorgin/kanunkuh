@@ -1,3 +1,4 @@
+{{-- Admin tickets list view. --}}
 @extends('admin.layout')
 
 @section('title', 'تیکت‌ها')

@@ -1,3 +1,4 @@
+{{-- Program report creation form. --}}
 @php
     $isAdmin = $isAdmin ?? (auth()->check() && auth()->user()->role === 'admin');
     $currentUser = auth()->user();

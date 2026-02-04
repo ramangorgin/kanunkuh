@@ -1,3 +1,4 @@
+{{-- Base site layout for public-facing pages. --}}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
     <head>

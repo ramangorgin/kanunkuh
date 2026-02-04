@@ -1,3 +1,4 @@
+{{-- Admin post edit form. --}}
 @extends('admin.layout')
 
 @section('title', 'ویرایش پست')

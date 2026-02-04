@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Controller for administrating user records and profiles.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +16,14 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
 
+/**
+ * Provides CRUD and listing operations for application users.
+ */
 class UserController extends Controller
 {
+    /**
+     * Display a paginated list of users with optional search filtering.
+     */
     public function index(Request $request)
     {
         $query = User::with('profile');
@@ -32,17 +42,26 @@ class UserController extends Controller
     }
     
 
+    /**
+     * Show the user creation form for administrators.
+     */
     public function create()
     {
         return view('admin.users.create');
     }
 
+    /**
+     * Show the edit form for a specific user.
+     */
     public function edit($id)
     {
         $user = User::with('profile')->findOrFail($id);
         return view('admin.users.edit', compact('user'));
     }
 
+    /**
+     * Remove a user and associated profile photo from storage.
+     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);
@@ -53,6 +72,9 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'کاربر حذف شد.');
     }
 
+    /**
+     * Display the details for a specific user.
+     */
     public function show($id)
     {
         $user = User::with(['profile'])->findOrFail($id);

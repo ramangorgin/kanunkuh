@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Post model for blog content and SEO metadata.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,6 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Represents a blog post with publishing rules and SEO helpers.
+ */
 class Post extends Model
 {
     use HasFactory, SoftDeletes;
@@ -38,6 +45,9 @@ class Post extends Model
         'is_followable' => 'boolean',
     ];
 
+    /**
+     * Configure model events for slugging and SEO defaults.
+     */
     protected static function booted()
     {
         static::saving(function (Post $post) {
@@ -64,16 +74,25 @@ class Post extends Model
         });
     }
 
+    /**
+     * Get the author of the post.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get categories assigned to the post.
+     */
     public function categories()
     {
         return $this->belongsToMany(Category::class);
     }
 
+    /**
+     * Scope query to published posts.
+     */
     public function scopePublished($query)
     {
         return $query->where('status', 'published')
@@ -82,6 +101,9 @@ class Post extends Model
             });
     }
 
+    /**
+     * Generate a unique slug for the post.
+     */
     protected static function generateUniqueSlug(string $value, ?int $ignoreId = null): string
     {
         $baseSlug = Str::slug($value);
@@ -99,6 +121,9 @@ class Post extends Model
         return $slug ?: Str::random(8);
     }
 
+    /**
+     * Estimate reading time in minutes based on content length.
+     */
     protected function calculateReadingTime(?string $content): ?int
     {
         if (!$content) {
@@ -110,6 +135,9 @@ class Post extends Model
         return max(1, (int) ceil($wordCount / 200));
     }
 
+    /**
+     * Build a fallback SEO description from excerpt or content.
+     */
     protected function generateSeoDescription(): string
     {
         if ($this->excerpt) {
@@ -119,6 +147,9 @@ class Post extends Model
         return Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->content))), 155, '');
     }
 
+    /**
+     * Build a canonical URL for the post.
+     */
     protected function generateCanonicalUrl(): string
     {
         $baseUrl = rtrim(config('app.url'), '/');

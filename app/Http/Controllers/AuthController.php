@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Authentication controller handling OTP-based login, registration, and session management.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -17,18 +21,21 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
 
+/**
+ * Provides OTP flows (request, verify) for login and registration, and session actions.
+ */
 class AuthController extends Controller
 {
-    // Entering Phone Form
-    // ==========================
+    /**
+     * Display the phone input form for OTP authentication.
+     */
     public function showPhoneForm()
     {
         return view('auth.login');
     }
-    // ==========================
-
-    // Sending OTP Request
-    // ==========================
+    /**
+     * Request an OTP for login or registration using the provided phone number.
+     */
     public function requestOtp(Request $request)
     {
         $rules = [
@@ -83,18 +90,13 @@ class AuthController extends Controller
 
         return redirect()->route('auth.verifyForm')->with('status', 'کد تایید ارسال شد');
     }
-    // ==========================
-
-    // Entering 4-digits Code Form
-    // ==========================
     public function showVerifyForm()
     {
         return view('auth.verify', ['action' => route('auth.login.verifyOtp')]);
     }
-    // ==========================
-
-    // Varificating OTP Code
-    // ==========================
+    /**
+     * Verify the submitted OTP and complete authentication or onboarding.
+     */
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -112,36 +114,34 @@ class AuthController extends Controller
             return redirect()->route('auth.phone')->withErrors(['phone' => 'کاربر یافت نشد']);
         }
 
-        // Checking the Code
+        // Validate OTP and expiration, then advance onboarding or login.
         if ($user->otp_code == $request->otp && Carbon::now()->lt($user->otp_expires_at)) {
-            // Deleting Code after using
+                // Clear OTP after successful verification.
             $user->otp_code = null;
             $user->otp_expires_at = null;
             $user->save();
 
-            // if User has other data → Go to Dashboard
             if ($user->isRegistrationComplete()) {
                 Auth::login($user);
                 return redirect()->route('dashboard.index');
             }
 
-            // if the User is New → Go to next step
             return redirect()->route('auth.register.step1');
         }
 
         return back()->withErrors(['otp' => 'کد تایید اشتباه یا منقضی شده است']);
     }
-    // ==========================
-
+    /**
+     * Normalize Persian/Arabic numerals to ASCII digits.
+     */
     private function nd($v){
         $map = ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9',
                 '٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9'];
         return strtr((string)$v, $map);
     }
-    // Old 3-step register wizard removed; onboarding is handled via dashboard routes
-
-    // ==========================
-    // Logout
+    /**
+     * Log out the current user and invalidate the session.
+     */
     public function logout(Request $request)
     {
         Auth::logout();
@@ -152,15 +152,17 @@ class AuthController extends Controller
 
         return redirect()->route('auth.login')->with('success', 'خروج با موفقیت انجام شد.');
     }
-    // ==========================
-
-    // Login Methods
-    // ==========================
+    /**
+     * Show the login form.
+     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
+    /**
+     * Request an OTP for the login flow.
+     */
     public function loginRequestOtp(Request $request)
     {
         $rules = [
@@ -212,19 +214,31 @@ class AuthController extends Controller
         return redirect()->route('auth.login.verifyForm');
     }
 
+    /**
+     * Show the OTP verification form for login.
+     */
     public function showLoginVerifyForm()
     {
         return view('auth.verify', ['action' => route('auth.login.verifyOtp')]);
     }
+    /**
+     * Show the registration form.
+     */
     public function showRegisterForm()
     {
         return view('auth.register');
     }
+    /**
+     * Show the OTP verification form for registration.
+     */
     public function showRegisterVerifyForm()
     {
         return view('auth.verify', ['action' => route('auth.register.verifyOtp')]);
     }
 
+    /**
+     * Verify login OTP and redirect to the appropriate onboarding step.
+     */
     public function loginVerifyOtp(Request $request)
     {
         $request->validate(['otp' => 'required|digits:4']);
@@ -234,9 +248,9 @@ class AuthController extends Controller
             return redirect()->route('auth.login')->withErrors(['phone' => 'کاربر یافت نشد']);
         }
 
-        // Checking the Code
+        // Validate OTP and expiration, then log user in.
         if ($user->otp_code == $request->otp && Carbon::now()->lt($user->otp_expires_at)) {
-            // Deleting Code after using
+            // Clear one-time code after use.
             $user->otp_code = null;
             $user->otp_expires_at = null;
             $user->save();
@@ -248,6 +262,9 @@ class AuthController extends Controller
         return back()->withErrors(['otp' => 'کد تایید اشتباه یا منقضی شده است']);
     }
 
+    /**
+     * Determine the next onboarding step for the user and redirect accordingly.
+     */
     protected function redirectToNextStep($user)
     {
         $incomplete = (!$user->hasProfile()) || (!$user->hasMedicalRecord()) || (!$user->hasEducationalHistory());
@@ -268,6 +285,9 @@ class AuthController extends Controller
 
 
 
+    /**
+     * Request an OTP for the registration flow and store it in session.
+     */
     public function registerRequestOtp(Request $request)
     {
         $rules = [
@@ -319,6 +339,9 @@ class AuthController extends Controller
         return redirect()->route('auth.register.verifyForm');
     }
 
+    /**
+     * Verify registration OTP, create the user record if needed, and complete login.
+     */
     public function registerVerifyOtp(Request $request)
     {
         $request->validate(['otp' => 'required|digits:4']);
@@ -339,7 +362,7 @@ class AuthController extends Controller
             return back()->withErrors(['otp' => 'کد وارد شده صحیح نیست.']);
         }
 
-        // --- Create or get user safely (no mass-assignment issues) ---
+        // Create or retrieve a user and sign in.
         $user = User::where('phone', $phone)->first();
         if (! $user) {
             $user = new User();

@@ -1,3 +1,4 @@
+{{-- Program detail view. --}}
 @extends('layout')
 
 @push('styles')

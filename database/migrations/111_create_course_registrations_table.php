@@ -1,11 +1,21 @@
 <?php
 
+/**
+ * Database migration for creating the course_registrations table.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Creates and drops the course_registrations table.
+ */
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up()
     {
         Schema::create('course_registrations', function (Blueprint $table) {
@@ -20,11 +30,11 @@ return new class extends Migration
             $table->string('guest_national_id')->nullable();
 
             $table->enum('status', [
-                'pending',     // ثبت اولیه
-                'paid',        // پرداخت شده
-                'approved',    // تایید شده
-                'rejected',    // رد شده
-                'cancelled'    // لغو شده
+                'pending',
+                'paid',
+                'approved',
+                'rejected',
+                'cancelled'
             ])->default('pending');
 
             $table->string('certificate_file')->nullable();
@@ -36,6 +46,9 @@ return new class extends Migration
         });       
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down()
     {
         Schema::dropIfExists('course_registrations');

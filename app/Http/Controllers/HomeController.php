@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Public landing and map pages with aggregated home content.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\Program;
@@ -8,10 +12,16 @@ use App\Models\Post;
 use App\Models\ProgramReport;
 use App\Models\User;
 
+/**
+ * Builds homepage content from programs, courses, posts, and reports.
+ */
 class HomeController extends Controller
 {
     public function index()
     {
+        /**
+         * Render the homepage with latest content and summary statistics.
+         */
         return view('home', [
             'latestPrograms' => Program::with('files')->latest('execution_date')->take(4)->get(),
             'latestCourses' => Course::with('files')->latest('start_date')->take(4)->get(),
@@ -26,6 +36,9 @@ class HomeController extends Controller
         ]);
     }
     public function map(){
+        /**
+         * Display the map page.
+         */
         return view('map.blade.php');
     }
 }
